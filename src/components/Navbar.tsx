@@ -17,7 +17,7 @@ export const Navbar = component<NavbarProps>(({ emit }) => {
                 <div class="flex-1 flex justify-start">
                     <RouterLink to="/">
                         <img
-                            src="/sigx.png"
+                            src={`${import.meta.env.BASE_URL}sigx.png`}
                             alt="SignalX"
                             width={150}
                             height={119}

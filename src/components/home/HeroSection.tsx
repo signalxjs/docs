@@ -31,7 +31,7 @@ export const HeroSection = component(({ signal }) => {
                 {/* Logo */}
                 <ScrollReveal animation="fade-up" delay={0}>
                     <img
-                        src="/sigx.png"
+                        src={`${import.meta.env.BASE_URL}sigx.png`}
                         alt="SignalX"
                         width={150}
                         height={119}

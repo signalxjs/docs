@@ -9,24 +9,25 @@
     "description": "SignalX framework documentation site",
     "type": "module",
     "scripts": {
-        "dev": "vite",
-        "build": "ssg build",
-        "preview": "vite preview",
+        "dev": "sigx dev",
+        "build": "sigx build",
+        "preview": "sigx preview",
         "typecheck": "tsgo --noEmit"
     },
     "dependencies": {
         "@sigx/daisyui": "^0.3.2",
         "@sigx/live-code": "^0.1.1",
         "@sigx/monaco-editor": "^0.1.1",
-        "@sigx/router": "^0.3.2",
-        "@sigx/ssg": "^0.3.2",
-        "@sigx/store": "^0.3.2",
+        "@sigx/router": "^0.4.3",
+        "@sigx/ssg": "^0.4.3",
+        "@sigx/store": "^0.4.2",
         "@sigx/vite": "^0.4.1",
         "monaco-editor": "^0.55.1",
         "sigx": "^0.4.1"
     },
     "devDependencies": {
         "@mdx-js/rollup": "^3.1.0",
+        "@sigx/cli": "^0.1.0",
         "@tailwindcss/vite": "4.3.0",
         "@typescript/native-preview": "7.0.0-dev.20260510.1",
         "daisyui": "5.5.19",
