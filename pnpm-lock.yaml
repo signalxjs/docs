@@ -20,16 +20,16 @@ importers:
         version: 0.3.2(daisyui@5.5.19)(sigx@0.4.1)(tailwindcss@4.3.0)
       '@sigx/live-code':
         specifier: ^0.1.1
-        version: 0.1.1(@shikijs/langs@3.23.0)(@shikijs/monaco@3.23.0)(@shikijs/themes@3.23.0)(@sigx/daisyui@0.3.2(daisyui@5.5.19)(sigx@0.4.1)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.1(monaco-editor@0.55.1)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.3(sigx@0.4.1))(@sigx/store@0.4.3)(shiki@3.23.0)(sigx@0.4.1)
+        version: 0.1.1(@shikijs/langs@3.23.0)(@shikijs/monaco@3.23.0)(@shikijs/themes@3.23.0)(@sigx/daisyui@0.3.2(daisyui@5.5.19)(sigx@0.4.1)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.1(monaco-editor@0.55.1)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.4(sigx@0.4.1))(@sigx/store@0.4.3)(shiki@3.23.0)(sigx@0.4.1)
       '@sigx/monaco-editor':
         specifier: ^0.1.1
         version: 0.1.1(monaco-editor@0.55.1)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4))
       '@sigx/router':
-        specifier: ^0.4.3
-        version: 0.4.3(sigx@0.4.1)
+        specifier: ^0.4.4
+        version: 0.4.4(sigx@0.4.1)
       '@sigx/ssg':
-        specifier: ^0.4.3
-        version: 0.4.3(@sigx/cli@0.1.0)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4))
+        specifier: ^0.4.4
+        version: 0.4.4(@sigx/cli@0.1.0)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4))
       '@sigx/store':
         specifier: ^0.4.2
         version: 0.4.3
@@ -617,8 +617,8 @@ packages:
     resolution: {integrity: sha512-p4/GDONCJwFKoaAf/nccvpNJ+7rfafjrbfQ+yc0xnziKLFmQTFyD1dPdnLr+pC9HwiBmIRhZzqL5sEKbHQwj3Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
-  '@sigx/router@0.4.3':
-    resolution: {integrity: sha512-sTcNKWrkhrNsabKsM8OoIW6nYMYuB9OkI5T4RMh2K+fMpZfXLHCYdRP4fl7ugBKw082KerRXxB79Eevb7LKyDQ==}
+  '@sigx/router@0.4.4':
+    resolution: {integrity: sha512-G9oZIqeEOSDb+3bXgRaP2buQrLbk3V5Joq7Vy2EWTkbzQOkE63S3tpvF56Gxv21WZshfapDEBwMpd1XTryG6eQ==}
     peerDependencies:
       sigx: ^0.4.1
 
@@ -636,8 +636,8 @@ packages:
   '@sigx/server-renderer@0.4.1':
     resolution: {integrity: sha512-hWdStiVBi6XyOX2UHFWNcg/YSq8urGNiK+SLMeeQoKhopqtu1/pbQ3jcBNKzIlK6GaYg/r6norEE1GWS7UXmKQ==}
 
-  '@sigx/ssg@0.4.3':
-    resolution: {integrity: sha512-YfutQ+tyQzR7cnc6RzDRdN7VNFpmv8Ka1WY0E1R+Qg4wBxFj2LhMga31HvGpSUq1PTGg/zgyPEKi/vHoxkqDzQ==}
+  '@sigx/ssg@0.4.4':
+    resolution: {integrity: sha512-atQJIApF/htjn3KN5NR6DcAfX4I4XzK3nShBPXjaFuhqxp7WzyIvS7wtgFqL/i3c9+0/FsZTVte+YBjJd7z4/g==}
     peerDependencies:
       '@sigx/cli': '*'
       sigx: ^0.4.1
@@ -2087,7 +2087,7 @@ snapshots:
       sigx: 0.4.1
       tailwindcss: 4.3.0
 
-  '@sigx/live-code@0.1.1(@shikijs/langs@3.23.0)(@shikijs/monaco@3.23.0)(@shikijs/themes@3.23.0)(@sigx/daisyui@0.3.2(daisyui@5.5.19)(sigx@0.4.1)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.1(monaco-editor@0.55.1)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.3(sigx@0.4.1))(@sigx/store@0.4.3)(shiki@3.23.0)(sigx@0.4.1)':
+  '@sigx/live-code@0.1.1(@shikijs/langs@3.23.0)(@shikijs/monaco@3.23.0)(@shikijs/themes@3.23.0)(@sigx/daisyui@0.3.2(daisyui@5.5.19)(sigx@0.4.1)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.1(monaco-editor@0.55.1)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.4(sigx@0.4.1))(@sigx/store@0.4.3)(shiki@3.23.0)(sigx@0.4.1)':
     dependencies:
       '@shikijs/langs': 3.23.0
       '@shikijs/monaco': 3.23.0
@@ -2098,7 +2098,7 @@ snapshots:
       sucrase: 3.35.1
     optionalDependencies:
       '@sigx/daisyui': 0.3.2(daisyui@5.5.19)(sigx@0.4.1)(tailwindcss@4.3.0)
-      '@sigx/router': 0.4.3(sigx@0.4.1)
+      '@sigx/router': 0.4.4(sigx@0.4.1)
       '@sigx/store': 0.4.3
 
   '@sigx/monaco-editor@0.1.1(monaco-editor@0.55.1)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4))':
@@ -2112,7 +2112,7 @@ snapshots:
 
   '@sigx/reactivity@0.4.1': {}
 
-  '@sigx/router@0.4.3(sigx@0.4.1)':
+  '@sigx/router@0.4.4(sigx@0.4.1)':
     dependencies:
       '@sigx/reactivity': 0.4.1
       '@sigx/runtime-core': 0.4.1
@@ -2137,9 +2137,9 @@ snapshots:
     dependencies:
       sigx: 0.4.1
 
-  '@sigx/ssg@0.4.3(@sigx/cli@0.1.0)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4))':
+  '@sigx/ssg@0.4.4(@sigx/cli@0.1.0)(sigx@0.4.1)(vite@8.0.11(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.8.4))':
     dependencies:
-      '@sigx/router': 0.4.3(sigx@0.4.1)
+      '@sigx/router': 0.4.4(sigx@0.4.1)
       '@sigx/server-renderer': 0.4.1
       esbuild: 0.27.7
       fast-glob: 3.3.3
