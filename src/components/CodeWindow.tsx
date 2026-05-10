@@ -135,7 +135,6 @@ export const CodeWindow = component<CodeWindowProps>(({ props, slots }) => {
                         code={extractedCode.value}
                         language={props.language ?? 'tsx'}
                         filename={filename}
-                        open={isModalOpen.value}
                         onClose={closePlayground}
                     />
                 )}

@@ -92,9 +92,9 @@ export const HeroSection = component(({ signal }) => {
                         </RouterLink>
                         
                         <a href="https://github.com/signalxjs/core" target="_blank" rel="noopener">
-                            <Button 
-                                variant="outline" 
-                                size="lg" 
+                            <Button
+                                outline
+                                size="lg"
                                 class="px-8 py-4 text-lg font-semibold hover:bg-base-content/10 hover:scale-105 transition-all"
                             >
                                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">

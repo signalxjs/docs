@@ -4,10 +4,9 @@
  * @layout docs
  */
 
-import { component, signal, effect } from 'sigx';
+import { component, signal } from 'sigx';
 import {
     ThemeConfigurator,
-    applyThemeToDocument,
     DEFAULT_THEME_CONFIG,
     cloneThemeConfig,
 } from '@sigx/daisyui';
@@ -19,7 +18,8 @@ const ThemeGeneratorPage = component(() => {
     return () => (
         <div class="not-prose -mx-6 lg:-mx-12">
             <ThemeConfigurator
-                model={config}
+                config={config}
+                onChange={(next) => config.$set(next)}
                 persistKey="sigx-docs-theme-config"
             />
         </div>

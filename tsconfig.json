@@ -13,7 +13,7 @@
         "esModuleInterop": true,
         "jsx": "preserve",
         "jsxImportSource": "sigx",
-        "types": ["vite/client", "@sigx/ssg/virtual"],
+        "types": ["vite/client"],
         "paths": {
             "@/*": ["./src/*"]
         }

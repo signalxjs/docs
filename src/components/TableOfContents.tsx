@@ -173,7 +173,7 @@ export const TableOfContents = component<TableOfContentsProps>(({ props, signal 
     onMounted(() => {
         // Use requestAnimationFrame to wait for content to render
         requestAnimationFrame(() => {
-            waitForHeadingsAndSetup(props.headings);
+            waitForHeadingsAndSetup(props.headings ?? []);
         });
     });
     
