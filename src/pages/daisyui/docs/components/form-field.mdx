@@ -1,0 +1,362 @@
+---
+title: FormField
+description: Form field wrapper with label, hint text, and validation error support using daisyUI fieldset/legend/label/validator-hint classes
+layout: docs
+category: ["Components", "Data Input"]
+order: 545
+---
+
+# FormField
+
+FormField is a convenience wrapper that combines `fieldset`, `fieldset-legend`, `label` (hint), and `validator-hint` (error) into a single compound component for consistent form layouts.
+
+## Import
+
+```tsx
+import { FormField, Input, Textarea, Select } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Wrap any form input with `FormField` for a labeled field:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { FormField, Input } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ email: '' });
+
+    return () => (
+        <FormField label="Email Address">
+            <Input
+                model={() => form.email}
+                type="email"
+                placeholder="you@example.com"
+            />
+        </FormField>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Required Field
+
+Use the `required` prop to show a red asterisk indicator after the label:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { FormField, Input, Col } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ name: '', email: '' });
+
+    return () => (
+        <Col gap="4">
+            <FormField label="Full Name" required>
+                <Input
+                    model={() => form.name}
+                    placeholder="John Doe"
+                />
+            </FormField>
+
+            <FormField label="Email" required>
+                <Input
+                    model={() => form.email}
+                    type="email"
+                    placeholder="john@example.com"
+                />
+            </FormField>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hint Text
+
+Add helper text below the field with the `hint` prop. Renders as a `<p class="label">`:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { FormField, Input, Col } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ username: '', password: '' });
+
+    return () => (
+        <Col gap="4">
+            <FormField label="Username" hint="Only letters, numbers, and underscores">
+                <Input
+                    model={() => form.username}
+                    placeholder="john_doe"
+                />
+            </FormField>
+
+            <FormField label="Password" hint="Must be at least 8 characters">
+                <Input
+                    model={() => form.password}
+                    type="password"
+                    placeholder="••••••••"
+                />
+            </FormField>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Error Messages
+
+Show validation errors with the `error` prop. Renders as a `<p class="validator-hint text-error">`. When both `error` and `hint` are set, the error takes priority:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { FormField, Input, Col } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ email: 'invalid-email' });
+    const emailError = () => {
+        if (!form.email) return 'Email is required';
+        if (!form.email.includes('@')) return 'Please enter a valid email';
+        return '';
+    };
+
+    return () => (
+        <Col gap="4">
+            <FormField
+                label="Email"
+                required
+                error={emailError()}
+            >
+                <Input
+                    model={() => form.email}
+                    type="email"
+                    placeholder="you@example.com"
+                    color={emailError() ? 'error' : undefined}
+                />
+            </FormField>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Different Inputs
+
+FormField works with all form components — Input, Textarea, Select, and more:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { FormField, Input, Textarea, Select, Col } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({
+        name: '',
+        bio: '',
+        country: ''
+    });
+
+    const countries = [
+        { value: 'us', label: 'United States' },
+        { value: 'uk', label: 'United Kingdom' },
+        { value: 'ca', label: 'Canada' }
+    ];
+
+    return () => (
+        <Col gap="4">
+            <FormField label="Name" required>
+                <Input
+                    model={() => form.name}
+                    placeholder="Your name"
+                />
+            </FormField>
+
+            <FormField label="Bio" hint="Brief description about yourself">
+                <Textarea
+                    model={() => form.bio}
+                    placeholder="Tell us about yourself..."
+                    rows={3}
+                />
+            </FormField>
+
+            <FormField label="Country">
+                <Select
+                    model={() => form.country}
+                    options={countries}
+                    placeholder="Select a country"
+                />
+            </FormField>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Complete Form
+
+A full registration form combining FormField with validation, multiple input types, and layout components:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { FormField, Input, Textarea, Select, Checkbox, Button, Card, Divider, Col, Row, Heading } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        role: '',
+        bio: '',
+        terms: false
+    });
+
+    const errors = signal({
+        firstName: '',
+        email: '',
+        terms: ''
+    });
+
+    const roles = [
+        { value: 'developer', label: 'Developer' },
+        { value: 'designer', label: 'Designer' },
+        { value: 'manager', label: 'Manager' }
+    ];
+
+    const validate = () => {
+        let valid = true;
+
+        if (!form.firstName) {
+            errors.firstName = 'First name is required';
+            valid = false;
+        } else {
+            errors.firstName = '';
+        }
+
+        if (!form.email) {
+            errors.email = 'Email is required';
+            valid = false;
+        } else if (!form.email.includes('@')) {
+            errors.email = 'Please enter a valid email';
+            valid = false;
+        } else {
+            errors.email = '';
+        }
+
+        if (!form.terms) {
+            errors.terms = 'You must accept the terms';
+            valid = false;
+        } else {
+            errors.terms = '';
+        }
+
+        return valid;
+    };
+
+    const handleSubmit = () => {
+        if (validate()) {
+            alert('Form submitted successfully!');
+        }
+    };
+
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Heading level={2} size="xl">Registration Form</Heading>
+
+                    <Row gap="4" wrap>
+                        <FormField label="First Name" required error={errors.firstName} class="flex-1 min-w-60">
+                            <Input
+                                model={() => form.firstName}
+                                placeholder="John"
+                                color={errors.firstName ? 'error' : undefined}
+                            />
+                        </FormField>
+
+                        <FormField label="Last Name" class="flex-1 min-w-60">
+                            <Input
+                                model={() => form.lastName}
+                                placeholder="Doe"
+                            />
+                        </FormField>
+                    </Row>
+
+                    <Row gap="4" wrap>
+                        <FormField label="Email" required error={errors.email} class="flex-1 min-w-60">
+                            <Input
+                                model={() => form.email}
+                                type="email"
+                                placeholder="john@example.com"
+                                color={errors.email ? 'error' : undefined}
+                            />
+                        </FormField>
+
+                        <FormField label="Phone" hint="Optional" class="flex-1 min-w-60">
+                            <Input
+                                model={() => form.phone}
+                                type="tel"
+                                placeholder="+1 (555) 000-0000"
+                            />
+                        </FormField>
+                    </Row>
+
+                    <FormField label="Role">
+                        <Select
+                            model={() => form.role}
+                            options={roles}
+                            placeholder="Select your role"
+                        />
+                    </FormField>
+
+                    <FormField label="Bio" hint="Tell us about yourself">
+                        <Textarea
+                            model={() => form.bio}
+                            placeholder="A brief description..."
+                            rows={3}
+                        />
+                    </FormField>
+
+                    <Divider />
+
+                    <FormField error={errors.terms}>
+                        <Checkbox
+                            model={() => form.terms}
+                            color={errors.terms ? 'error' : 'primary'}
+                            label="I accept the terms of service and privacy policy"
+                        />
+                    </FormField>
+
+                    <Button variant="primary" block onClick={handleSubmit}>
+                        Register
+                    </Button>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | - | Label text rendered as `<legend class="fieldset-legend">` |
+| `required` | `boolean` | `false` | Shows a red asterisk (*) after the label |
+| `hint` | `string` | - | Helper text rendered as `<p class="label">` below the field |
+| `error` | `string` | - | Error message rendered as `<p class="validator-hint text-error">` (replaces hint) |
+| `class` | `string` | - | Additional CSS classes on the fieldset container |
+
+## Slots
+
+| Slot | Description |
+|------|-------------|
+| `default` | The form input component(s) to wrap |

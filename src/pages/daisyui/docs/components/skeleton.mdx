@@ -1,0 +1,159 @@
+---
+title: Skeleton
+description: Animated loading placeholder for content that is being fetched
+layout: docs
+category: ["Components", "Feedback"]
+order: 420
+---
+
+# Skeleton
+
+Display animated placeholder content while data is loading. Use Tailwind utility classes for sizing and shape.
+
+## Import
+
+```tsx
+import { Skeleton } from '@sigx/daisyui';
+```
+
+## Basic Skeleton
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Skeleton } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Skeleton class="h-32 w-32" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Circle with Content
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Skeleton, Row, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4" class="w-52">
+            <Row align="center" gap="4">
+                <Skeleton class="h-16 w-16 shrink-0 rounded-full" />
+                <Col gap="4">
+                    <Skeleton class="h-4 w-20" />
+                    <Skeleton class="h-4 w-28" />
+                </Col>
+            </Row>
+            <Skeleton class="h-32 w-full" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Rectangle with Content
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Skeleton, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4" class="w-52">
+            <Skeleton class="h-32 w-full" />
+            <Skeleton class="h-4 w-28" />
+            <Skeleton class="h-4 w-full" />
+            <Skeleton class="h-4 w-full" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Animated Text (skeleton-text)
+
+Use the `text` prop to animate text color instead of background. Renders as a `<span>`.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Skeleton } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Skeleton text>AI is thinking harder...</Skeleton>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Card Placeholder
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Skeleton, Card, Col, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card class="w-64">
+            <Skeleton class="h-48 w-full" />
+            <Card.Body>
+                <Col gap="4">
+                    <Skeleton class="h-6 w-3/4" />
+                    <Skeleton class="h-4 w-full" />
+                    <Skeleton class="h-4 w-full" />
+                    <Skeleton class="h-4 w-2/3" />
+                    <Row gap="2">
+                        <Skeleton class="h-8 w-20 rounded-full" />
+                        <Skeleton class="h-8 w-20 rounded-full" />
+                    </Row>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## List Placeholder
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Skeleton, Card, Row, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card class="w-80">
+            <Card.Body>
+                <Col gap="4">
+                    {[1, 2, 3].map(() => (
+                        <Row align="center" gap="4">
+                            <Skeleton class="h-12 w-12 shrink-0 rounded-lg" />
+                            <Col gap="2" class="flex-1">
+                                <Skeleton class="h-4 w-1/2" />
+                                <Skeleton class="h-3 w-3/4" />
+                            </Col>
+                            <Skeleton class="h-8 w-16 shrink-0 rounded" />
+                        </Row>
+                    ))}
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `text` | `boolean` | `false` | Applies `skeleton-text` class, animates text color instead of background. Renders as `<span>` instead of `<div>`. |
+| `class` | `string` | - | CSS utility classes for sizing (`h-*`, `w-*`), shape (`rounded-full`, `rounded-lg`), and other styling. |

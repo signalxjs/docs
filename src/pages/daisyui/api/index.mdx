@@ -1,0 +1,175 @@
+---
+title: API Reference
+description: API reference for @sigx/daisyui
+layout: docs
+category: API Reference
+order: 100
+---
+
+# DaisyUI API Reference
+
+Complete API reference for `@sigx/daisyui`.
+
+## Theme Functions
+
+### initializeTheme
+
+Initializes the theme system. Call on app mount.
+
+```tsx
+import { initializeTheme } from '@sigx/daisyui';
+
+initializeTheme({
+    defaultTheme?: string,  // Default: 'light'
+    storageKey?: string,    // Default: 'theme'
+});
+```
+
+### setTheme
+
+Sets the current theme.
+
+```tsx
+import { setTheme } from '@sigx/daisyui';
+
+setTheme('dark');
+```
+
+### getTheme
+
+Gets the current theme.
+
+```tsx
+import { getTheme } from '@sigx/daisyui';
+
+const theme = getTheme(); // 'dark'
+```
+
+---
+
+## Components
+
+### Button
+
+```tsx
+interface ButtonProps {
+    variant?: 'primary' | 'secondary' | 'accent' | 'ghost' | 'link' | 'info' | 'success' | 'warning' | 'error';
+    size?: 'xs' | 'sm' | 'md' | 'lg';
+    outline?: boolean;
+    loading?: boolean;
+    disabled?: boolean;
+    onClick?: () => void;
+}
+```
+
+### Modal
+
+```tsx
+interface ModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    closeOnBackdrop?: boolean;  // Default: true
+    closeOnEscape?: boolean;    // Default: true
+}
+
+// Sub-components
+Modal.Header
+Modal.Body  
+Modal.Actions
+```
+
+### Card
+
+```tsx
+interface CardProps {
+    compact?: boolean;
+    bordered?: boolean;
+    imageFull?: boolean;
+}
+
+// Sub-components
+Card.Image
+Card.Body
+Card.Title
+Card.Actions
+```
+
+### Input
+
+```tsx
+interface InputProps {
+    type?: string;           // Default: 'text'
+    placeholder?: string;
+    label?: string;
+    error?: string;
+    size?: 'xs' | 'sm' | 'md' | 'lg';
+    variant?: 'bordered' | 'ghost';
+    value?: string;
+    onInput?: (value: string) => void;
+}
+```
+
+### Alert
+
+```tsx
+interface AlertProps {
+    variant?: 'info' | 'success' | 'warning' | 'error';
+    dismissible?: boolean;
+    onDismiss?: () => void;
+}
+```
+
+### Badge
+
+```tsx
+interface BadgeProps {
+    variant?: 'primary' | 'secondary' | 'accent' | 'ghost' | 'info' | 'success' | 'warning' | 'error';
+    size?: 'xs' | 'sm' | 'md' | 'lg';
+    outline?: boolean;
+}
+```
+
+### ThemeToggle
+
+```tsx
+interface ThemeToggleProps {
+    themes?: string[];  // Default: ['light', 'dark']
+}
+```
+
+### Dropdown
+
+```tsx
+interface DropdownProps {
+    position?: 'top' | 'bottom' | 'left' | 'right';
+    align?: 'start' | 'end';
+    hover?: boolean;
+}
+
+// Sub-components
+Dropdown.Toggle
+Dropdown.Menu
+Dropdown.Item
+```
+
+### Tabs
+
+```tsx
+interface TabsProps {
+    variant?: 'boxed' | 'bordered' | 'lifted';
+    size?: 'xs' | 'sm' | 'md' | 'lg';
+}
+
+// Sub-components
+Tabs.Tab: { active?: boolean; disabled?: boolean }
+```
+
+### Progress
+
+```tsx
+interface ProgressProps {
+    value: number;
+    max?: number;       // Default: 100
+    variant?: 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error';
+}
+```

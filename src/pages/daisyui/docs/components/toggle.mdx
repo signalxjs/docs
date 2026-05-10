@@ -1,0 +1,255 @@
+---
+title: Toggle
+description: Toggle switch for on/off boolean states
+layout: docs
+category: ["Components", "Data Input"]
+order: 530
+---
+
+# Toggle
+
+Toggle switch component for boolean on/off states with model binding support.
+
+## Import
+
+```tsx
+import { Toggle, Row, Col, Text, Heading } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Use `model` for two-way binding:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toggle, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const settings = signal({ enabled: false });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Toggle 
+                    model={() => settings.enabled}
+                    label="Enable notifications"
+                />
+                
+                <Text size="sm" class="opacity-70">
+                    Notifications: {settings.enabled ? 'On' : 'Off'}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toggle, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Toggle size="xs" label="Extra small toggle" />
+            <Toggle size="sm" label="Small toggle" />
+            <Toggle size="md" label="Medium toggle (default)" />
+            <Toggle size="lg" label="Large toggle" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toggle, Col } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const toggles = signal({
+        primary: true,
+        secondary: true,
+        accent: true,
+        info: true,
+        success: true,
+        warning: true,
+        error: true
+    });
+    
+    return () => (
+        <Col gap="4">
+            <Toggle model={() => toggles.primary} color="primary" label="Primary" />
+            <Toggle model={() => toggles.secondary} color="secondary" label="Secondary" />
+            <Toggle model={() => toggles.accent} color="accent" label="Accent" />
+            <Toggle model={() => toggles.info} color="info" label="Info" />
+            <Toggle model={() => toggles.success} color="success" label="Success" />
+            <Toggle model={() => toggles.warning} color="warning" label="Warning" />
+            <Toggle model={() => toggles.error} color="error" label="Error" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Without Label
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toggle, Row, Text } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const enabled = signal({ value: true });
+    
+    return () => (
+        <Row align="center" gap="4">
+            <Toggle model={() => enabled.value} color="primary" />
+            <Text as="span">Toggle without built-in label</Text>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Settings Panel Example
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toggle, Card, Divider, Col, Heading } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const settings = signal({
+        notifications: true,
+        darkMode: false,
+        sounds: true,
+        autoSave: true,
+        analytics: false
+    });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Heading level={3} size="lg">Settings</Heading>
+                
+                <Col gap="3">
+                    <Toggle 
+                        model={() => settings.notifications}
+                        color="primary"
+                        label="Push notifications"
+                    />
+                    <Toggle 
+                        model={() => settings.darkMode}
+                        color="primary"
+                        label="Dark mode"
+                    />
+                    <Toggle 
+                        model={() => settings.sounds}
+                        color="primary"
+                        label="Sound effects"
+                    />
+                </Col>
+                
+                <Divider />
+                
+                <Col gap="3">
+                    <Toggle 
+                        model={() => settings.autoSave}
+                        color="success"
+                        label="Auto-save documents"
+                    />
+                    <Toggle 
+                        model={() => settings.analytics}
+                        color="warning"
+                        label="Share usage analytics"
+                    />
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Disabled State
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toggle, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Toggle label="Disabled off" disabled />
+            <Toggle label="Disabled on" disabled checked />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Toggle vs Checkbox
+
+Use Toggle for settings that take effect immediately. Use Checkbox for selections that are submitted with a form.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toggle, Checkbox, Card, Divider, Text, Col, Heading } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const toggle = signal({ value: true });
+    const checkbox = signal({ value: true });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Col gap="2">
+                    <Heading level={4} size="md">Toggle (immediate effect)</Heading>
+                    <Toggle 
+                        model={() => toggle.value}
+                        color="success"
+                        label="Enable dark mode"
+                    />
+                    <Text size="xs" class="opacity-50 mt-1">Changes apply immediately</Text>
+                </Col>
+                
+                <Divider />
+                
+                <Col gap="2">
+                    <Heading level={4} size="md">Checkbox (form submission)</Heading>
+                    <Checkbox 
+                        model={() => checkbox.value}
+                        color="primary"
+                        label="Subscribe to newsletter"
+                    />
+                    <Text size="xs" class="opacity-50 mt-1">Requires form submission</Text>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => signal.property` | - | Model binding for boolean value |
+| `name` | `string` | - | Toggle name for form submission |
+| `label` | `string` | - | Label text displayed next to toggle |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Toggle size |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Toggle color when on |
+| `disabled` | `boolean` | `false` | Disable the toggle |
+| `class` | `string` | - | Additional CSS classes |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `onChange` | `(checked: boolean) => void` | Fired when toggle state changes |

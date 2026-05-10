@@ -1,0 +1,15 @@
+```tsx
+import { component } from 'sigx';
+
+const Counter = component(({ signal }) => {
+    const state = signal({ count: 0 });
+    
+    return () => (
+        <div class="flex items-center gap-4">
+            <button onClick={() => state.count--}>-</button>
+            <span class="text-2xl">{state.count}</span>
+            <button onClick={() => state.count++}>+</button>
+        </div>
+    );
+});
+```

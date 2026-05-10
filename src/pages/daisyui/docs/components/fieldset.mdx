@@ -1,0 +1,152 @@
+---
+title: Fieldset
+description: Container for grouping related form elements with a legend and labels
+layout: docs
+category: ["Components", "Data Input"]
+order: 545
+---
+
+# Fieldset
+
+Fieldset is a container for grouping related form elements. Use `Fieldset.Legend` for the title and `Label` for description text.
+
+## Import
+
+```tsx
+import { Fieldset, Label, Input, Button, Join, Row, Col, Text } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Fieldset, Label, Input } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Fieldset>
+            <Fieldset.Legend>Page title</Fieldset.Legend>
+            <Input placeholder="My awesome page" />
+            <Label>You can edit page title later on from settings</Label>
+        </Fieldset>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Styled Fieldset
+
+Add background, border, and padding with Tailwind utility classes.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Fieldset, Label, Input } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Fieldset class="bg-base-200 border-base-300 rounded-box w-xs border p-4">
+            <Fieldset.Legend>Page title</Fieldset.Legend>
+            <Input placeholder="My awesome page" />
+            <Label>You can edit page title later on from settings</Label>
+        </Fieldset>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Multiple Inputs
+
+Group several labeled inputs together.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Fieldset, Label, Input } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Fieldset class="bg-base-200 border-base-300 rounded-box w-xs border p-4">
+            <Fieldset.Legend>Page details</Fieldset.Legend>
+            <Label>Title</Label>
+            <Input placeholder="My awesome page" />
+            <Label>Slug</Label>
+            <Input placeholder="my-awesome-page" />
+            <Label>Author</Label>
+            <Input placeholder="Name" />
+        </Fieldset>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Join
+
+Combine inputs and buttons inside a fieldset using Join.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Fieldset, Label, Input, Button, Join } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Fieldset class="bg-base-200 border-base-300 rounded-box w-xs border p-4">
+            <Fieldset.Legend>Settings</Fieldset.Legend>
+            <Join>
+                <Input placeholder="Product name" class="join-item" />
+                <Button class="join-item">Save</Button>
+            </Join>
+        </Fieldset>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Login Form
+
+A complete login form example.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Fieldset, Label, Input, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Fieldset class="bg-base-200 border-base-300 rounded-box w-xs border p-4">
+            <Fieldset.Legend>Login</Fieldset.Legend>
+            <Label>Email</Label>
+            <Input type="email" placeholder="Email" />
+            <Label>Password</Label>
+            <Input type="password" placeholder="Password" />
+            <Button variant="neutral" class="mt-4">Login</Button>
+        </Fieldset>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Fieldset
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes (e.g. `bg-base-200 border p-4`) |
+| `children` | `JSX.Element` | — | Child elements (legend, labels, inputs) |
+
+### Fieldset.Legend
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes |
+| `children` | `JSX.Element` | — | Legend text content |
+
+### Label
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes |
+| `children` | `JSX.Element` | — | Label/description text |

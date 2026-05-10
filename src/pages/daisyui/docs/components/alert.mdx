@@ -1,0 +1,149 @@
+---
+title: Alert
+description: Alerts inform users about important events
+layout: docs
+category: ["Components", "Feedback"]
+order: 400
+---
+
+# Alert
+
+Alert informs users about important events.
+
+## Import
+
+```tsx
+import { Alert } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Alert } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Alert>A simple alert message.</Alert>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Variants
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Alert, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <Alert variant="info">New software update available.</Alert>
+            <Alert variant="success">Your purchase has been confirmed!</Alert>
+            <Alert variant="warning">Warning: Invalid email address!</Alert>
+            <Alert variant="error">Error! Task failed successfully.</Alert>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Soft Style
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Alert, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <Alert variant="info" alertStyle="soft">Info with soft style.</Alert>
+            <Alert variant="success" alertStyle="soft">Success with soft style.</Alert>
+            <Alert variant="warning" alertStyle="soft">Warning with soft style.</Alert>
+            <Alert variant="error" alertStyle="soft">Error with soft style.</Alert>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Outline Style
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Alert, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <Alert variant="info" alertStyle="outline">Info with outline style.</Alert>
+            <Alert variant="success" alertStyle="outline">Success with outline style.</Alert>
+            <Alert variant="warning" alertStyle="outline">Warning with outline style.</Alert>
+            <Alert variant="error" alertStyle="outline">Error with outline style.</Alert>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Dash Style
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Alert, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <Alert variant="info" alertStyle="dash">Info with dash style.</Alert>
+            <Alert variant="success" alertStyle="dash">Success with dash style.</Alert>
+            <Alert variant="warning" alertStyle="dash">Warning with dash style.</Alert>
+            <Alert variant="error" alertStyle="dash">Error with dash style.</Alert>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Layout
+
+Use `layout` to control the direction of content inside the alert.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Alert, Button, Col, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <Alert variant="warning" layout="vertical">
+                <Row gap="2" align="center">We use cookies for no reason.</Row>
+                <Row gap="2">
+                    <Button size="sm">Deny</Button>
+                    <Button size="sm" variant="primary">Accept</Button>
+                </Row>
+            </Alert>
+            <Alert variant="success" layout="horizontal">
+                Your purchase has been confirmed!
+            </Alert>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'info' \| 'success' \| 'warning' \| 'error'` | `undefined` | Alert color variant |
+| `alertStyle` | `'outline' \| 'dash' \| 'soft'` | `undefined` | Alert style modifier |
+| `layout` | `'vertical' \| 'horizontal'` | `undefined` | Layout direction |
+| `class` | `string` | `undefined` | Additional CSS classes |

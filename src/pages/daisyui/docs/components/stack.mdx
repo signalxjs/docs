@@ -1,0 +1,285 @@
+---
+title: Stack
+description: Stack visually puts elements on top of each other, creating a layered card effect
+layout: docs
+category: ["Components", "Layout"]
+order: 350
+---
+
+# Stack
+
+Stack visually puts elements on top of each other, like stacked papers or cards.
+
+## Import
+
+```tsx
+import { Stack } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Use `w-*` and `h-*` classes on the Stack to set the size of all stacked items.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Stack, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stack class="w-32 h-20">
+            <Card class="bg-primary text-primary-content">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">1</Text>
+                </Card.Body>
+            </Card>
+            <Card class="bg-accent text-accent-content">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">2</Text>
+                </Card.Body>
+            </Card>
+            <Card class="bg-secondary text-secondary-content">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">3</Text>
+                </Card.Body>
+            </Card>
+        </Stack>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Stacked Images
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Stack } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stack class="w-48">
+            <img src="https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp" alt="Example 1" class="rounded-box" />
+            <img src="https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp" alt="Example 2" class="rounded-box" />
+            <img src="https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp" alt="Example 3" class="rounded-box" />
+        </Stack>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Stacked Cards
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Stack, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stack class="size-28">
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">A</Text>
+                </Card.Body>
+            </Card>
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">B</Text>
+                </Card.Body>
+            </Card>
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">C</Text>
+                </Card.Body>
+            </Card>
+        </Stack>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Directions
+
+Use the `direction` prop to control the alignment of stacked elements.
+
+### Top Direction
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Stack, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stack direction="top" class="size-28">
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">A</Text>
+                </Card.Body>
+            </Card>
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">B</Text>
+                </Card.Body>
+            </Card>
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">C</Text>
+                </Card.Body>
+            </Card>
+        </Stack>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### Start Direction
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Stack, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stack direction="start" class="size-28">
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">A</Text>
+                </Card.Body>
+            </Card>
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">B</Text>
+                </Card.Body>
+            </Card>
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">C</Text>
+                </Card.Body>
+            </Card>
+        </Stack>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### End Direction
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Stack, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stack direction="end" class="size-28">
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">A</Text>
+                </Card.Body>
+            </Card>
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">B</Text>
+                </Card.Body>
+            </Card>
+            <Card class="border border-base-content bg-base-100 text-center">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">C</Text>
+                </Card.Body>
+            </Card>
+        </Stack>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Shadows
+
+Add shadows to create depth in the stack.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Stack, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stack class="size-28">
+            <Card class="bg-base-200 text-center shadow-md">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">A</Text>
+                </Card.Body>
+            </Card>
+            <Card class="bg-base-200 text-center shadow">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">B</Text>
+                </Card.Body>
+            </Card>
+            <Card class="bg-base-200 text-center shadow-sm">
+                <Card.Body class="items-center justify-center">
+                    <Text weight="bold">C</Text>
+                </Card.Body>
+            </Card>
+        </Stack>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Notification Cards
+
+A practical example showing notification cards in a stack.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Stack, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stack>
+            <Card class="shadow-md bg-base-100">
+                <Card.Body>
+                    <Card.Title>Notification 1</Card.Title>
+                    <Text>You have 3 unread messages. Tap here to see.</Text>
+                </Card.Body>
+            </Card>
+            <Card class="shadow-md bg-base-100">
+                <Card.Body>
+                    <Card.Title>Notification 2</Card.Title>
+                    <Text>You have 3 unread messages. Tap here to see.</Text>
+                </Card.Body>
+            </Card>
+            <Card class="shadow-md bg-base-100">
+                <Card.Body>
+                    <Card.Title>Notification 3</Card.Title>
+                    <Text>You have 3 unread messages. Tap here to see.</Text>
+                </Card.Body>
+            </Card>
+        </Stack>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `direction` | `'top' \| 'bottom' \| 'start' \| 'end'` | `'bottom'` | Alignment direction of the stacked elements |
+| `class` | `string` | - | Additional CSS classes. Use `w-*` and `h-*` to set stack size |
+
+## CSS Classes
+
+The Stack component uses DaisyUI's `stack` CSS class under the hood:
+
+| Class | Description |
+|-------|-------------|
+| `stack` | Main component class - puts children on top of each other |
+| `stack-top` | Aligns children to the top |
+| `stack-bottom` | Aligns children to the bottom (default) |
+| `stack-start` | Aligns children to the start (horizontally) |
+| `stack-end` | Aligns children to the end (horizontally) |

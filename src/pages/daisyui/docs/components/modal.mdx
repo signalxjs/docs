@@ -1,0 +1,200 @@
+---
+title: Modal
+description: Modal dialog for focused content or user confirmation
+layout: docs
+category: ["Components", "Feedback"]
+order: 460
+---
+
+# Modal
+
+Modal is used to show a dialog or a box when you click a button.
+
+## Import
+
+```tsx
+import { Modal } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+A basic modal with header, body, and action buttons.
+
+```tsx preview code live
+import { component, render, signal } from 'sigx';
+import { Modal, Button, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const isOpen = signal(false);
+    return () => (
+        <Col align="start">
+            <Button variant="primary" onClick={() => isOpen.value = true}>Open Modal</Button>
+            <Modal model={isOpen}>
+                <Modal.Header>Hello!</Modal.Header>
+                <Modal.Body>Press ESC key or click the button below to close.</Modal.Body>
+                <Modal.Actions>
+                    <Button onClick={() => isOpen.value = false}>Close</Button>
+                </Modal.Actions>
+            </Modal>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Close on Backdrop Click
+
+By default, the modal includes a backdrop. Clicking outside the modal-box closes it.
+
+```tsx preview code live
+import { component, render, signal } from 'sigx';
+import { Modal, Button, Text, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const isOpen = signal(false);
+    return () => (
+        <Col align="start">
+            <Button onClick={() => isOpen.value = true}>Open Modal</Button>
+            <Modal model={isOpen}>
+                <Modal.Header>Hello!</Modal.Header>
+                <Modal.Body>
+                    <Text>Press ESC key or click outside to close.</Text>
+                </Modal.Body>
+            </Modal>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Width
+
+Pass a custom class to control the modal-box width.
+
+```tsx preview code live
+import { component, render, signal } from 'sigx';
+import { Modal, Button, Text, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const isOpen = signal(false);
+    return () => (
+        <Col align="start">
+            <Button onClick={() => isOpen.value = true}>Open Wide Modal</Button>
+            <Modal model={isOpen} class="w-11/12 max-w-5xl">
+                <Modal.Header>Wide Modal</Modal.Header>
+                <Modal.Body>
+                    <Text>This modal has a custom width using w-11/12 max-w-5xl classes.</Text>
+                </Modal.Body>
+                <Modal.Actions>
+                    <Button onClick={() => isOpen.value = false}>Close</Button>
+                </Modal.Actions>
+            </Modal>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Position: Top
+
+```tsx preview code live
+import { component, render, signal } from 'sigx';
+import { Modal, Button, Text, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const isOpen = signal(false);
+    return () => (
+        <Col align="start">
+            <Button onClick={() => isOpen.value = true}>Open Top Modal</Button>
+            <Modal model={isOpen} position="top">
+                <Modal.Header>Top Position</Modal.Header>
+                <Modal.Body>
+                    <Text>This modal is positioned at the top of the viewport.</Text>
+                </Modal.Body>
+                <Modal.Actions>
+                    <Button onClick={() => isOpen.value = false}>Close</Button>
+                </Modal.Actions>
+            </Modal>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Position: Bottom
+
+```tsx preview code live
+import { component, render, signal } from 'sigx';
+import { Modal, Button, Text, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const isOpen = signal(false);
+    return () => (
+        <Col align="start">
+            <Button onClick={() => isOpen.value = true}>Open Bottom Modal</Button>
+            <Modal model={isOpen} position="bottom">
+                <Modal.Header>Bottom Position</Modal.Header>
+                <Modal.Body>
+                    <Text>This modal is positioned at the bottom of the viewport.</Text>
+                </Modal.Body>
+                <Modal.Actions>
+                    <Button onClick={() => isOpen.value = false}>Close</Button>
+                </Modal.Actions>
+            </Modal>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Without Backdrop
+
+Disable the backdrop to prevent closing by clicking outside.
+
+```tsx preview code live
+import { component, render, signal } from 'sigx';
+import { Modal, Button, Text, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const isOpen = signal(false);
+    return () => (
+        <Col align="start">
+            <Button onClick={() => isOpen.value = true}>Open (No Backdrop)</Button>
+            <Modal model={isOpen} backdrop={false}>
+                <Modal.Header>No Backdrop</Modal.Header>
+                <Modal.Body>
+                    <Text>This modal has no backdrop. Use the close button or press ESC.</Text>
+                </Modal.Body>
+                <Modal.Actions>
+                    <Button variant="primary" onClick={() => isOpen.value = false}>Close</Button>
+                </Modal.Actions>
+            </Modal>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `Signal<boolean>` | `undefined` | Two-way binding for open/close state |
+| `position` | `'top' \| 'middle' \| 'bottom'` | `undefined` | Vertical position of the modal |
+| `align` | `'start' \| 'end'` | `undefined` | Horizontal alignment of the modal |
+| `backdrop` | `boolean` | `true` | Whether to show a clickable backdrop to close the modal |
+| `class` | `string` | `undefined` | Additional CSS classes applied to the modal-box |
+
+## Sub-components
+
+| Component | Description |
+|-----------|-------------|
+| `Modal.Header` | Title area with an automatic close button |
+| `Modal.Body` | Content area with vertical padding |
+| `Modal.Actions` | Action buttons area (uses `modal-action` class) |

@@ -1,0 +1,19 @@
+```tsx
+import { component, type Define } from 'sigx';
+
+type ButtonProps = 
+    & Define.Prop<'variant', 'primary' | 'secondary', true>
+    & Define.Prop<'disabled', boolean, false>
+    & Define.Slot<'default'>;
+
+const Button = component<ButtonProps>(({ props, slots }) => {
+    return () => (
+        <button 
+            class={`btn btn-${props.variant}`}
+            disabled={props.disabled}
+        >
+            {slots.default()}
+        </button>
+    );
+});
+```

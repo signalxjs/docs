@@ -1,0 +1,223 @@
+---
+title: Indicator
+description: Indicator is used to place an element on the corner of another element
+layout: docs
+category: ["Components", "Feedback"]
+order: 417
+---
+
+# Indicator
+
+Indicator is used to place an element (like a badge or status dot) on the corner of another element. Uses `Indicator.Item` sub-component for the positioned content.
+
+## Import
+
+```tsx
+import { Indicator } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+A simple indicator badge on a content area.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Indicator, Badge, Card } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Indicator>
+            <Indicator.Item>
+                <Badge variant="primary">New</Badge>
+            </Indicator.Item>
+            <Card class="bg-base-300 grid h-32 w-60 place-items-center">
+                Content
+            </Card>
+        </Indicator>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Badge on Button
+
+Show a notification count on a button.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Indicator, Badge, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Indicator>
+            <Indicator.Item>
+                <Badge variant="secondary">99+</Badge>
+            </Indicator.Item>
+            <Button>Inbox</Button>
+        </Indicator>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## All Positions
+
+Use `vertical` (top, middle, bottom) and `horizontal` (start, center, end) props on `Indicator.Item` to control placement.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Indicator, Badge, Card } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Indicator>
+            <Indicator.Item vertical="top" horizontal="start">
+                <Badge size="xs" variant="secondary" />
+            </Indicator.Item>
+            <Indicator.Item vertical="top" horizontal="center">
+                <Badge size="xs" variant="secondary" />
+            </Indicator.Item>
+            <Indicator.Item vertical="top" horizontal="end">
+                <Badge size="xs" variant="secondary" />
+            </Indicator.Item>
+            <Indicator.Item vertical="middle" horizontal="start">
+                <Badge size="xs" variant="secondary" />
+            </Indicator.Item>
+            <Indicator.Item vertical="middle" horizontal="center">
+                <Badge size="xs" variant="secondary" />
+            </Indicator.Item>
+            <Indicator.Item vertical="middle" horizontal="end">
+                <Badge size="xs" variant="secondary" />
+            </Indicator.Item>
+            <Indicator.Item vertical="bottom" horizontal="start">
+                <Badge size="xs" variant="secondary" />
+            </Indicator.Item>
+            <Indicator.Item vertical="bottom" horizontal="center">
+                <Badge size="xs" variant="secondary" />
+            </Indicator.Item>
+            <Indicator.Item vertical="bottom" horizontal="end">
+                <Badge size="xs" variant="secondary" />
+            </Indicator.Item>
+            <Card class="bg-base-300 grid h-32 w-60 place-items-center">
+                All 9 positions
+            </Card>
+        </Indicator>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Multiple Indicators
+
+Use multiple `Indicator.Item` children to show indicators at different corners.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Indicator, Badge, Card } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Indicator>
+            <Indicator.Item vertical="top" horizontal="start">
+                <Badge variant="warning">Hot</Badge>
+            </Indicator.Item>
+            <Indicator.Item vertical="top" horizontal="end">
+                <Badge variant="error">-20%</Badge>
+            </Indicator.Item>
+            <Indicator.Item vertical="bottom" horizontal="end">
+                <Badge variant="success">New</Badge>
+            </Indicator.Item>
+            <Card class="bg-base-300 grid h-32 w-60 place-items-center">
+                Product
+            </Card>
+        </Indicator>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## For Avatar
+
+Show a status badge on an avatar.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Indicator, Badge, Avatar } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Indicator>
+            <Indicator.Item>
+                <Badge variant="success" size="xs" />
+            </Indicator.Item>
+            <Avatar shape="circle" size="md" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+        </Indicator>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## For Input
+
+Show a "Required" badge on an input field.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Indicator, Badge, Input } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Indicator class="w-full max-w-xs">
+            <Indicator.Item>
+                <Badge variant="secondary">Required</Badge>
+            </Indicator.Item>
+            <Input class="w-full" placeholder="Your email address" />
+        </Indicator>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Center on Image
+
+Use center placement to overlay content on an image.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Indicator, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Indicator>
+            <Indicator.Item vertical="middle" horizontal="center">
+                <Button variant="primary">Apply</Button>
+            </Indicator.Item>
+            <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" class="rounded-lg w-60" />
+        </Indicator>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Indicator
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | — | Additional CSS classes for the container |
+
+### Indicator.Item
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `vertical` | `'top' \| 'middle' \| 'bottom'` | — | Vertical alignment of the indicator item |
+| `horizontal` | `'start' \| 'center' \| 'end'` | — | Horizontal alignment of the indicator item |
+| `class` | `string` | — | Additional CSS classes for the indicator item |

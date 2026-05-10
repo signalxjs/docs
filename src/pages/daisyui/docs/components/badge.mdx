@@ -1,0 +1,207 @@
+---
+title: Badge
+description: Badges are used to inform the user of the status of specific data
+layout: docs
+category: ["Components", "Feedback"]
+order: 410
+---
+
+# Badge
+
+Badge is used to inform the user of the status of specific data.
+
+## Import
+
+```tsx
+import { Badge } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Badge } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Badge>Badge</Badge>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Badge, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Badge>default</Badge>
+            <Badge variant="neutral">neutral</Badge>
+            <Badge variant="primary">primary</Badge>
+            <Badge variant="secondary">secondary</Badge>
+            <Badge variant="accent">accent</Badge>
+            <Badge variant="ghost">ghost</Badge>
+            <Badge variant="info">info</Badge>
+            <Badge variant="success">success</Badge>
+            <Badge variant="warning">warning</Badge>
+            <Badge variant="error">error</Badge>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Outline
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Badge, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Badge badgeStyle="outline">default</Badge>
+            <Badge variant="primary" badgeStyle="outline">primary</Badge>
+            <Badge variant="secondary" badgeStyle="outline">secondary</Badge>
+            <Badge variant="accent" badgeStyle="outline">accent</Badge>
+            <Badge variant="info" badgeStyle="outline">info</Badge>
+            <Badge variant="success" badgeStyle="outline">success</Badge>
+            <Badge variant="warning" badgeStyle="outline">warning</Badge>
+            <Badge variant="error" badgeStyle="outline">error</Badge>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Soft
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Badge, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Badge badgeStyle="soft">default</Badge>
+            <Badge variant="primary" badgeStyle="soft">primary</Badge>
+            <Badge variant="secondary" badgeStyle="soft">secondary</Badge>
+            <Badge variant="accent" badgeStyle="soft">accent</Badge>
+            <Badge variant="info" badgeStyle="soft">info</Badge>
+            <Badge variant="success" badgeStyle="soft">success</Badge>
+            <Badge variant="warning" badgeStyle="soft">warning</Badge>
+            <Badge variant="error" badgeStyle="soft">error</Badge>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Dash
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Badge, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Badge badgeStyle="dash">default</Badge>
+            <Badge variant="primary" badgeStyle="dash">primary</Badge>
+            <Badge variant="secondary" badgeStyle="dash">secondary</Badge>
+            <Badge variant="accent" badgeStyle="dash">accent</Badge>
+            <Badge variant="info" badgeStyle="dash">info</Badge>
+            <Badge variant="success" badgeStyle="dash">success</Badge>
+            <Badge variant="warning" badgeStyle="dash">warning</Badge>
+            <Badge variant="error" badgeStyle="dash">error</Badge>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Badge, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" align="center">
+            <Badge size="xl">xl</Badge>
+            <Badge size="lg">lg</Badge>
+            <Badge size="md">md</Badge>
+            <Badge size="sm">sm</Badge>
+            <Badge size="xs">xs</Badge>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Empty Badges
+
+Empty badges can be used as status indicators or dot badges.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Badge, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" align="center">
+            <Badge size="xs" variant="primary">{""}</Badge>
+            <Badge size="sm" variant="secondary">{""}</Badge>
+            <Badge size="md" variant="accent">{""}</Badge>
+            <Badge size="lg" variant="neutral">{""}</Badge>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Badge in Text
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Badge, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Row gap="2" align="center">
+                <Text>Inbox</Text>
+                <Badge size="sm" variant="primary">+99</Badge>
+            </Row>
+            <Row gap="2" align="center">
+                <Text>Updates</Text>
+                <Badge size="sm" variant="secondary">NEW</Badge>
+            </Row>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error' \| 'ghost' \| 'neutral'` | `undefined` | Badge color variant |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `undefined` | Badge size |
+| `badgeStyle` | `'outline' \| 'soft' \| 'dash' \| 'ghost'` | `undefined` | Badge style modifier |
+| `outline` | `boolean` | `false` | Shorthand for outline style (overridden by `badgeStyle`) |
+| `class` | `string` | `undefined` | Additional CSS classes |

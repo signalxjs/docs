@@ -1,0 +1,370 @@
+---
+title: Timeline
+description: Timeline component for displaying chronological events with connectors and icons
+layout: docs
+category: ["Components", "Feedback"]
+order: 455
+---
+
+# Timeline
+
+Display chronological events with connecting lines, icons, and content on either side.
+
+## Import
+
+```tsx
+import { Timeline } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Timeline with content on both sides and a middle icon.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Timeline } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Timeline vertical>
+            <Timeline.Item>
+                <Timeline.Start>1984</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>First Macintosh computer</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start>1998</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iMac</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start>2001</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iPod</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start>2007</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iPhone</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start>2015</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>Apple Watch</Timeline.End>
+            </Timeline.Item>
+        </Timeline>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## End Only (Bottom/Right Side)
+
+Show content only on the end side — useful for compact timelines.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Timeline } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Timeline vertical>
+            <Timeline.Item>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>First Macintosh computer</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iMac</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iPod</Timeline.End>
+            </Timeline.Item>
+        </Timeline>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Start Only (Top/Left Side)
+
+Show content only on the start side.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Timeline } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Timeline vertical>
+            <Timeline.Item>
+                <Timeline.Start boxed>First Macintosh computer</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start boxed>iMac</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start boxed>iPod</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+            </Timeline.Item>
+        </Timeline>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colored Connectors
+
+Use the `color` prop on `Timeline.Hr` to color the connecting lines.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Timeline } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Timeline vertical>
+            <Timeline.Item>
+                <Timeline.Start>1984</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>First Macintosh computer</Timeline.End>
+                <Timeline.Hr color="primary" />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr color="primary" />
+                <Timeline.Start>1998</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iMac</Timeline.End>
+                <Timeline.Hr color="primary" />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr color="primary" />
+                <Timeline.Start>2001</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iPod</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start>2007</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iPhone</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start>2015</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>Apple Watch</Timeline.End>
+            </Timeline.Item>
+        </Timeline>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Without Icons
+
+Timeline without middle icons — just connectors and content.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Timeline } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Timeline vertical>
+            <Timeline.Item>
+                <Timeline.End boxed>First Macintosh computer</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.End boxed>iMac</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.End boxed>iPod</Timeline.End>
+            </Timeline.Item>
+        </Timeline>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Compact
+
+The `compact` modifier forces all content to one side.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Timeline } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Timeline vertical compact>
+            <Timeline.Item>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>First Macintosh computer</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iMac</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iPod</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iPhone</Timeline.End>
+            </Timeline.Item>
+        </Timeline>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Snap Icon
+
+The `snap` modifier snaps icons to the start instead of the middle.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Timeline } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Timeline vertical snap>
+            <Timeline.Item>
+                <Timeline.Start>1984</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>First Macintosh computer</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start>1998</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iMac</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start>2015</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>Apple Watch</Timeline.End>
+            </Timeline.Item>
+        </Timeline>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Horizontal Timeline
+
+Use the `horizontal` modifier for a horizontal layout.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Timeline } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Timeline horizontal class="overflow-x-auto">
+            <Timeline.Item>
+                <Timeline.Start boxed>1984</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>Macintosh</Timeline.End>
+                <Timeline.Hr color="primary" />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr color="primary" />
+                <Timeline.Start boxed>1998</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iMac</Timeline.End>
+                <Timeline.Hr />
+            </Timeline.Item>
+            <Timeline.Item>
+                <Timeline.Hr />
+                <Timeline.Start boxed>2001</Timeline.Start>
+                <Timeline.Middle>●</Timeline.Middle>
+                <Timeline.End boxed>iPod</Timeline.End>
+            </Timeline.Item>
+        </Timeline>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Timeline Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `vertical` | `boolean` | `false` | Vertical layout (`timeline-vertical`) |
+| `horizontal` | `boolean` | `false` | Horizontal layout (`timeline-horizontal`) |
+| `snap` | `boolean` | `false` | Snap icon to start (`timeline-snap-icon`) |
+| `compact` | `boolean` | `false` | Force all items to one side (`timeline-compact`) |
+| `class` | `string` | - | Additional CSS classes |
+
+### Timeline.Item Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | - | Additional CSS classes |
+
+### Timeline.Start / Timeline.End Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `boxed` | `boolean` | `false` | Apply box styling (`timeline-box`) |
+| `class` | `string` | - | Additional CSS classes |
+
+### Timeline.Middle Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | - | Additional CSS classes |
+
+### Timeline.Hr Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Connector line color (`bg-*`) |
+| `class` | `string` | - | Additional CSS classes |

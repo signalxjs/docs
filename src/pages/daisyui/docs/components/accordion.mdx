@@ -1,0 +1,394 @@
+---
+title: Accordion
+description: Collapsible content panels for organizing and hiding content
+layout: docs
+category: ["Components", "Data Display"]
+order: 200
+---
+
+# Accordion
+
+Accordion allows showing and hiding content in collapsible panels. Only one panel can be open at a time.
+
+## Import
+
+```tsx
+import { Accordion, Row, Col, Heading, Text } from '@sigx/daisyui';
+```
+
+Sub-components are available as `Accordion.Item` and `Accordion.Collapse`.
+
+## Basic Usage
+
+Use the `items` prop for a simple accordion:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Accordion, Card, Heading } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const active = signal({ id: '' });
+    
+    const faqs = [
+        { 
+            id: '1', 
+            title: 'How do I create an account?', 
+            content: 'Click the "Sign Up" button in the top right corner and follow the registration process.' 
+        },
+        { 
+            id: '2', 
+            title: 'How do I reset my password?', 
+            content: 'Go to the login page and click "Forgot Password" to receive a reset link via email.' 
+        },
+        { 
+            id: '3', 
+            title: 'Where can I find pricing information?', 
+            content: 'Visit our pricing page at /pricing for detailed plan information and comparisons.' 
+        }
+    ];
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <Heading level={2} size="xl" class="mb-4">FAQ</Heading>
+                <Accordion 
+                    items={faqs} 
+                    model:activeId={() => active.id}
+                    variant="arrow"
+                />
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Plus/Minus Icon
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Accordion } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const active = signal({ id: '1' });
+    
+    const items = [
+        { id: '1', title: 'What is SignalX?', content: 'SignalX is a reactive UI framework for building modern web applications.' },
+        { id: '2', title: 'What is DaisyUI?', content: 'DaisyUI is a component library for Tailwind CSS with beautiful ready-made components.' },
+        { id: '3', title: 'How do they work together?', content: '@sigx/daisyui combines both to provide reactive, beautiful UI components.' }
+    ];
+    
+    return () => (
+        <Accordion 
+            items={items} 
+            model:activeId={() => active.id}
+            variant="plus"
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Joined Accordion
+
+Use the `join` prop to connect items visually:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Accordion } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const active = signal({ id: '' });
+    
+    const items = [
+        { id: '1', title: 'Step 1: Install', content: 'Run npm install @sigx/daisyui to add the package to your project.' },
+        { id: '2', title: 'Step 2: Configure', content: 'Add daisyui to your Tailwind config and import the components.' },
+        { id: '3', title: 'Step 3: Use', content: 'Import and use any component in your SignalX application.' }
+    ];
+    
+    return () => (
+        <Accordion 
+            items={items} 
+            model:activeId={() => active.id}
+            variant="arrow"
+            join
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Using Details Element
+
+Use the `type="details"` prop to use native HTML `<details>` elements. This makes the collapsed content searchable by the browser:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Accordion } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const active = signal({ id: '' });
+    
+    const items = [
+        { id: '1', title: 'What is the return policy?', content: 'We offer a 30-day return policy for all unused items in original packaging.' },
+        { id: '2', title: 'How long does shipping take?', content: 'Standard shipping takes 5-7 business days. Express shipping is available for 2-3 day delivery.' },
+        { id: '3', title: 'Do you offer international shipping?', content: 'Yes, we ship to over 100 countries worldwide with calculated shipping rates.' }
+    ];
+    
+    return () => (
+        <Accordion 
+            items={items} 
+            model:activeId={() => active.id}
+            variant="arrow"
+            type="details"
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Accordion.Collapse (Single Collapsible)
+
+For a single collapsible panel, use `Accordion.Collapse`:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Accordion, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const isOpen = signal({ value: false });
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <Accordion.Collapse 
+                    model={() => isOpen.value}
+                    title="Click to reveal more information"
+                    variant="arrow"
+                >
+                    <Text>This is the hidden content that appears when you expand the collapse.</Text>
+                    <Text class="mt-2">You can put any content here including forms, images, or other components.</Text>
+                </Accordion.Collapse>
+                
+                <Text size="sm" class="mt-4 opacity-70">
+                    Collapse is {isOpen.value ? 'open' : 'closed'}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Accordion.Item (Custom Content)
+
+For custom content in each accordion item:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Accordion, Card, Button, Badge, Row, Col, Text } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body class="space-y-2">
+                <Accordion.Item 
+                    title="Premium Features" 
+                    name="features" 
+                    variant="plus"
+                >
+                    <Col gap="2">
+                        <Row align="center" gap="2">
+                            <Badge variant="success">✓</Badge>
+                            <Text as="span">Unlimited projects</Text>
+                        </Row>
+                        <Row align="center" gap="2">
+                            <Badge variant="success">✓</Badge>
+                            <Text as="span">Priority support</Text>
+                        </Row>
+                        <Row align="center" gap="2">
+                            <Badge variant="success">✓</Badge>
+                            <Text as="span">Advanced analytics</Text>
+                        </Row>
+                        <Button variant="primary" size="sm" class="mt-4">
+                            Upgrade Now
+                        </Button>
+                    </Col>
+                </Accordion.Item>
+                
+                <Accordion.Item 
+                    title="Basic Features" 
+                    name="features"
+                    variant="plus"
+                >
+                    <Col gap="2">
+                        <Row align="center" gap="2">
+                            <Badge variant="ghost">✓</Badge>
+                            <Text as="span">Up to 5 projects</Text>
+                        </Row>
+                        <Row align="center" gap="2">
+                            <Badge variant="ghost">✓</Badge>
+                            <Text as="span">Email support</Text>
+                        </Row>
+                    </Col>
+                </Accordion.Item>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Force Open/Close
+
+Use `forceOpen` or `forceClose` to control the collapse state via CSS:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Accordion, Card, Button, Row } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const forceState = signal({ value: '' as '' | 'open' | 'close' });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Row gap="2">
+                    <Button size="sm" onClick={() => forceState.value = 'open'}>Force Open</Button>
+                    <Button size="sm" onClick={() => forceState.value = 'close'}>Force Close</Button>
+                    <Button size="sm" variant="ghost" onClick={() => forceState.value = ''}>Reset</Button>
+                </Row>
+                
+                <Accordion.Collapse 
+                    title="Controlled collapse"
+                    variant="arrow"
+                    forceOpen={forceState.value === 'open'}
+                    forceClose={forceState.value === 'close'}
+                >
+                    <Text>This collapse can be force-opened or force-closed using the buttons above.</Text>
+                </Accordion.Collapse>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## FAQ Section Example
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Accordion, Card, Heading, Input, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const active = signal({ id: '' });
+    const search = signal({ text: '' });
+    
+    const allFaqs = [
+        { id: '1', title: 'What payment methods do you accept?', content: 'We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and bank transfers.' },
+        { id: '2', title: 'How long does shipping take?', content: 'Standard shipping takes 5-7 business days. Express shipping is available for 2-3 day delivery.' },
+        { id: '3', title: 'What is your return policy?', content: 'We offer a 30-day return policy for unused items in original packaging. Contact support to initiate a return.' },
+        { id: '4', title: 'Do you offer international shipping?', content: 'Yes, we ship to over 100 countries. Shipping costs and times vary by location.' },
+        { id: '5', title: 'How can I track my order?', content: 'Once shipped, you will receive an email with a tracking number. Use this on our website or the carrier site.' }
+    ];
+    
+    const filteredFaqs = () => {
+        if (!search.text) return allFaqs;
+        const term = search.text.toLowerCase();
+        return allFaqs.filter(faq => 
+            faq.title.toLowerCase().includes(term) || 
+            faq.content.toLowerCase().includes(term)
+        );
+    };
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Heading level={2} size="2xl">Frequently Asked Questions</Heading>
+                
+                <Input 
+                    model={() => search.text}
+                    placeholder="Search FAQs..."
+                    variant="bordered"
+                />
+                
+                {filteredFaqs().length > 0 ? (
+                    <Accordion 
+                        items={filteredFaqs()} 
+                        model:activeId={() => active.id}
+                        variant="arrow"
+                        join
+                    />
+                ) : (
+                    <Text align="center" class="py-8 opacity-70">No FAQs match your search.</Text>
+                )}
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Accordion Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `Array<{ id, title, content }>` | - | Array of accordion items |
+| `model:activeId` | `() => signal.property` | - | Currently open item ID |
+| `variant` | `'arrow' \| 'plus' \| 'none'` | `'none'` | Icon style |
+| `type` | `'radio' \| 'details'` | `'radio'` | Use radio inputs or details elements |
+| `join` | `boolean` | `false` | Connect items visually |
+| `class` | `string` | - | Additional CSS classes |
+
+### Accordion.Item Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | - | Item title |
+| `name` | `string` | `'accordion'` | Radio group name (for mutual exclusivity) |
+| `open` | `boolean` | `false` | Open state |
+| `forceOpen` | `boolean` | `false` | Force open via CSS (collapse-open) |
+| `forceClose` | `boolean` | `false` | Force close via CSS (collapse-close) |
+| `variant` | `'arrow' \| 'plus' \| 'none'` | `'none'` | Icon style |
+| `type` | `'radio' \| 'details'` | `'radio'` | Use radio input or details element |
+| `class` | `string` | - | Additional CSS classes |
+
+### Accordion.Collapse Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => signal.property` | - | Open state binding |
+| `title` | `string` | - | Collapse title |
+| `variant` | `'arrow' \| 'plus' \| 'none'` | `'none'` | Icon style |
+| `forceOpen` | `boolean` | `false` | Force open via CSS (collapse-open) |
+| `forceClose` | `boolean` | `false` | Force close via CSS (collapse-close) |
+| `class` | `string` | - | Additional CSS classes |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `onChange` | `(id: string) => void` | Fired when active item changes |
+| `onToggle` | `(open: boolean) => void` | Fired when collapse toggles (Collapse only) |
+
+## CSS Classes
+
+The component uses these DaisyUI classes:
+
+| Class | Description |
+|-------|-------------|
+| `collapse` | Main component class |
+| `collapse-title` | Title part |
+| `collapse-content` | Content part |
+| `collapse-arrow` | Adds arrow icon |
+| `collapse-plus` | Adds plus/minus icon |
+| `collapse-open` | Force open state |
+| `collapse-close` | Force close state |

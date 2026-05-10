@@ -1,0 +1,123 @@
+---
+title: Route Guards
+description: Protect routes with guards in @sigx/router
+layout: docs
+category: Advanced
+order: 40
+---
+
+# Route Guards
+
+Route guards allow you to control access to routes, redirect users, and load data before rendering.
+
+## Basic Guard
+
+Add a `guard` function to a route:
+
+```tsx
+const router = createRouter({
+    routes: [
+        {
+            path: '/admin',
+            component: AdminDashboard,
+            guard: () => {
+                if (!isAuthenticated()) {
+                    return '/login'; // Redirect to login
+                }
+                return true; // Allow access
+            },
+        },
+    ],
+});
+```
+
+## Guard Return Values
+
+Guards can return different values:
+
+```tsx
+guard: () => {
+    // Allow navigation
+    return true;
+    
+    // Block navigation (stays on current page)
+    return false;
+    
+    // Redirect to path
+    return '/login';
+    
+    // Redirect with options
+    return { path: '/login', query: { redirect: '/admin' } };
+}
+```
+
+## Async Guards
+
+Guards can be asynchronous for data fetching or validation:
+
+```tsx
+{
+    path: '/profile',
+    component: Profile,
+    guard: async () => {
+        try {
+            await fetchUserProfile();
+            return true;
+        } catch (error) {
+            return '/login';
+        }
+    },
+}
+```
+
+## Guard with Route Context
+
+Guards receive the target route as context:
+
+```tsx
+{
+    path: '/users/:id',
+    component: UserProfile,
+    guard: async (to) => {
+        const userId = to.params.id;
+        const hasAccess = await checkUserAccess(userId);
+        return hasAccess ? true : '/unauthorized';
+    },
+}
+```
+
+## Nested Route Guards
+
+Guards are executed from parent to child. If a parent guard fails, child guards are not executed:
+
+```tsx
+{
+    path: '/admin',
+    component: AdminLayout,
+    guard: () => isAdmin(), // Checked first
+    children: [
+        {
+            path: 'settings',
+            component: AdminSettings,
+            guard: () => hasSuperAdminRole(), // Checked second
+        },
+    ],
+}
+```
+
+## Global Navigation Guards
+
+Register global guards that run on every navigation:
+
+```tsx
+router.beforeEach((to, from) => {
+    // Log all navigation
+    console.log(`Navigating from ${from.path} to ${to.path}`);
+    return true;
+});
+
+router.afterEach((to, from) => {
+    // Track page views
+    analytics.pageView(to.path);
+});
+```

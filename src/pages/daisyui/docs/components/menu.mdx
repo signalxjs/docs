@@ -1,0 +1,395 @@
+---
+title: Menu
+description: Vertical menu component for navigation
+layout: docs
+category: ["Components", "Navigation"]
+order: 300
+---
+
+# Menu
+
+Vertical menu component for navigation with support for nested items, icons, and active states.
+
+## Import
+
+```tsx
+import { Menu, Row, Text } from '@sigx/daisyui';
+```
+
+## Basic Menu
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Menu>
+                    <Menu.Item>Home</Menu.Item>
+                    <Menu.Item>About</Menu.Item>
+                    <Menu.Item>Services</Menu.Item>
+                    <Menu.Item>Contact</Menu.Item>
+                </Menu>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Menu with Active Item
+
+Use model binding to track the active menu item:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Badge, Col, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const nav = signal({ active: 'home' });
+    
+    const items = [
+        { id: 'home', label: 'Home' },
+        { id: 'about', label: 'About' },
+        { id: 'services', label: 'Services' },
+        { id: 'contact', label: 'Contact' }
+    ];
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Menu model={() => nav.active}>
+                        {items.map(item => (
+                            <Menu.Item value={item.id}>
+                                <Text as="span">{item.label}</Text>
+                            </Menu.Item>
+                        ))}
+                    </Menu>
+                    
+                    <Col gap="1">
+                        <Text size="sm" color="muted">Current page:</Text>
+                        <Badge variant="primary" size="lg">{nav.active}</Badge>
+                    </Col>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Menu with Icons
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const items = [
+        { icon: '🏠', label: 'Home' },
+        { icon: 'ℹ️', label: 'About' },
+        { icon: '📊', label: 'Stats' }
+    ];
+
+    return () => (
+        <Card>
+            <Card.Body>
+                <Menu>
+                    {items.map(item => (
+                        <Menu.Item>
+                            <Row align="center" gap="2">
+                                <Text as="span">{item.icon}</Text>
+                                <Text as="span">{item.label}</Text>
+                            </Row>
+                        </Menu.Item>
+                    ))}
+                </Menu>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Menu with Title
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Menu>
+                    <Menu.Title><Text as="span" weight="semibold">Category 1</Text></Menu.Title>
+                    <Menu.Item><Text as="span">Item 1</Text></Menu.Item>
+                    <Menu.Item><Text as="span">Item 2</Text></Menu.Item>
+                    
+                    <Menu.Title><Text as="span" weight="semibold">Category 2</Text></Menu.Title>
+                    <Menu.Item><Text as="span">Item 3</Text></Menu.Item>
+                    <Menu.Item><Text as="span">Item 4</Text></Menu.Item>
+                </Menu>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Nested Menu (Submenu)
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Menu>
+                    <Menu.Item><Text as="span">Item 1</Text></Menu.Item>
+                    <Menu.Item>
+                        <details open>
+                            <summary>Parent Item</summary>
+                            <ul>
+                                <li><Text as="span">Submenu 1</Text></li>
+                                <li><Text as="span">Submenu 2</Text></li>
+                                <li>
+                                    <details open>
+                                        <summary>Nested Parent</summary>
+                                        <ul>
+                                            <li><Text as="span">Deep Item 1</Text></li>
+                                            <li><Text as="span">Deep Item 2</Text></li>
+                                        </ul>
+                                    </details>
+                                </li>
+                            </ul>
+                        </details>
+                    </Menu.Item>
+                    <Menu.Item><Text as="span">Item 3</Text></Menu.Item>
+                </Menu>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Menu Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Menu size="xs">
+                        <Menu.Item><Text as="span">xs size</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 2</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 3</Text></Menu.Item>
+                    </Menu>
+                    
+                    <Menu size="sm">
+                        <Menu.Item><Text as="span">sm size</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 2</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 3</Text></Menu.Item>
+                    </Menu>
+                    
+                    <Menu size="md">
+                        <Menu.Item><Text as="span">md size</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 2</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 3</Text></Menu.Item>
+                    </Menu>
+                    
+                    <Menu size="lg">
+                        <Menu.Item><Text as="span">lg size</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 2</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 3</Text></Menu.Item>
+                    </Menu>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Horizontal Menu
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Menu horizontal>
+                    <Menu.Item><Text as="span">Item 1</Text></Menu.Item>
+                    <Menu.Item><Text as="span">Item 2</Text></Menu.Item>
+                    <Menu.Item><Text as="span">Item 3</Text></Menu.Item>
+                </Menu>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Menu with Badges
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Badge, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const items = [
+        { label: 'Inbox', badge: '99+', variant: 'primary' as const },
+        { label: 'Notifications', badge: '8', variant: 'secondary' as const },
+        { label: 'Updates', badge: 'New', variant: 'accent' as const }
+    ];
+
+    return () => (
+        <Card>
+            <Card.Body>
+                <Menu>
+                    {items.map(item => (
+                        <Menu.Item>
+                            <Row justify="between" align="center" class="w-full">
+                                <Text as="span">{item.label}</Text>
+                                <Badge variant={item.variant}>{item.badge}</Badge>
+                            </Row>
+                        </Menu.Item>
+                    ))}
+                </Menu>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Disabled Items
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Menu>
+                    <Menu.Item><Text as="span">Normal item</Text></Menu.Item>
+                    <Menu.Item disabled><Text as="span">Disabled item</Text></Menu.Item>
+                    <Menu.Item><Text as="span">Normal item</Text></Menu.Item>
+                    <Menu.Item disabled><Text as="span">Another disabled</Text></Menu.Item>
+                </Menu>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sidebar Navigation Example
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Menu, Card, Badge, Row, Col, Heading, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const nav = signal({ active: 'dashboard' });
+    
+    const menuItems = [
+        { id: 'dashboard', icon: '📊', label: 'Dashboard' },
+        { id: 'users', icon: '👥', label: 'Users', badge: 12 },
+        { id: 'products', icon: '📦', label: 'Products' },
+        { id: 'orders', icon: '🛒', label: 'Orders', badge: 5 },
+        { id: 'analytics', icon: '📈', label: 'Analytics' },
+        { id: 'settings', icon: '⚙️', label: 'Settings' }
+    ];
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Col gap="2" class="w-64">
+                        <Heading level={2} size="lg">Admin Panel</Heading>
+                        <Menu model={() => nav.active}>
+                            {menuItems.map(item => (
+                                <Menu.Item value={item.id}>
+                                    <Row justify="between" align="center" class="w-full">
+                                        <Row align="center" gap="2">
+                                            <Text as="span">{item.icon}</Text>
+                                            <Text as="span">{item.label}</Text>
+                                        </Row>
+                                        {item.badge && (
+                                            <Badge variant="primary" size="sm">{item.badge}</Badge>
+                                        )}
+                                    </Row>
+                                </Menu.Item>
+                            ))}
+                        </Menu>
+                    </Col>
+                    
+                    <Col gap="2" class="p-4 bg-base-200 rounded-lg">
+                        <Heading level={3} size="xl" class="capitalize">{nav.active}</Heading>
+                        <Text color="muted">Content for {nav.active} page goes here.</Text>
+                    </Col>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Menu Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => string` | - | Two-way binding for active item |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Menu item size |
+| `horizontal` | `boolean` | `false` | Horizontal layout |
+| `class` | `string` | - | Additional CSS classes |
+
+### Menu.Item Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | - | Value for model binding |
+| `active` | `boolean` | `false` | Force active state |
+| `disabled` | `boolean` | `false` | Disable the item |
+| `class` | `string` | - | Additional CSS classes |
+
+### Menu.Title Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | - | Additional CSS classes |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `update:modelValue` | `(value: string) => void` | Emitted when active item changes |

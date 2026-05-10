@@ -1,0 +1,212 @@
+---
+title: Signals
+description: Learn how to use signals for reactive state management in SignalX
+layout: docs
+category: Core Concepts
+order: 10
+---
+
+# Signals
+
+Signals are the foundation of SignalX's reactivity system. They create **reactive proxies** that automatically track access and notify subscribers when values change.
+
+## Creating Signals
+
+SignalX signals work differently depending on the value type:
+
+```tsx code console live
+import { signal } from 'sigx';
+
+// Primitives are wrapped in { value: T }
+const count = signal(0);        // { value: 0 }
+const name = signal('World');   // { value: 'World' }
+
+console.log(count.value);       // 0
+console.log(name.value);        // "World"
+
+// Objects become reactive proxies - access properties directly
+const user = signal({ id: 1, name: 'John' });
+const items = signal([1, 2, 3]);
+
+console.log(user.name);         // "John"
+console.log(items[0]);          // 1
+```
+
+## Reading and Writing
+
+### Primitives (wrapped in `{ value }`)
+
+Primitives (`string`, `number`, `boolean`, etc.) are wrapped in `{ value: T }`. Use `.value` to read and write:
+
+```tsx code console live
+import { signal } from 'sigx';
+
+const count = signal(0);
+console.log(count.value);  // 0
+
+count.value = 5;
+console.log(count.value);  // 5
+
+count.value++;
+console.log(count.value);  // 6
+```
+
+### Objects (direct property access)
+
+```tsx code console live
+import { signal } from 'sigx';
+
+// Objects use direct property access - no .value needed!
+const user = signal({ id: 1, name: 'John' });
+console.log(user.name);    // "John"
+
+user.name = 'Jane';        // Reactive update
+console.log(user.name);    // "Jane"
+
+// Arrays work the same way
+const items = signal([1, 2, 3]);
+items.push(4);             // Reactive
+console.log(items.length); // 4
+
+items[0] = 10;             // Reactive
+console.log(items[0]);     // 10
+```
+
+## Replacing Entire Objects and Arrays
+
+Use `$set()` to replace the entire object or array. **Note:** `$set()` is only available on object/array signals, not primitive signals (use `.value` for primitives).
+
+### Replacing Objects
+
+```tsx code console live
+import { signal } from 'sigx';
+
+const user = signal({ name: 'John', age: 25 });
+console.log(user.name, user.age);  // "John" 25
+
+user.$set({ name: 'Jane', age: 30 });  // Replace entirely
+console.log(user.name, user.age);  // "Jane" 30
+```
+
+### Replacing Arrays
+
+```tsx code console live
+import { signal } from 'sigx';
+
+const items = signal([1, 2, 3]);
+console.log([...items]);  // [1, 2, 3]
+
+items.$set([4, 5]);       // Replace entire array
+console.log([...items]);  // [4, 5]
+console.log(items.length); // 2 (automatically updated)
+```
+
+### Array Mutation Methods
+
+Array methods like `push`, `pop`, `splice`, `shift`, `unshift`, `sort`, and `reverse` are automatically batched for optimal performance:
+
+```tsx code console live
+import { signal } from 'sigx';
+
+const items = signal([1, 2, 3]);
+
+items.push(4, 5);          // Batched - single reactive update
+console.log([...items]);   // [1, 2, 3, 4, 5]
+
+items.splice(1, 2);        // Remove 2 items starting at index 1
+console.log([...items]);   // [1, 4, 5]
+```
+
+## Signals in Components
+
+In components, you get `signal` from the setup context:
+
+```tsx code preview live
+import { component, render } from 'sigx';
+
+const Counter = component(({ signal }) => {
+    const state = signal({ count: 0 });
+    
+    return () => (
+        <div>
+            <span>Count: {state.count}</span>
+            <button onClick={() => state.count++}>+</button>
+        </div>
+    );
+});
+
+render(<Counter />, "#sandbox");
+```
+
+### Object State Pattern (Recommended)
+
+Group related state in a single signal object:
+
+```tsx code preview live
+import { component, render } from 'sigx';
+
+const MyComponent = component(({ signal }) => {
+    const state = signal({
+        count: 0,
+        name: 'World',
+        items: ['Apple', 'Banana']
+    });
+    
+    return () => (
+        <div>
+            <p>Hello, {state.name}!</p>
+            <p>Count: {state.count}</p>
+            <button onClick={() => state.count++}>Increment</button>
+            <ul>
+                {state.items.map(item => <li>{item}</li>)}
+            </ul>
+        </div>
+    );
+});
+
+render(<MyComponent />, "#sandbox");
+```
+
+## Why Signals?
+
+Signals provide:
+
+1. **Fine-grained updates** - Only the specific DOM node that uses the signal updates
+2. **No re-renders** - The component function doesn't re-run
+3. **Referential stability** - The signal reference never changes
+4. **Synchronous updates** - Changes are applied immediately
+5. **Deep reactivity** - Nested properties are automatically reactive
+
+## Signal API
+
+| API | Description |
+|-----|-------------|
+| `signal(primitive)` | Returns `{ value: T }` wrapper for primitives |
+| `signal(object)` | Returns reactive proxy with direct property access |
+| `obj.$set(newObj)` | Replace entire object/array (not available on primitives) |
+| `toRaw(proxy)` | Get the raw, non-reactive object |
+| `isReactive(value)` | Check if a value is a reactive proxy |
+| `untrack(() => ...)` | Read values without creating subscriptions |
+| `batch(() => ...)` | Batch multiple updates together |
+
+## Collection Support
+
+SignalX supports reactive `Map`, `Set`, `WeakMap`, and `WeakSet`:
+
+```tsx code console live
+import { signal } from 'sigx';
+
+const map = signal(new Map());
+map.set('key', 'value');  // Reactive
+console.log(map.get('key'));  // "value"
+
+const set = signal(new Set());
+set.add('item');          // Reactive
+console.log(set.has('item'));  // true
+```
+
+## Next Steps
+
+- [Computed](/docs/computed) - Derive values from signals
+- [Effects](/docs/effects) - React to signal changes
+- [Components](/docs/components) - Use signals in components

@@ -1,0 +1,372 @@
+---
+title: Components
+description: Learn how to create and compose SignalX components
+layout: docs
+category: Core Concepts
+order: 40
+---
+
+# Components
+
+Components are the building blocks of SignalX applications. They encapsulate UI logic, state, and rendering in a reusable package.
+
+## Defining Components
+
+Use `component` to create a component:
+
+```tsx code preview live
+import { component, render } from 'sigx';
+
+const Greeting = component(() => {
+    console.log('Greeting component created');
+    return () => <h1>Hello, World!</h1>;
+});
+
+render(<Greeting />, "#sandbox");
+```
+
+The function passed to `component` is the **setup function**. It runs once when the component is created and returns a **render function**.
+
+## Setup Context
+
+The setup function receives a context object with everything you need:
+
+```tsx code preview live
+import { component, render } from 'sigx';
+
+const MyComponent = component((ctx) => {
+    // ctx.signal - Create reactive state
+    const state = ctx.signal({ count: 0 });
+    
+    // ctx.props - Access component props
+    // ctx.slots - Access named slots
+    // ctx.emit - Emit events to parent
+    // ctx.onMounted - Register mount callback
+    // ctx.onUnmounted - Register unmount callback
+    // ctx.expose - Expose API to parent via ref
+    
+    return () => <div>{state.count}</div>;
+});
+
+render(<MyComponent />, "#sandbox");
+```
+
+You can also destructure the context:
+
+```tsx code preview live
+import { component, render } from 'sigx';
+
+const MyComponent = component(({ signal, props, slots, emit }) => {
+    const state = signal({ count: 0 });
+    return () => <div>{state.count}</div>;
+});
+
+render(<MyComponent />, "#sandbox");
+```
+
+## Props
+
+Components can receive props from their parent:
+
+```tsx code preview live
+import { component, render, type Define } from 'sigx';
+
+type GreetingProps = Define.Prop<'name', string, true>;  // required
+
+const Greeting = component<GreetingProps>(({ props }) => {
+    return () => <h1>Hello, {props.name}!</h1>;
+});
+
+render(<Greeting name="SignalX" />, "#sandbox");
+```
+
+### Optional Props
+
+Mark props as optional with a `false` third type parameter:
+
+```tsx code preview live
+import { component, render, type Define } from 'sigx';
+
+type ButtonProps = 
+    & Define.Prop<'variant', 'primary' | 'secondary', false>  // optional
+    & Define.Prop<'disabled', boolean, false>                 // optional
+    & Define.Slot<'default'>;
+
+const Button = component<ButtonProps>(({ props, slots }) => {
+    return () => (
+        <button 
+            class={`btn btn-${props.variant || 'primary'}`}
+            disabled={props.disabled}
+        >
+            {slots.default()}
+        </button>
+    );
+});
+
+render(<Button variant="primary">Click Me</Button>, "#sandbox");
+```
+
+## Slots
+
+Slots allow parent components to inject content:
+
+```tsx code preview live
+import { component, render, type Define } from 'sigx';
+
+type CardProps = Define.Slot<'default'> & Define.Slot<'header'>;
+
+const Card = component<CardProps>(({ slots }) => {
+    return () => (
+        <div class="card" style="border: 1px solid #ccc; border-radius: 8px; overflow: hidden;">
+            <div class="card-header" style="background: #f5f5f5; padding: 12px; border-bottom: 1px solid #ccc;">
+                {slots.header?.() ?? <span>Default Header</span>}
+            </div>
+            <div class="card-body" style="padding: 16px;">
+                {slots.default()}
+            </div>
+        </div>
+    );
+});
+
+render(
+    <Card slots={{ header: () => <h2 style="margin: 0;">Card Title</h2> }}>
+        <p style="margin: 0;">Card content goes here</p>
+    </Card>,
+    "#sandbox"
+);
+```
+
+### Scoped Slots
+
+Pass data back to the parent:
+
+```tsx code preview live
+import { component, render, type Define } from 'sigx';
+
+type ListProps<T> = 
+    & Define.Prop<'items', T[], true>
+    & Define.Slot<'item', { item: T; index: number }>;
+
+const List = component<ListProps<any>>(({ props, slots }) => {
+    return () => (
+        <ul>
+            {props.items.map((item, index) => (
+                <li key={index}>{slots.item?.({ item, index })}</li>
+            ))}
+        </ul>
+    );
+});
+
+const fruits = ['Apple', 'Banana', 'Cherry'];
+
+render(
+    <List 
+        items={fruits} 
+        slots={{ item: ({ item, index }) => <span>{index + 1}. {item}</span> }}
+    />,
+    "#sandbox"
+);
+```
+
+## Events
+
+Components can emit events to their parent:
+
+```tsx code preview live
+import { component, render, type Define } from 'sigx';
+
+type ButtonProps = 
+    & Define.Event<'click', MouseEvent>
+    & Define.Event<'customAction', { action: string }>
+    & Define.Slot<'default'>;
+
+const Button = component<ButtonProps>(({ slots, emit }) => {
+    return () => (
+        <button onClick={(e) => {
+            emit('click', e);
+            emit('customAction', { action: 'clicked' });
+        }}>
+            {slots.default?.()}
+        </button>
+    );
+});
+
+const App = component(({ signal }) => {
+    const log = signal({ message: 'Click the button!' });
+    
+    return () => (
+        <div>
+            <Button 
+                onClick={() => log.message = 'Clicked!'}
+                onCustomAction={({ action }) => log.message = `Action: ${action}`}
+            >
+                Click me
+            </Button>
+            <p style="margin-top: 8px;">{log.message}</p>
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+## Exposing Component API
+
+Use `expose` to make methods available to parent via ref:
+
+```tsx code preview live
+import { component, Exposed, render, type Define } from 'sigx';
+
+type CounterExpose = Define.Expose<{
+    increment: () => void;
+    reset: () => void;
+}>;
+
+const Counter = component<CounterExpose>(({ signal, expose }) => {
+    const state = signal({ count: 0 });
+    
+    expose({
+        increment: () => state.count++,
+        reset: () => state.count = 0
+    });
+    
+    return () => <div style="font-size: 24px; margin-bottom: 12px;">Count: {state.count}</div>;
+});
+
+const App = component(() => {
+    let counterApi: Exposed<typeof Counter>;
+    
+    return () => (
+        <div>
+            <Counter ref={r => counterApi = r!} />
+            <button onClick={() => counterApi?.increment()}>Increment</button>
+            <button onClick={() => counterApi?.reset()} style="margin-left: 8px;">Reset</button>
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+## Component Context Reference
+
+| Property | Description |
+|----------|-------------|
+| `signal` | Create reactive state |
+| `props` | Reactive props accessor |
+| `slots` | Named slot functions (default always exists) |
+| `emit` | Typed event emitter |
+| `el` | The component's root element (after mount) |
+| `parent` | Parent component instance (if any) |
+| `onMounted(fn)` | Register mount callback |
+| `onUnmounted(fn)` | Register unmount callback |
+| `onCreated(fn)` | Register created callback |
+| `onUpdated(fn)` | Register update callback |
+| `expose(api)` | Expose API to parent via ref |
+| `update()` | Force re-render (for HMR) |
+
+## Two-Way Binding
+
+SignalX provides powerful `model` binding for two-way data synchronization with form elements and custom components:
+
+```tsx code preview live
+import { component, render } from 'sigx';
+
+const FormDemo = component(({ signal }) => {
+    const state = signal({ name: '', agreed: false });
+    
+    return () => (
+        <div>
+            <input model={() => state.name} placeholder="Your name" />
+            <label>
+                <input type="checkbox" model={() => state.agreed} />
+                I agree
+            </label>
+            <p>Hello, {state.name || 'stranger'}! Agreed: {state.agreed ? 'Yes' : 'No'}</p>
+        </div>
+    );
+});
+
+render(<FormDemo />, "#sandbox");
+```
+
+For complete documentation on two-way binding including:
+- All supported native elements (text, checkbox, radio, select, textarea)
+- Creating custom components with `Define.Model<T>`
+- Named model props with `model:propName`
+
+See the dedicated [Two-Way Binding](/docs/two-way-binding) guide.
+
+## Fragment
+
+Use `Fragment` to return multiple elements without a wrapper:
+
+```tsx code preview live
+import { component, Fragment, render, type Define } from 'sigx';
+
+const ListItems = component(() => {
+    return () => (
+        <Fragment>
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+        </Fragment>
+    );
+});
+
+type ConditionalProps = Define.Prop<'showExtra', boolean, false>;
+
+const ConditionalItems = component<ConditionalProps>(({ props }) => {
+    return () => (
+        <ul>
+            {props.showExtra && (
+                <>
+                    <li>Extra 1</li>
+                    <li>Extra 2</li>
+                </>
+            )}
+            <li>Always visible</li>
+        </ul>
+    );
+});
+
+const App = component(({ signal }) => {
+    const state = signal({ showExtra: true });
+    
+    return () => (
+        <div>
+            <label>
+                <input type="checkbox" model={() => state.showExtra} /> Show extra items
+            </label>
+            <ConditionalItems showExtra={state.showExtra} />
+            <h4>Using Fragment:</h4>
+            <ul><ListItems /></ul>
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+## Component Options
+
+Pass options as a second argument:
+
+```tsx code preview live
+import { component, render } from 'sigx';
+
+const MyComponent = component(
+    (ctx) => {
+        return () => <div>Hello from named component!</div>;
+    },
+    { name: 'MyComponent' }  // Shows in DevTools
+);
+
+render(<MyComponent />, "#sandbox");
+```
+
+## Next Steps
+
+- [Signals](/docs/signals) - Reactive state management
+- [Lifecycle](/docs/lifecycle) - Component lifecycle hooks
+- [Effects](/docs/effects) - Side effects and reactions

@@ -1,0 +1,143 @@
+---
+title: Checkbox
+description: Checkboxes are used to select or deselect a value
+layout: docs
+category: ["Components", "Data Input"]
+order: 525
+---
+
+# Checkbox
+
+Checkbox is used to select or deselect a value.
+
+## Import
+
+```tsx
+import { Checkbox } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Checkbox } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Checkbox checked />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Label
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Checkbox, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <Checkbox label="Remember me" />
+            <Checkbox label="Accept terms" checked />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Checkbox, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Checkbox checked />
+            <Checkbox color="primary" checked />
+            <Checkbox color="secondary" checked />
+            <Checkbox color="accent" checked />
+            <Checkbox color="neutral" checked />
+            <Checkbox color="info" checked />
+            <Checkbox color="success" checked />
+            <Checkbox color="warning" checked />
+            <Checkbox color="error" checked />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Checkbox, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" items="center" wrap>
+            <Checkbox size="xs" checked />
+            <Checkbox size="sm" checked />
+            <Checkbox size="md" checked />
+            <Checkbox size="lg" checked />
+            <Checkbox size="xl" checked />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Disabled
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Checkbox, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4">
+            <Checkbox disabled />
+            <Checkbox disabled checked />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Indeterminate
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Checkbox } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Checkbox indeterminate />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `Signal<boolean>` | - | Two-way binding for checked state |
+| `name` | `string` | - | Name attribute for form submission |
+| `size` | `"xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Checkbox size |
+| `color` | `"primary" \| "secondary" \| "accent" \| "neutral" \| "info" \| "success" \| "warning" \| "error"` | - | Checkbox color |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `indeterminate` | `boolean` | `false` | Indeterminate state |
+| `label` | `string` | - | Label text displayed next to checkbox |
+| `class` | `string` | - | Additional CSS classes |
+| `onChange` | `(checked: boolean) => void` | - | Change event handler |

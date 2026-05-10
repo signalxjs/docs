@@ -1,0 +1,461 @@
+---
+title: Reactivity
+description: SignalX reactivity API reference
+layout: docs
+category: Reference
+order: 20
+---
+
+# Reactivity API
+
+Core reactive primitives for state management.
+
+## signal
+
+Create reactive state. Primitives are wrapped in `{ value }`, objects become reactive proxies.
+
+```tsx
+function signal<T extends Primitive>(target: T): PrimitiveSignal<T>;
+function signal<T extends object>(target: T): Signal<T>;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `target` | `T` | Initial value (primitive or object) |
+
+### Returns
+
+- **Primitives**: `{ value: T }` wrapper with reactive `value` property
+- **Objects**: Reactive proxy with direct property access
+
+### Examples
+
+```tsx
+import { signal } from 'sigx';
+
+// Primitives - use .value
+const count = signal(0);
+count.value++;              // 1
+
+const name = signal('World');
+name.value = 'SignalX';
+
+// Objects - direct access
+const user = signal({ name: 'John', age: 30 });
+user.name = 'Jane';         // Reactive
+user.age++;                 // Reactive
+
+// Arrays
+const items = signal([1, 2, 3]);
+items.push(4);              // Reactive
+items[0] = 10;              // Reactive
+
+// Collections
+const map = signal(new Map());
+map.set('key', 'value');    // Reactive
+
+// Replace entire object
+user.$set({ name: 'Bob', age: 25 });
+```
+
+---
+
+## effect
+
+Run a function when its reactive dependencies change.
+
+```tsx
+function effect(fn: EffectFn): EffectRunner;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fn` | `() => void` | Function to run reactively |
+
+### Returns
+
+`EffectRunner` - Callable function with a `stop()` method.
+
+### Examples
+
+```tsx
+import { signal, effect } from 'sigx';
+
+const state = signal({ count: 0 });
+
+// Effect runs immediately and on changes
+const runner = effect(() => {
+    console.log('Count:', state.count);
+});
+
+state.count = 5;  // Logs: "Count: 5"
+
+// Stop the effect
+runner.stop();
+state.count = 10; // No log
+```
+
+---
+
+## computed
+
+Create a lazily-evaluated derived value.
+
+```tsx
+function computed<T>(getter: () => T): Computed<T>;
+function computed<T>(options: { get: () => T; set: (v: T) => void }): WritableComputed<T>;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `getter` | `() => T` | Function that computes the value |
+| `options.get` | `() => T` | Getter for writable computed |
+| `options.set` | `(v: T) => void` | Setter for writable computed |
+
+### Returns
+
+- **Read-only**: `Computed<T>` - Call to get value: `computed()`
+- **Writable**: `WritableComputed<T>` - Has `set()` method
+
+### Examples
+
+```tsx
+import { signal, computed } from 'sigx';
+
+const state = signal({ count: 0 });
+
+// Read-only computed
+const doubled = computed(() => state.count * 2);
+console.log(doubled());  // 0
+
+state.count = 5;
+console.log(doubled());  // 10
+
+// Writable computed
+const celsius = signal({ value: 0 });
+const fahrenheit = computed({
+    get: () => celsius.value * 9/5 + 32,
+    set: (f) => celsius.value = (f - 32) * 5/9
+});
+
+fahrenheit.set(212);
+console.log(celsius.value);  // 100
+```
+
+---
+
+## watch
+
+Watch reactive sources with a callback.
+
+```tsx
+function watch<T>(
+    source: WatchSource<T>,
+    callback: WatchCallback<T>,
+    options?: WatchOptions
+): WatchHandle;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `source` | `T \| () => T` | Value or getter to watch |
+| `callback` | `(value, oldValue, onCleanup) => void` | Called on change |
+| `options.immediate` | `boolean` | Run immediately (default: false) |
+| `options.deep` | `boolean \| number` | Deep watch (default: false) |
+| `options.once` | `boolean` | Run once then stop |
+
+### Returns
+
+`WatchHandle` - Object with `stop()`, `pause()`, `resume()` methods.
+
+### Examples
+
+```tsx
+import { signal, watch } from 'sigx';
+
+const state = signal({ count: 0 });
+
+// Basic watch
+const handle = watch(
+    () => state.count,
+    (newVal, oldVal) => {
+        console.log(`Changed from ${oldVal} to ${newVal}`);
+    }
+);
+
+state.count = 5;  // Logs: "Changed from 0 to 5"
+
+// With cleanup
+watch(
+    () => state.count,
+    (value, _, onCleanup) => {
+        const timer = setInterval(() => console.log(value), 1000);
+        onCleanup(() => clearInterval(timer));
+    }
+);
+
+// Pause/resume
+handle.pause();
+state.count = 10;  // No log
+handle.resume();   // Catches up if value changed
+
+// Stop watching
+handle.stop();
+```
+
+---
+
+## batch
+
+Group multiple updates into a single reactive flush.
+
+```tsx
+function batch(fn: () => void): void;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fn` | `() => void` | Function containing updates |
+
+### Examples
+
+```tsx
+import { signal, effect, batch } from 'sigx';
+
+const state = signal({ a: 0, b: 0, c: 0 });
+
+effect(() => {
+    console.log(state.a, state.b, state.c);
+});
+
+// Without batch: effect runs 3 times
+state.a = 1;
+state.b = 2;
+state.c = 3;
+
+// With batch: effect runs once
+batch(() => {
+    state.a = 1;
+    state.b = 2;
+    state.c = 3;
+});
+```
+
+---
+
+## untrack
+
+Read values without creating dependencies.
+
+```tsx
+function untrack<T>(fn: () => T): T;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fn` | `() => T` | Function to execute |
+
+### Returns
+
+The return value of `fn`.
+
+### Examples
+
+```tsx
+import { signal, effect, untrack } from 'sigx';
+
+const state = signal({ count: 0, multiplier: 2 });
+
+effect(() => {
+    // Depends on count, NOT multiplier
+    const mult = untrack(() => state.multiplier);
+    console.log(state.count * mult);
+});
+
+state.count++;      // Effect runs
+state.multiplier++; // Effect does NOT run
+```
+
+---
+
+## toRaw
+
+Get the underlying non-reactive object from a proxy.
+
+```tsx
+function toRaw<T>(observed: T): T;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `observed` | `T` | Reactive proxy or any value |
+
+### Returns
+
+The raw object, or the value itself if not reactive.
+
+### Examples
+
+```tsx
+import { signal, toRaw } from 'sigx';
+
+const state = signal({ name: 'John', items: [1, 2, 3] });
+
+// Get raw for serialization
+const raw = toRaw(state);
+fetch('/api', { body: JSON.stringify(raw) });
+
+// Check identity
+const obj = { x: 1 };
+const reactive = signal(obj);
+toRaw(reactive) === obj;  // true
+```
+
+---
+
+## isReactive
+
+Check if a value is a reactive proxy.
+
+```tsx
+function isReactive(value: unknown): boolean;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `unknown` | Value to check |
+
+### Returns
+
+`true` if the value is a reactive proxy.
+
+### Examples
+
+```tsx
+import { signal, isReactive } from 'sigx';
+
+const state = signal({ count: 0 });
+const plain = { count: 0 };
+
+isReactive(state);  // true
+isReactive(plain);  // false
+```
+
+---
+
+## effectScope
+
+Create a scope for grouping effects.
+
+```tsx
+function effectScope(detached?: boolean): EffectScope;
+```
+
+### Parameters
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `detached` | `boolean` | `false` | Independent of parent scope |
+
+### Returns
+
+`EffectScope` with:
+- `run<T>(fn: () => T): T | undefined` - Execute within scope
+- `stop(): void` - Stop all effects in scope
+
+### Examples
+
+```tsx
+import { signal, effect, effectScope } from 'sigx';
+
+const scope = effectScope();
+
+scope.run(() => {
+    const state = signal({ count: 0 });
+    effect(() => console.log(state.count));
+    effect(() => console.log(state.count * 2));
+});
+
+// Stop all effects at once
+scope.stop();
+```
+
+---
+
+## Types
+
+### Signal\<T\>
+
+```tsx
+type Signal<T> = T & {
+    $set: (newValue: T) => void;
+};
+```
+
+### PrimitiveSignal\<T\>
+
+```tsx
+type PrimitiveSignal<T> = Signal<{ value: Widen<T> }>;
+```
+
+### EffectRunner
+
+```tsx
+interface EffectRunner<T = void> {
+    (): T;
+    stop: () => void;
+}
+```
+
+### Computed\<T\>
+
+```tsx
+interface Computed<T> {
+    (): T;
+}
+```
+
+### WritableComputed\<T\>
+
+```tsx
+interface WritableComputed<T> {
+    (): T;
+    set(value: T): void;
+}
+```
+
+### WatchHandle
+
+```tsx
+interface WatchHandle {
+    (): void;          // Callable to stop
+    stop: () => void;
+    pause: () => void;
+    resume: () => void;
+}
+```
+
+### EffectScope
+
+```tsx
+type EffectScope = {
+    run<T>(fn: () => T): T | undefined;
+    stop(fromParent?: boolean): void;
+}
+```

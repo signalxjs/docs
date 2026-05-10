@@ -1,0 +1,562 @@
+---
+title: Directives
+description: Create reusable element-level behavior with the directive system
+layout: docs
+category: Core Concepts
+order: 75
+---
+
+# Directives
+
+Directives provide reusable, element-level lifecycle hooks via the `use:name` prop syntax. They let you encapsulate DOM behavior — such as toggling visibility, adding tooltips, or integrating third-party libraries — and apply it declaratively to any element.
+
+## Built-in Directives
+
+### `show`
+
+The `show` directive is built-in and always available. It toggles element visibility via the CSS `display` property. Unlike conditional rendering, `use:show` keeps the element in the DOM and only toggles its visibility:
+
+```tsx code preview live
+import { component, render } from 'sigx';
+
+const ToggleDemo = component(({ signal }) => {
+    const state = signal({ visible: true });
+
+    return () => (
+        <div style="padding: 16px;">
+            <button onClick={() => state.visible = !state.visible}>
+                {state.visible ? 'Hide' : 'Show'}
+            </button>
+            <div use:show={state.visible} style={{ 
+                marginTop: '12px',
+                padding: '12px',
+                background: '#056b25ff',
+                borderRadius: '8px'
+            }}>
+                This content is toggled with use:show
+            </div>
+        </div>
+    );
+});
+
+render(<ToggleDemo />, "#sandbox");
+```
+
+Built-in directives like `show` are registered internally and resolve automatically — you just pass the value directly. No imports or registration needed.
+
+#### When to Use `show` vs Conditional Rendering
+
+| | `use:show` | Ternary / `&&` |
+|---|---|---|
+| **DOM** | Element stays in the DOM | Element is added/removed |
+| **State** | Preserves scroll, focus, input values | State is lost on hide |
+| **Cost** | Cheap toggle (just CSS) | Re-creates elements on show |
+| **Best for** | Frequent toggling | Rarely shown content |
+
+#### Preserving Display Values
+
+`show` preserves the element's original `display` value. If your element uses `display: flex`, toggling show will restore it to `flex`, not the default `block`:
+
+```tsx code preview live
+import { component, render } from 'sigx';
+
+const FlexDemo = component(({ signal }) => {
+    const state = signal({ visible: true });
+
+    return () => (
+        <div style="padding: 16px;">
+            <button onClick={() => state.visible = !state.visible}>
+                Toggle Flex Container
+            </button>
+            <div 
+                use:show={state.visible} 
+                style={{ 
+                    display: 'flex', 
+                    gap: '8px', 
+                    marginTop: '12px' 
+                }}
+            >
+                <div style="padding: 8px; background: #bfdbfe; border-radius: 4px;">Item 1</div>
+                <div style="padding: 8px; background: #93c5fd; border-radius: 4px;">Item 2</div>
+                <div style="padding: 8px; background: #60a5fa; border-radius: 4px;">Item 3</div>
+            </div>
+        </div>
+    );
+});
+
+render(<FlexDemo />, "#sandbox");
+```
+
+## Defining a Custom Directive
+
+Use `defineDirective` to create a directive:
+
+```tsx code
+import { defineDirective } from 'sigx';
+
+const tooltip = defineDirective<string>({
+    mounted(el, { value }) {
+        el.title = value;
+    },
+    updated(el, { value }) {
+        el.title = value;
+    },
+    unmounted(el) {
+        el.title = '';
+    }
+});
+```
+
+The generic parameter (`<string>`) defines the type of the directive's binding value. SignalX will enforce this at the type level when the directive is used in JSX.
+
+## Registering Custom Directives
+
+Custom directives need to be registered so the runtime can resolve them by name when you write `use:myDirective={value}`. Register them globally on your app instance with `app.directive()`:
+
+```tsx code preview live
+import { component, defineDirective, defineApp, render } from 'sigx';
+
+// 1. Define the directive
+const highlight = defineDirective<string>({
+    mounted(el, { value }) {
+        el.style.backgroundColor = value;
+    },
+    updated(el, { value }) {
+        el.style.backgroundColor = value;
+    },
+    unmounted(el) {
+        el.style.backgroundColor = '';
+    }
+});
+
+const App = component(({ signal }) => {
+    const state = signal({ color: '#fef08a' });
+
+    const colors = ['#fef08a', '#bbf7d0', '#bfdbfe', '#fecaca', '#e9d5ff'];
+
+    return () => (
+        <div style="padding: 16px;">
+            <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+                {colors.map(c => (
+                    <button 
+                        onClick={() => state.color = c}
+                        style={{
+                            width: '32px', height: '32px', borderRadius: '50%',
+                            background: c, border: state.color === c ? '3px solid #333' : '2px solid #ccc',
+                            cursor: 'pointer'
+                        }}
+                    />
+                ))}
+            </div>
+            {/* 3. Use the shorthand — just pass a value, no imports needed */}
+            <div use:highlight={state.color} style="padding: 12px; border-radius: 8px;">
+                Highlighted with use:highlight
+            </div>
+        </div>
+    );
+});
+
+// 2. Register on the app
+const app = defineApp(<App />);
+app.directive('highlight', highlight);
+app.mount('#sandbox');
+```
+
+Once registered, `use:highlight={value}` works exactly like the built-in `use:show` — you just pass a value and the runtime resolves the directive by name.
+
+### Resolution Priority
+
+When the runtime encounters a `use:name` prop, it resolves the directive in this order:
+
+1. **Explicit directive** — A directive definition or `[definition, value]` tuple passed directly (no registration needed)
+2. **Built-in directives** — Internally registered directives like `show` (always available)
+3. **App-registered directives** — Custom directives registered via `app.directive()`
+
+This means built-in directives always take precedence, and you can always bypass registration by passing a directive explicitly.
+
+## Using Directives
+
+There are three ways to apply a directive to an element:
+
+### Shorthand (registered directives)
+
+For built-in and app-registered directives, pass the value directly:
+
+```tsx code
+// Built-in — always works
+<div use:show={isVisible}>Content</div>
+
+// Custom — after calling app.directive('highlight', highlight)
+<div use:highlight="#fef08a">Highlighted</div>
+```
+
+### Tuple Form (escape hatch)
+
+Pass the directive definition and value as a tuple. This works without any registration — useful for one-off directives or when you don't have access to the app instance:
+
+```tsx code preview live
+import { component, defineDirective, render } from 'sigx';
+
+const tooltip = defineDirective<string>({
+    mounted(el, { value }) {
+        el.title = value;
+    },
+    updated(el, { value }) {
+        el.title = value;
+    }
+});
+
+const Demo = component(() => {
+    return () => (
+        <div style="padding: 16px;">
+            <div 
+                use:tooltip={[tooltip, "I'm a tooltip! Hover to see."]}
+                style="padding: 12px; background: #f0f0f0; border-radius: 8px; cursor: help;"
+            >
+                Hover me to see the tooltip (check title attribute)
+            </div>
+        </div>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### Bare Form (no value)
+
+If the directive doesn't need a binding value, pass the definition directly:
+
+```tsx code preview live
+import { component, defineDirective, render } from 'sigx';
+
+const autoBorder = defineDirective<void>({
+    mounted(el) {
+        el.style.border = '2px dashed #6366f1';
+        el.style.borderRadius = '8px';
+    },
+    unmounted(el) {
+        el.style.border = '';
+    }
+});
+
+const Demo = component(() => {
+    return () => (
+        <div style="padding: 16px;">
+            <div use:border={autoBorder} style="padding: 12px;">
+                This element got a dashed border from a directive
+            </div>
+        </div>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Lifecycle Hooks
+
+Directives support four lifecycle hooks, all optional:
+
+| Hook | When it runs |
+|------|-------------|
+| `created` | After the element is created, before it is inserted into the DOM |
+| `mounted` | After the element is inserted into the DOM |
+| `updated` | When the binding value changes |
+| `unmounted` | Before the element is removed from the DOM |
+
+Each hook receives the DOM element and a binding object:
+
+```tsx code preview live
+import { component, defineDirective, defineApp, render } from 'sigx';
+
+const lifecycle = defineDirective<string>({
+    created(el, { value }) {
+        el.dataset.log = 'created';
+    },
+    mounted(el, { value }) {
+        el.dataset.log += ' → mounted';
+        el.style.backgroundColor = value;
+    },
+    updated(el, { value, oldValue }) {
+        el.dataset.log += ' → updated';
+        el.style.backgroundColor = value;
+    },
+    unmounted(el) {
+        // cleanup
+    }
+});
+
+const Demo = component(({ signal }) => {
+    const state = signal({ color: '#bbf7d0' });
+
+    return () => (
+        <div style="padding: 16px;">
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <button onClick={() => state.color = '#bbf7d0'}>Green</button>
+                <button onClick={() => state.color = '#bfdbfe'}>Blue</button>
+                <button onClick={() => state.color = '#fecaca'}>Red</button>
+            </div>
+            <div use:lifecycle={state.color} style="padding: 12px; border-radius: 8px; transition: background-color 0.2s;">
+                Change colors to trigger the updated hook
+            </div>
+        </div>
+    );
+});
+
+const app = defineApp(<Demo />);
+app.directive('lifecycle', lifecycle);
+app.mount('#sandbox');
+```
+
+## The Binding Object
+
+The binding object (`DirectiveBinding<T>`) has two properties:
+
+- **`value`** — The current value passed to the directive
+- **`oldValue`** — The previous value (only available in the `updated` hook)
+
+```tsx code
+interface DirectiveBinding<T> {
+    value: T;
+    oldValue?: T;
+}
+```
+
+## Type-Safe Element Types
+
+By default, the element parameter is typed as `any`. You can narrow it using the second generic parameter:
+
+```tsx code
+import { defineDirective } from 'sigx';
+
+// Only works on HTMLInputElement
+const autoSelect = defineDirective<void, HTMLInputElement>({
+    mounted(el) {
+        el.select(); // Fully typed — .select() exists on HTMLInputElement
+    }
+});
+```
+
+## Custom Directive Examples
+
+### Click Outside
+
+Detect clicks outside an element — useful for closing dropdowns and modals:
+
+```tsx code preview live
+import { component, defineDirective, defineApp, render } from 'sigx';
+
+const clickOutside = defineDirective<() => void>({
+    mounted(el, { value: callback }) {
+        const handler = (e: MouseEvent) => {
+            if (!el.contains(e.target as Node)) callback();
+        };
+        document.addEventListener('click', handler);
+        (el as any).__clickOutsideCleanup = handler;
+    },
+    unmounted(el) {
+        document.removeEventListener('click', (el as any).__clickOutsideCleanup);
+        delete (el as any).__clickOutsideCleanup;
+    }
+});
+
+const Demo = component(({ signal }) => {
+    const state = signal({ open: false });
+
+    return () => (
+        <div style="padding: 16px;">
+            <button onClick={(e: Event) => { e.stopPropagation(); state.open = true; }}>
+                Open Dropdown
+            </button>
+            {state.open && (
+                <div 
+                    use:clickOutside={() => state.open = false}
+                    style={{
+                        marginTop: '8px', padding: '16px',
+                        background: '#155e01ff', border: '1px solid #e5e7eb',
+                        borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                >
+                    Click outside this box to close it
+                </div>
+            )}
+        </div>
+    );
+});
+
+const app = defineApp(<Demo />);
+app.directive('clickOutside', clickOutside);
+app.mount('#sandbox');
+```
+
+### Long Press
+
+Trigger a callback after holding down an element:
+
+```tsx code preview live
+import { component, defineDirective, defineApp, render } from 'sigx';
+
+const longPress = defineDirective<{ duration?: number; onPress: () => void }>({
+    mounted(el, { value: { duration = 600, onPress } }) {
+        let timer: ReturnType<typeof setTimeout>;
+        const start = () => { timer = setTimeout(onPress, duration); };
+        const cancel = () => clearTimeout(timer);
+        el.addEventListener('pointerdown', start);
+        el.addEventListener('pointerup', cancel);
+        el.addEventListener('pointerleave', cancel);
+        (el as any).__longPressCleanup = () => {
+            el.removeEventListener('pointerdown', start);
+            el.removeEventListener('pointerup', cancel);
+            el.removeEventListener('pointerleave', cancel);
+        };
+    },
+    unmounted(el) {
+        (el as any).__longPressCleanup?.();
+    }
+});
+
+const Demo = component(({ signal }) => {
+    const state = signal({ count: 0 });
+
+    return () => (
+        <div style="padding: 16px;">
+            <button 
+                use:longPress={{ onPress: () => state.count++, duration: 600 }}
+                style="padding: 12px 24px; background: #6366f1; color: white; border: none; border-radius: 8px; cursor: pointer; user-select: none;"
+            >
+                Hold me for 600ms
+            </button>
+            <p style="margin-top: 12px;">Long presses: {state.count}</p>
+        </div>
+    );
+});
+
+const app = defineApp(<Demo />);
+app.directive('longPress', longPress);
+app.mount('#sandbox');
+```
+
+### Intersection Observer
+
+Trigger a callback when an element enters the viewport:
+
+```tsx code preview live
+import { component, defineDirective, defineApp, render } from 'sigx';
+
+const whenVisible = defineDirective<() => void>({
+    mounted(el, { value: onVisible }) {
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                onVisible();
+                observer.disconnect();
+            }
+        });
+        observer.observe(el);
+        (el as any).__observer = observer;
+    },
+    unmounted(el) {
+        (el as any).__observer?.disconnect();
+    }
+});
+
+const Demo = component(({ signal }) => {
+    const state = signal({ seen: false });
+
+    return () => (
+        <div style="padding: 16px;">
+            <p>Scroll down inside this box:</p>
+            <div style="height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px;">
+                <div style="height: 200px; display: flex; align-items: center; justify-content: center; color: #999;">
+                    ↓ Keep scrolling ↓
+                </div>
+                <div 
+                    use:whenVisible={() => state.seen = true}
+                    style={{
+                        padding: '16px', borderRadius: '8px', textAlign: 'center', color: "black", 
+                        background: state.seen ? '#bbf7d0' : '#f3f4f6',
+                        transition: 'background-color 0.3s'
+                    }}
+                >
+                    {state.seen ? '✅ I was seen!' : '👀 Scroll to reveal me'}
+                </div>
+            </div>
+        </div>
+    );
+});
+
+const app = defineApp(<Demo />);
+app.directive('whenVisible', whenVisible);
+app.mount('#sandbox');
+```
+
+## Multiple Directives
+
+You can apply multiple directives to the same element. Each directive manages its own lifecycle independently:
+
+```tsx code preview live
+import { component, defineDirective, defineApp, render } from 'sigx';
+
+const bgColor = defineDirective<string>({
+    mounted(el, { value }) { el.style.backgroundColor = value; },
+    updated(el, { value }) { el.style.backgroundColor = value; }
+});
+
+const border = defineDirective<string>({
+    mounted(el, { value }) { el.style.border = `2px solid ${value}`; },
+    updated(el, { value }) { el.style.border = `2px solid ${value}`; }
+});
+
+const Demo = component(({ signal }) => {
+    const state = signal({ bg: '#fef08a', bd: '#f59e0b' });
+
+    return () => (
+        <div style="padding: 16px;">
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <button onClick={() => { state.bg = '#fef08a'; state.bd = '#f59e0b'; }}>Warm</button>
+                <button onClick={() => { state.bg = '#dbeafe'; state.bd = '#3b82f6'; }}>Cool</button>
+                <button onClick={() => { state.bg = '#dcfce7'; state.bd = '#22c55e'; }}>Fresh</button>
+            </div>
+            <div 
+                use:bgColor={state.bg}
+                use:border={state.bd}
+                style="padding: 16px; border-radius: 8px; transition: all 0.2s;color:black"
+            >
+                Two directives on one element
+            </div>
+        </div>
+    );
+});
+
+const app = defineApp(<Demo />);
+app.directive('bgColor', bgColor);
+app.directive('border', border);
+app.mount('#sandbox');
+```
+
+## SSR Support
+
+When using `@sigx/server-renderer`, directives can provide SSR-specific props via the `getSSRProps` hook. This hook is available when the server-renderer package is installed — it extends the directive type automatically through TypeScript module augmentation.
+
+```tsx code
+import { defineDirective } from 'sigx';
+
+const hidden = defineDirective<boolean>({
+    mounted(el, { value }) {
+        el.style.display = value ? 'none' : '';
+    },
+    getSSRProps({ value }) {
+        if (value) {
+            return { style: { display: 'none' } };
+        }
+    }
+});
+```
+
+`getSSRProps` returns an object whose properties are merged into the element's HTML attributes during server rendering. Custom directives registered via `app.directive()` work in SSR automatically — the server renderer resolves them from the app context just like the client renderer does. Built-in directives like `show` have their SSR support handled automatically.
+
+## Summary
+
+| Registration | How it works | Use case |
+|---|---|---|
+| **Built-in** (`show`) | Always available, no registration needed | Core framework directives |
+| **`app.directive()`** | Register globally on your app instance | Custom directives used across your app |
+| **Tuple form** `[def, value]` | Pass definition inline, no registration | One-off usage, library directives |

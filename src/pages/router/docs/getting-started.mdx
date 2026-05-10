@@ -1,0 +1,94 @@
+---
+title: Getting Started
+description: Get started with @sigx/router - the declarative router for SignalX
+layout: docs
+category: Getting Started
+order: 10
+---
+
+import { PrereqCallout } from '@/components/PrereqCallout';
+
+# Getting Started with Router
+
+<PrereqCallout items={[
+    { name: 'SignalX Core basics', path: '/core/docs/getting-started' },
+    { name: 'Components', path: '/core/docs/components' },
+]} />
+
+The SignalX Router provides declarative, type-safe routing for your SignalX applications with full SSR support.
+
+## Installation
+
+```bash
+pnpm add @sigx/router
+```
+
+## Basic Setup
+
+Create a router instance and define your routes:
+
+```tsx
+import { createRouter, RouterView, RouterLink } from '@sigx/router';
+import { createApp } from 'sigx';
+
+// Define your routes
+const router = createRouter({
+    routes: [
+        { path: '/', component: Home },
+        { path: '/about', component: About },
+        { path: '/users/:id', component: UserProfile },
+    ],
+});
+
+// Create your app with the router plugin
+const app = createApp(App);
+app.use(router);
+app.mount('#app');
+```
+
+## Using RouterView
+
+The `RouterView` component renders the matched route component:
+
+```tsx
+import { component } from 'sigx';
+import { RouterView, RouterLink } from '@sigx/router';
+
+const App = component(() => {
+    return () => (
+        <div>
+            <nav>
+                <RouterLink to="/">Home</RouterLink>
+                <RouterLink to="/about">About</RouterLink>
+            </nav>
+            
+            <main>
+                <RouterView />
+            </main>
+        </div>
+    );
+});
+```
+
+## RouterLink Component
+
+Use `RouterLink` for navigation instead of regular anchor tags:
+
+```tsx
+<RouterLink to="/users/123">View User</RouterLink>
+
+{/* With active class */}
+<RouterLink 
+    to="/about" 
+    activeClass="text-primary font-bold"
+>
+    About
+</RouterLink>
+```
+
+## Next Steps
+
+- [Defining Routes](/router/docs/routes) - Learn about route configuration
+- [Navigation](/router/docs/navigation) - Programmatic navigation
+- [Route Guards](/router/docs/guards) - Protect routes with guards
+- [SSR Routing](/router/docs/ssr) - Server-side rendering and hash-based routing for static hosts

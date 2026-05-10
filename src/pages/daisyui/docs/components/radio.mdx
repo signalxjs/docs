@@ -1,0 +1,362 @@
+---
+title: Radio
+description: Radio button group for single selection from multiple options
+layout: docs
+category: ["Components", "Data Input"]
+order: 535
+---
+
+# Radio
+
+Radio button component for selecting one option from a group. Supports both compound pattern with `Radio.Item` and standalone usage.
+
+## Import
+
+```tsx
+import { Radio, Col, Card, Heading, Row, Text } from '@sigx/daisyui';
+```
+
+## Basic Usage (Compound Pattern)
+
+Use `Radio` with `Radio.Item` children for grouped radio buttons:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Radio, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ color: 'red' });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Radio model={() => form.color} name="color">
+                    <Radio.Item value="red" label="Red" />
+                    <Radio.Item value="blue" label="Blue" />
+                    <Radio.Item value="green" label="Green" />
+                </Radio>
+                
+                <Text size="sm" class="opacity-70">
+                    Selected: {form.color}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Radio, Col, Heading } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const sizes = signal({ xs: 'a', sm: 'a', md: 'a', lg: 'a' });
+    
+    return () => (
+        <Col gap="6">
+            <Col gap="2">
+                <Heading level={4} size="sm">Extra Small</Heading>
+                <Radio model={() => sizes.xs} name="size-xs" size="xs">
+                    <Radio.Item value="a" label="Option A" />
+                    <Radio.Item value="b" label="Option B" />
+                </Radio>
+            </Col>
+            
+            <Col gap="2">
+                <Heading level={4} size="sm">Small</Heading>
+                <Radio model={() => sizes.sm} name="size-sm" size="sm">
+                    <Radio.Item value="a" label="Option A" />
+                    <Radio.Item value="b" label="Option B" />
+                </Radio>
+            </Col>
+            
+            <Col gap="2">
+                <Heading level={4} size="sm">Medium (default)</Heading>
+                <Radio model={() => sizes.md} name="size-md" size="md">
+                    <Radio.Item value="a" label="Option A" />
+                    <Radio.Item value="b" label="Option B" />
+                </Radio>
+            </Col>
+            
+            <Col gap="2">
+                <Heading level={4} size="sm">Large</Heading>
+                <Radio model={() => sizes.lg} name="size-lg" size="lg">
+                    <Radio.Item value="a" label="Option A" />
+                    <Radio.Item value="b" label="Option B" />
+                </Radio>
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Radio, Col, Row } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const colors = signal({
+        primary: 'a',
+        secondary: 'a',
+        accent: 'a',
+        success: 'a',
+        warning: 'a',
+        error: 'a'
+    });
+    
+    return () => (
+        <Row gap="4" wrap>
+            <Col class="min-w-56">
+                <Radio model={() => colors.primary} name="c-primary" color="primary">
+                    <Radio.Item value="a" label="Primary A" />
+                    <Radio.Item value="b" label="Primary B" />
+                </Radio>
+            </Col>
+            <Col class="min-w-56">
+                <Radio model={() => colors.secondary} name="c-secondary" color="secondary">
+                    <Radio.Item value="a" label="Secondary A" />
+                    <Radio.Item value="b" label="Secondary B" />
+                </Radio>
+            </Col>
+            <Col class="min-w-56">
+                <Radio model={() => colors.accent} name="c-accent" color="accent">
+                    <Radio.Item value="a" label="Accent A" />
+                    <Radio.Item value="b" label="Accent B" />
+                </Radio>
+            </Col>
+            <Col class="min-w-56">
+                <Radio model={() => colors.success} name="c-success" color="success">
+                    <Radio.Item value="a" label="Success A" />
+                    <Radio.Item value="b" label="Success B" />
+                </Radio>
+            </Col>
+            <Col class="min-w-56">
+                <Radio model={() => colors.warning} name="c-warning" color="warning">
+                    <Radio.Item value="a" label="Warning A" />
+                    <Radio.Item value="b" label="Warning B" />
+                </Radio>
+            </Col>
+            <Col class="min-w-56">
+                <Radio model={() => colors.error} name="c-error" color="error">
+                    <Radio.Item value="a" label="Error A" />
+                    <Radio.Item value="b" label="Error B" />
+                </Radio>
+            </Col>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Horizontal Direction
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Radio, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ plan: 'free' });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Radio model={() => form.plan} name="plan" direction="horizontal" color="primary">
+                    <Radio.Item value="free" label="Free" />
+                    <Radio.Item value="pro" label="Pro" />
+                    <Radio.Item value="enterprise" label="Enterprise" />
+                </Radio>
+                
+                <Text size="sm" class="opacity-70">
+                    Selected plan: {form.plan}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Standalone Radio
+
+For cases where you need more control, use `Radio.Standalone`:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Radio, Card, Text, Col } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const form = signal({ theme: 'light' });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Col gap="2">
+                    <Radio.Standalone 
+                        name="theme" 
+                        value="light" 
+                        label="Light mode"
+                        checked={form.theme === 'light'}
+                        onChange={() => form.theme = 'light'}
+                        color="primary"
+                    />
+                    <Radio.Standalone 
+                        name="theme" 
+                        value="dark" 
+                        label="Dark mode"
+                        checked={form.theme === 'dark'}
+                        onChange={() => form.theme = 'dark'}
+                        color="primary"
+                    />
+                    <Radio.Standalone 
+                        name="theme" 
+                        value="system" 
+                        label="System preference"
+                        checked={form.theme === 'system'}
+                        onChange={() => form.theme = 'system'}
+                        color="primary"
+                    />
+                </Col>
+                
+                <Text size="sm" class="opacity-70">
+                    Theme: {form.theme}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Disabled Options
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Radio, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ tier: 'basic' });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Radio model={() => form.tier} name="tier" color="primary">
+                    <Radio.Item value="basic" label="Basic (Free)" />
+                    <Radio.Item value="pro" label="Pro ($9/mo)" />
+                    <Radio.Item value="enterprise" label="Enterprise (Coming Soon)" disabled />
+                </Radio>
+                
+                <Text size="sm" class="opacity-70">
+                    Selected tier: {form.tier}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Survey Example
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Radio, Card, Button, Divider, Text, Col, Heading } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const survey = signal({
+        satisfaction: '',
+        recommend: ''
+    });
+    
+    const handleSubmit = () => {
+        alert(`Satisfaction: ${survey.satisfaction}\nWould recommend: ${survey.recommend}`);
+    };
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-6">
+                <Heading level={3} size="lg">Customer Survey</Heading>
+                
+                <Col gap="2">
+                    <Text weight="medium" class="mb-2">How satisfied are you with our service?</Text>
+                    <Radio model={() => survey.satisfaction} name="satisfaction" color="primary">
+                        <Radio.Item value="very-satisfied" label="Very satisfied" />
+                        <Radio.Item value="satisfied" label="Satisfied" />
+                        <Radio.Item value="neutral" label="Neutral" />
+                        <Radio.Item value="dissatisfied" label="Dissatisfied" />
+                        <Radio.Item value="very-dissatisfied" label="Very dissatisfied" />
+                    </Radio>
+                </Col>
+                
+                <Divider />
+                
+                <Col gap="2">
+                    <Text weight="medium" class="mb-2">Would you recommend us to others?</Text>
+                    <Radio model={() => survey.recommend} name="recommend" direction="horizontal" color="primary">
+                        <Radio.Item value="yes" label="Yes" />
+                        <Radio.Item value="maybe" label="Maybe" />
+                        <Radio.Item value="no" label="No" />
+                    </Radio>
+                </Col>
+                
+                <Button variant="primary" onClick={handleSubmit}>
+                    Submit Survey
+                </Button>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Radio (RadioGroup) Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => signal.property` | - | Model binding for selected value |
+| `name` | `string` | **required** | HTML name attribute for the radio group |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Size of all radio buttons |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Color of all radio buttons |
+| `direction` | `'horizontal' \| 'vertical'` | `'vertical'` | Layout direction |
+| `disabled` | `boolean` | `false` | Disable all radio buttons |
+| `class` | `string` | - | Additional CSS classes |
+
+### Radio.Item Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | Value when this option is selected |
+| `label` | `string` | - | Label text |
+| `disabled` | `boolean` | `false` | Disable this specific option |
+| `class` | `string` | - | Additional CSS classes |
+
+### Radio.Standalone Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | **required** | HTML name attribute |
+| `value` | `string` | **required** | Value of this radio button |
+| `checked` | `boolean` | `false` | Whether this radio is selected |
+| `label` | `string` | - | Label text |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Size |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Color |
+| `disabled` | `boolean` | `false` | Disable the radio |
+| `class` | `string` | - | Additional CSS classes |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `onChange` | `(value: string) => void` | Fired when selection changes |

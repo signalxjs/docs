@@ -1,0 +1,324 @@
+---
+title: Chat
+description: Chat bubble components for messaging interfaces
+layout: docs
+category: ["Components", "Data Display"]
+order: 250
+---
+
+# Chat
+
+Chat bubbles and messaging UI components for building chat interfaces.
+
+## Import
+
+```tsx
+import { Chat, ChatImage, ChatHeader, ChatBubble, ChatFooter } from '@sigx/daisyui';
+```
+
+## Basic Chat
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Chat, ChatBubble, Card, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Chat align="start">
+                        <ChatBubble>Hey! How are you?</ChatBubble>
+                    </Chat>
+                    
+                    <Chat align="end">
+                        <ChatBubble>I'm doing great, thanks for asking!</ChatBubble>
+                    </Chat>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Chat with Avatar
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Chat, ChatImage, ChatBubble, Card, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Chat align="start">
+                        <ChatImage placeholder="JD" />
+                        <ChatBubble>Good morning! Ready for the meeting?</ChatBubble>
+                    </Chat>
+                    
+                    <Chat align="end">
+                        <ChatImage placeholder="ME" bgColor="secondary" />
+                        <ChatBubble>Yes, just grabbing coffee first ☕</ChatBubble>
+                    </Chat>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Chat with Header and Footer
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Chat, ChatImage, ChatHeader, ChatBubble, ChatFooter, Card, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Chat align="start">
+                        <ChatImage placeholder="JD" />
+                        <ChatHeader name="John Doe" time="12:45" />
+                        <ChatBubble>Can you review my pull request?</ChatBubble>
+                        <ChatFooter>Delivered</ChatFooter>
+                    </Chat>
+                    
+                    <Chat align="end">
+                        <ChatImage placeholder="ME" bgColor="secondary" />
+                        <ChatHeader name="Me" time="12:46" />
+                        <ChatBubble>Sure! I'll check it out now.</ChatBubble>
+                        <ChatFooter>Seen at 12:46</ChatFooter>
+                    </Chat>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Chat Bubble Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Chat, ChatBubble, Card, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Chat align="start">
+                        <ChatBubble color="primary">Primary bubble</ChatBubble>
+                    </Chat>
+                    <Chat align="end">
+                        <ChatBubble color="secondary">Secondary bubble</ChatBubble>
+                    </Chat>
+                    <Chat align="start">
+                        <ChatBubble color="accent">Accent bubble</ChatBubble>
+                    </Chat>
+                    <Chat align="end">
+                        <ChatBubble color="info">Info bubble</ChatBubble>
+                    </Chat>
+                    <Chat align="start">
+                        <ChatBubble color="success">Success bubble</ChatBubble>
+                    </Chat>
+                    <Chat align="end">
+                        <ChatBubble color="warning">Warning bubble</ChatBubble>
+                    </Chat>
+                    <Chat align="start">
+                        <ChatBubble color="error">Error bubble</ChatBubble>
+                    </Chat>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Conversation Example
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Chat, ChatImage, ChatHeader, ChatBubble, Card, Input, Button, Row, Divider, Col, Flex } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const chat = signal({ 
+        newMessage: '',
+        messages: [
+            { id: 1, sender: 'Alice', avatar: 'A', text: 'Hey! Have you seen the new design?', time: '10:30', mine: false },
+            { id: 2, sender: 'Me', avatar: 'M', text: 'Not yet, can you share it?', time: '10:31', mine: true },
+            { id: 3, sender: 'Alice', avatar: 'A', text: 'Sure, here it is! Let me know what you think.', time: '10:32', mine: false },
+            { id: 4, sender: 'Me', avatar: 'M', text: 'Wow, this looks amazing! 🎉', time: '10:33', mine: true }
+        ]
+    });
+    
+    const sendMessage = () => {
+        if (!chat.newMessage.trim()) return;
+        
+        chat.messages = [...chat.messages, {
+            id: Date.now(),
+            sender: 'Me',
+            avatar: 'M',
+            text: chat.newMessage,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            mine: true
+        }];
+        chat.newMessage = '';
+    };
+    
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') sendMessage();
+    };
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4" maxHeight="400px" class="overflow-y-auto">
+                    {chat.messages.map(msg => (
+                        <Chat align={msg.mine ? 'end' : 'start'}>
+                            <ChatImage placeholder={msg.avatar} bgColor={msg.mine ? 'primary' : 'secondary'} />
+                            <ChatHeader name={msg.sender} time={msg.time} />
+                            <ChatBubble color={msg.mine ? 'primary' : undefined}>
+                                {msg.text}
+                            </ChatBubble>
+                        </Chat>
+                    ))}
+                </Col>
+            </Card.Body>
+            
+            <Divider />
+            <Row gap="2" padding="4">
+                <Flex grow>
+                    <Input 
+                        model={() => chat.newMessage}
+                        placeholder="Type a message..."
+                        onKeyPress={handleKeyPress}
+                    />
+                </Flex>
+                <Button variant="primary" onClick={sendMessage}>Send</Button>
+            </Row>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Multiple Bubbles
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Chat, ChatImage, ChatBubble, Card, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Chat align="start">
+                        <ChatImage placeholder="JD" />
+                        <ChatBubble>Hey!</ChatBubble>
+                        <ChatBubble>I have a question about the project.</ChatBubble>
+                        <ChatBubble>Are you available for a quick call?</ChatBubble>
+                    </Chat>
+                    
+                    <Chat align="end">
+                        <ChatImage placeholder="ME" bgColor="secondary" />
+                        <ChatBubble>Hi!</ChatBubble>
+                        <ChatBubble>Yes, give me 5 minutes.</ChatBubble>
+                    </Chat>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Image in Chat
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Chat, ChatImage, ChatBubble, ChatHeader, ChatFooter, Card, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="4">
+                    <Chat align="start">
+                        <ChatImage placeholder="JD" />
+                        <ChatHeader>John Doe</ChatHeader>
+                        <ChatBubble>Check out this view from my hike!</ChatBubble>
+                        <ChatBubble class="p-0 overflow-hidden">
+                            <img 
+                                src="https://picsum.photos/300/200" 
+                                alt="Shared image"
+                                class="max-w-xs"
+                            />
+                        </ChatBubble>
+                        <ChatFooter>Sent at 3:45 PM</ChatFooter>
+                    </Chat>
+                    
+                    <Chat align="end">
+                        <ChatImage placeholder="ME" bgColor="secondary" />
+                        <ChatBubble color="primary">That's beautiful! 😍</ChatBubble>
+                    </Chat>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Chat Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `align` | `'start' \| 'end'` | `'start'` | Bubble alignment |
+| `class` | `string` | - | Additional CSS classes |
+
+### Chat Slots
+
+| Slot | Description |
+|------|-------------|
+| `default` | ChatImage, ChatHeader, ChatBubble, ChatFooter components |
+
+### ChatBubble Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Bubble color |
+| `class` | `string` | - | Additional CSS classes |
+
+### ChatImage Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | - | Image URL for avatar |
+| `alt` | `string` | `'Avatar'` | Alt text for image avatar |
+| `placeholder` | `string` | - | Initials text; renders a colored circle instead of an image |
+| `bgColor` | `string` | `'primary'` | Background color for placeholder circle (e.g. `'secondary'`, `'accent'`) |
+| `class` | `string` | - | Additional CSS classes |
+
+### ChatHeader/ChatFooter Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | - | Additional CSS classes |

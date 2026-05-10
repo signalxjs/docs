@@ -1,0 +1,792 @@
+---
+title: Two-Way Binding
+description: Learn how to use model binding for two-way data synchronization in SignalX
+layout: docs
+category: Core Concepts
+order: 70
+---
+
+# Two-Way Binding
+
+SignalX provides a powerful `model` directive for two-way data binding between your reactive state and form elements or custom components.
+
+## Overview
+
+The model binding system separates concerns cleanly:
+
+- **For callers**: Use `model={() => state.property}` to create a two-way binding
+- **For components**: Access `props.model` to read/write values and forward bindings
+
+This architecture enables seamless binding forwarding to child components while maintaining full reactivity.
+
+## Model on Native Elements
+
+The simplest way to use two-way binding is with native HTML elements. Just use `model={() => state.property}`:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+
+const TextInputDemo = component(({ signal }) => {
+    const state = signal({ name: '' });
+    
+    return () => (
+        <div style="padding: 16px;">
+            <input 
+                model={() => state.name} 
+                placeholder="Type your name"
+            />
+            <p style="margin-top: 12px;">Hello, {state.name || 'stranger'}!</p>
+        </div>
+    );
+});
+
+render(<TextInputDemo />, "#sandbox");
+```
+
+The `model` prop accepts a **getter function** that returns a property from a reactive signal. SignalX automatically:
+- Sets the element's value from your state
+- Updates your state when the user types
+
+### Supported Elements
+
+#### Text & Number Inputs
+
+```tsx preview code live
+import { component, render } from 'sigx';
+
+const InputsDemo = component(({ signal }) => {
+    const form = signal({ 
+        username: '', 
+        age: 25 
+    });
+    
+    return () => (
+        <div style="padding: 16px;">
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <input type="text" model={() => form.username} placeholder="Username" />
+                <input type="number" model={() => form.age} style="width: 80px;" />
+            </div>
+            <p>User: {form.username || '(empty)'}, Age: {form.age}</p>
+        </div>
+    );
+});
+
+render(<InputsDemo />, "#sandbox");
+```
+
+#### Checkbox (Boolean)
+
+For a single checkbox, bind to a boolean value:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+
+const CheckboxDemo = component(({ signal }) => {
+    const state = signal({ agreed: false });
+    
+    return () => (
+        <div style="padding: 16px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" model={() => state.agreed} />
+                I agree to the terms
+            </label>
+            <p style="margin-top: 12px;">Agreed: <strong>{state.agreed ? 'Yes ✓' : 'No'}</strong></p>
+        </div>
+    );
+});
+
+render(<CheckboxDemo />, "#sandbox");
+```
+
+#### Checkbox (Array)
+
+For multiple checkboxes, bind to an array. The checkbox's `value` is added/removed from the array:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+
+const MultiCheckboxDemo = component(({ signal }) => {
+    const state = signal({ 
+        selectedFruits: [] as string[] 
+    });
+    
+    const labelStyle = "display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px;";
+    
+    return () => (
+        <div style="padding: 16px;">
+            <label style={labelStyle}>
+                <input type="checkbox" value="apple" model={() => state.selectedFruits} />
+                🍎 Apple
+            </label>
+            <label style={labelStyle}>
+                <input type="checkbox" value="banana" model={() => state.selectedFruits} />
+                🍌 Banana
+            </label>
+            <label style={labelStyle}>
+                <input type="checkbox" value="orange" model={() => state.selectedFruits} />
+                🍊 Orange
+            </label>
+            <p style="margin-top: 12px;">Selected: <strong>{state.selectedFruits.join(', ') || 'none'}</strong></p>
+        </div>
+    );
+});
+
+render(<MultiCheckboxDemo />, "#sandbox");
+```
+
+#### Radio Buttons
+
+Radio buttons update the bound value with their `value` attribute:
+
+```tsx preview code live
+import { component, render } from 'sigx';
+
+const RadioDemo = component(({ signal }) => {
+    const state = signal({ size: 'medium' });
+    
+    const labelStyle = "display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px;";
+    
+    return () => (
+        <div style="padding: 16px;">
+            <label style={labelStyle}>
+                <input type="radio" value="small" model={() => state.size} />
+                Small
+            </label>
+            <label style={labelStyle}>
+                <input type="radio" value="medium" model={() => state.size} />
+                Medium
+            </label>
+            <label style={labelStyle}>
+                <input type="radio" value="large" model={() => state.size} />
+                Large
+            </label>
+            <p style="margin-top: 12px;">Size: <strong>{state.size}</strong></p>
+        </div>
+    );
+});
+
+render(<RadioDemo />, "#sandbox");
+```
+
+#### Select
+
+```tsx preview code live
+import { component, render } from 'sigx';
+
+const SelectDemo = component(({ signal }) => {
+    const state = signal({ country: 'us' });
+    
+    const countries: Record<string, string> = {
+        us: 'United States',
+        uk: 'United Kingdom', 
+        ca: 'Canada'
+    };
+    
+    return () => (
+        <div style="padding: 16px;">
+            <select 
+                model={() => state.country}
+            >
+                <option value="us">United States</option>
+                <option value="uk">United Kingdom</option>
+                <option value="ca">Canada</option>
+            </select>
+            <p style="margin-top: 12px;">Country: <strong>{countries[state.country]}</strong></p>
+        </div>
+    );
+});
+
+render(<SelectDemo />, "#sandbox");
+```
+
+#### Textarea
+
+```tsx preview code live
+import { component, render } from 'sigx';
+
+const TextareaDemo = component(({ signal }) => {
+    const state = signal({ bio: '' });
+    
+    return () => (
+        <div style="padding: 16px;">
+            <textarea 
+                model={() => state.bio} 
+                placeholder="Tell us about yourself"
+                rows={4}
+                style="width: 100%; max-width: 300px;"
+            />
+            <p style="margin-top: 12px;">Characters: <strong>{state.bio.length}</strong></p>
+        </div>
+    );
+});
+
+render(<TextareaDemo />, "#sandbox");
+```
+
+---
+
+## Model on Custom Components
+
+To create a component that supports `model` binding, use the `Define.Model<T>` type helper. Components receive model bindings through a dedicated `models` object in the setup context, separate from `props`.
+
+### The Model Object
+
+When a component receives a `model` binding, SignalX provides a `Model<T>` object on `props` with:
+
+| Property | Description | Use Case |
+|----------|-------------|----------|
+| `props.model.value` | Current value (read/write) | Reading or updating the value |
+| `props.model` | The model object itself | Forwarding to child components |
+
+For named models like `model:title`, you get `props.title.value` and `props.title`.
+
+### Why Model Objects?
+
+The `Model<T>` object on props provides several benefits:
+
+1. **Clean forwarding**: `props.model` can be passed directly to child components
+2. **Always reactive**: Model value reads in render are tracked
+3. **Unified access**: Read and write via `props.model.value`
+4. **Type safety**: Full TypeScript inference for model types
+
+### Define.Model Type
+
+`Define.Model<T>` creates:
+- A `props.model` object with `.value` accessor
+- The model object for forwarding to children
+- An `update:modelValue` event for emitting updates
+
+```tsx preview code live
+import { component, render, type Define } from 'sigx';
+
+// Define a component that accepts model binding
+type RatingProps = Define.Model<number>;
+
+const Rating = component<RatingProps>(({ props }) => {
+    const stars = [1, 2, 3, 4, 5];
+    
+    return () => (
+        <div style="display: flex; gap: 4px;">
+            {stars.map(star => (
+                <button 
+                    onClick={() => { if (props.model) props.model.value = star; }}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '24px',
+                        cursor: 'pointer',
+                        color: star <= (props.model?.value ?? 0) ? '#fbbf24' : '#d1d5db',
+                        transition: 'color 0.15s'
+                    }}
+                >
+                    ★
+                </button>
+            ))}
+        </div>
+    );
+});
+
+// Usage with model binding
+const App = component(({ signal }) => {
+    const state = signal({ rating: 3 });
+    
+    return () => (
+        <div style="padding: 16px;">
+            <Rating model={() => state.rating} />
+            <p style="margin-top: 12px;">Rating: <strong>{state.rating}</strong> stars</p>
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+### Named Model Props
+
+For components that need multiple two-way bindings, use the two-argument form of `Define.Model`:
+
+```tsx preview code live
+import { component, render, type Define } from 'sigx';
+
+// Define.Model<'propName', Type> creates:
+// - props.propName (Model object for forwarding)
+// - props.propName.value (current value)
+// - update:propName event
+type RangeProps = 
+    & Define.Model<'min', number>
+    & Define.Model<'max', number>;
+
+const RangeSlider = component<RangeProps>(({ props }) => {
+    const labelStyle = "display: flex; align-items: center; gap: 12px; margin-bottom: 12px;";
+    const valueStyle = "min-width: 30px; font-weight: bold;";
+    
+    return () => (
+        <div>
+            <label style={labelStyle}>
+                <span style="min-width: 40px;">Min:</span>
+                <input 
+                    type="range" 
+                    min={0} 
+                    max={100}
+                    value={props.min?.value ?? 0}
+                    onInput={(e) => { if (props.min) props.min.value = Number((e.target as HTMLInputElement).value); }}
+                    style="flex: 1;"
+                />
+                <span style={valueStyle}>{props.min?.value}</span>
+            </label>
+            <label style={labelStyle}>
+                <span style="min-width: 40px;">Max:</span>
+                <input 
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={props.max?.value ?? 100}
+                    onInput={(e) => { if (props.max) props.max.value = Number((e.target as HTMLInputElement).value); }}
+                    style="flex: 1;"
+                />
+                <span style={valueStyle}>{props.max?.value}</span>
+            </label>
+        </div>
+    );
+});
+
+// Usage with named model bindings
+const Filter = component(({ signal }) => {
+    const range = signal({ min: 20, max: 80 });
+    
+    return () => (
+        <div style="padding: 16px; max-width: 320px;">
+            <RangeSlider 
+                model:min={() => range.min}
+                model:max={() => range.max}
+            />
+            <p style="margin-top: 8px; padding: 8px; background: #e5e7eb; border-radius: 6px; text-align: center; color: #111;">
+                Range: <strong>{range.min}</strong> – <strong>{range.max}</strong>
+            </p>
+        </div>
+    );
+});
+
+render(<Filter />, "#sandbox");
+```
+
+---
+
+## Forwarding Model Bindings
+
+One of the most powerful features of SignalX's model architecture is seamless forwarding to child components.
+
+### Direct Forwarding
+
+Since `props.model` is a `Model<T>` object, you can pass it directly to child components:
+
+```tsx
+import { component, type Define } from 'sigx';
+
+type WrapperProps = Define.Model<string>;
+
+const Wrapper = component<WrapperProps>(({ props, slots }) => {
+    return () => (
+        <div class="wrapper">
+            {/* Forward model binding directly to child */}
+            <Input model={props.model} />
+        </div>
+    );
+});
+
+// Usage: binding flows through Wrapper to Input
+<Wrapper model={() => form.email} />
+```
+
+The child component receives the same reactive binding—changes propagate all the way back to the original signal.
+
+### Forwarding Named Models
+
+For named models, use the corresponding model object from props:
+
+```tsx
+type FormFieldProps = 
+    & Define.Model<'text', string>
+    & Define.Model<'error', string>;
+
+const FormField = component<FormFieldProps>(({ props }) => {
+    return () => (
+        <div class="field">
+            {/* Forward to different child components */}
+            <Input model={props.text} />
+            <ErrorMessage model={props.error} />
+        </div>
+    );
+});
+
+// Usage
+<FormField 
+    model:text={() => form.email}
+    model:error={() => form.emailError}
+/>
+```
+
+### Forwarding via Context
+
+For deeply nested components (like menu items in a menu), provide the binding through context. Use a getter for clean reactive access:
+
+```tsx
+import { component, defineInjectable, defineProvide, type Define } from 'sigx';
+
+// Context with value getter and setter
+const menuContext = defineInjectable<{
+    readonly value: string | undefined;
+    setValue: (v: string) => void;
+}>(() => ({ 
+    value: undefined, 
+    setValue: () => {} 
+}));
+
+type MenuProps = Define.Model<string>;
+
+const Menu = component<MenuProps>(({ props, slots }) => {
+    // Provide reactive value access via getter
+    defineProvide(menuContext, () => ({
+        get value() { return props.model?.value; },
+        setValue: (v: string) => { if (props.model) props.model.value = v; }
+    }));
+    
+    return () => (
+        <ul class="menu">
+            {slots.default?.()}
+        </ul>
+    );
+});
+
+type MenuItemProps = Define.Prop<'value', string>;
+
+const MenuItem = component<MenuItemProps>(({ props, slots }) => {
+    const ctx = menuContext();
+    
+    return () => {
+        const isActive = ctx.value === props.value;
+        
+        return (
+            <li 
+                class={isActive ? "active" : ""}
+                onClick={() => ctx.setValue(props.value)}
+            >
+                {slots.default?.()}
+            </li>
+        );
+    };
+});
+
+// Usage
+const Nav = component(({ signal }) => {
+    const nav = signal({ active: 'home' });
+    
+    return () => (
+        <Menu model={() => nav.active}>
+            <MenuItem value="home">Home</MenuItem>
+            <MenuItem value="about">About</MenuItem>
+            <MenuItem value="contact">Contact</MenuItem>
+        </Menu>
+    );
+});
+```
+
+This approach:
+- **Clean reads**: `ctx.value` — the getter is called automatically
+- **Clean writes**: `ctx.setValue(v)` — explicit setter call
+- **Stays reactive**: The getter accesses `props.model.value` inside the render function
+
+---
+
+## How It Works
+
+When you write `model={() => state.property}`:
+
+1. **Getter function**: The `() => state.property` is a function that accesses a reactive property
+2. **Detection**: SignalX's `detectAccess()` function intercepts the property access to extract `[stateObj, "property"]`
+3. **JSX Processing**: The JSX runtime transforms this into:
+   - For components: A `Model<T>` object on `props` with `value` accessor and binding info
+   - For native elements: Sets up value binding and event listeners
+4. **Component receives**: The model object is available on `props.model`
+
+### Component Model Flow
+
+```
+Caller: model={() => state.property}
+    ↓
+JSX Runtime: detectAccess → [state, "property"]
+    ↓
+VNode: props.$models = { model: Model<T> }
+    ↓
+Renderer: Merges model into props
+    ↓
+Component: Access via props.model.value
+    ↓
+Update: props.model.value = newValue → state.property = newValue
+```
+
+### Forwarding Flow
+
+```
+Parent receives: model={() => nav.active}
+    ↓
+Parent's props.model = Model<string>
+    ↓
+Forward: <Child model={props.model} />
+    ↓
+Child receives same model object
+    ↓
+Child props.model.value = x updates original nav.active
+```
+
+---
+
+## Best Practices
+
+### Use props.model for Model Values
+
+Access model values from the `props` object:
+
+```tsx
+const Input = component<Define.Model<string>>(({ props }) => {
+    return () => (
+        <input 
+            value={props.model?.value ?? ''}
+            onInput={(e) => { if (props.model) props.model.value = (e.target as HTMLInputElement).value; }}
+        />
+    );
+});
+```
+
+### Use Signals or Writable Computed
+
+Bind to signal properties or writable computed values:
+
+```tsx
+// ✅ Good - binds to signal property
+<input model={() => state.name} />
+
+// ✅ Good - writable computed works with model
+<input model={() => fullName.value} />
+
+// ❌ Bad - read-only computed isn't settable
+<input model={() => readOnlyComputed.value} />
+
+// ❌ Bad - expressions aren't bindable
+<input model={() => state.name.toUpperCase()} />
+```
+
+### Writable Computed Example
+
+Writable computed values work seamlessly with model binding, enabling transformations in both directions:
+
+```tsx preview code live
+import { component, computed, render } from 'sigx';
+
+const TemperatureConverter = component(({ signal }) => {
+    const state = signal({ celsius: 20 });
+    
+    // Writable computed for Fahrenheit conversion
+    const fahrenheit = computed({
+        get: () => state.celsius * 9/5 + 32,
+        set: (f) => { state.celsius = (f - 32) * 5/9; }
+    });
+    
+    return () => (
+        <div style="padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input 
+                        type="number" 
+                        model={() => state.celsius}
+                        style="width: 80px; text-align: center;"
+                    />
+                    <span>°C</span>
+                </label>
+                <span style="color: #6b7280;">=</span>
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input 
+                        type="number"
+                        model={() => fahrenheit.value}
+                        style="width: 80px; text-align: center;"
+                    />
+                    <span>°F</span>
+                </label>
+            </div>
+            <p style="color: #6b7280; font-size: 14px;">
+                Edit either field — both stay in sync!
+            </p>
+        </div>
+    );
+});
+
+render(<TemperatureConverter />, "#sandbox");
+```
+
+The `fahrenheit` computed automatically converts between units. When you type in the Fahrenheit field, the setter updates `state.celsius`, which in turn updates the Fahrenheit display.
+
+### Forward with props.model
+
+When forwarding bindings, pass the model object from props:
+
+```tsx
+// ✅ Good - forwards the model object
+<ChildInput model={props.model} />
+
+// ✅ Good - named model forwarding
+<ChildInput model={props.title} />
+```
+
+### Type Your Define.Model Props
+
+For TypeScript users, always specify the type:
+
+```tsx
+type FormProps = Define.Model<string>;  // For string values
+type ToggleProps = Define.Model<boolean>;  // For boolean values
+type CounterProps = Define.Model<number>;  // For number values
+
+// Named models
+type EditorProps = Define.Model<'content', string>;
+```
+
+### Combine with Other Props
+
+`Define.Model` composes with other type helpers:
+
+```tsx
+import { type Define } from 'sigx';
+
+type InputProps = 
+    & Define.Model<string>
+    & Define.Prop<'placeholder', string, false>
+    & Define.Prop<'disabled', boolean, false>
+    & Define.Event<'blur', FocusEvent>;
+```
+
+---
+
+## Model Type
+
+For advanced use cases, you can import the `Model<T>` type:
+
+```tsx
+import { Model } from 'sigx';
+
+// Model<T> provides:
+// - .value: T (read/write)
+// - .binding: [stateObj, key, handler] (internal)
+
+type ContextType = {
+    model?: Model<string>;
+};
+```
+
+This is useful when:
+- Creating context types for model forwarding
+- Building wrapper components that pass bindings
+- Writing utility functions that work with models
+
+---
+
+## Complete Example
+
+Here's a complete form example showing the full model binding architecture:
+
+```tsx preview code live
+import { component, render, type Define } from 'sigx';
+
+// Reusable form field with text and error models
+type FormFieldProps = 
+    & Define.Model<'text', string>
+    & Define.Model<'error', string>
+    & Define.Prop<'label', string>;
+
+const FormField = component<FormFieldProps>(({ props }) => {
+    function handleInput(e: Event) {
+        const text = (e.target as HTMLInputElement).value;
+        if (props.text) props.text.value = text;
+        if (props.error?.value) {
+            props.error.value = '';
+        }
+    }
+    
+    return () => (
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">
+                {props.label}
+            </label>
+            <input 
+                value={props.text?.value ?? ''}
+                style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: props.error?.value ? '2px solid #ef4444' : '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                }}
+                onInput={handleInput}
+            />
+            {props.error?.value && (
+                <span style="color: #ef4444; font-size: 12px; margin-top: 4px; display: block;">
+                    {props.error.value}
+                </span>
+            )}
+        </div>
+    );
+});
+
+// Main form component
+const ContactForm = component(({ signal }) => {
+    const form = signal({
+        name: '',
+        nameError: '',
+        email: '',
+        emailError: ''
+    });
+    
+    function validate() {
+        let valid = true;
+        if (!form.name) {
+            form.nameError = 'Name is required';
+            valid = false;
+        }
+        if (!form.email.includes('@')) {
+            form.emailError = 'Invalid email';
+            valid = false;
+        }
+        return valid;
+    }
+    
+    function handleSubmit() {
+        if (validate()) {
+            alert(`Submitted: ${form.name}, ${form.email}`);
+        }
+    }
+    
+    return () => (
+        <form 
+            style="max-width: 320px; padding: 20px;"
+            onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}
+        >
+            <FormField 
+                label="Name"
+                model:text={() => form.name}
+                model:error={() => form.nameError}
+            />
+            <FormField 
+                label="Email"
+                model:text={() => form.email}
+                model:error={() => form.emailError}
+            />
+            <button type="submit">
+                Submit
+            </button>
+        </form>
+    );
+});
+
+render(<ContactForm />, "#sandbox");
+```

@@ -1,0 +1,218 @@
+---
+title: Kbd
+description: Kbd is used to display keyboard keys and shortcuts
+layout: docs
+category: ["Components", "Feedback"]
+order: 418
+---
+
+# Kbd
+
+Kbd is used to display keyboard keys and shortcuts.
+
+## Import
+
+```tsx
+import { Kbd } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Display individual keyboard keys.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Kbd, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" align="center">
+            <Kbd>A</Kbd>
+            <Kbd>B</Kbd>
+            <Kbd>C</Kbd>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+Kbd supports five sizes: `xs`, `sm`, `md`, `lg`, and `xl`.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Kbd, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Kbd size="xs">Xsmall</Kbd>
+            <Kbd size="sm">Small</Kbd>
+            <Kbd size="md">Medium</Kbd>
+            <Kbd size="lg">Large</Kbd>
+            <Kbd size="xl">Xlarge</Kbd>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Inline Context
+
+Use Kbd inline with text.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Kbd, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Text>Press <Kbd size="sm">F</Kbd> to pay respects.</Text>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Key Combinations
+
+Display keyboard shortcuts with multiple keys.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Kbd, Row, Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <Row align="center" gap="2">
+                <Text class="w-24">Copy:</Text>
+                <Kbd>Ctrl</Kbd>
+                <Text>+</Text>
+                <Kbd>C</Kbd>
+            </Row>
+            <Row align="center" gap="2">
+                <Text class="w-24">Paste:</Text>
+                <Kbd>Ctrl</Kbd>
+                <Text>+</Text>
+                <Kbd>V</Kbd>
+            </Row>
+            <Row align="center" gap="2">
+                <Text class="w-24">Save:</Text>
+                <Kbd>Ctrl</Kbd>
+                <Text>+</Text>
+                <Kbd>S</Kbd>
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Function Keys
+
+Display macOS-style modifier keys.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Kbd, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" align="center">
+            <Kbd>⌘</Kbd>
+            <Kbd>⌥</Kbd>
+            <Kbd>⇧</Kbd>
+            <Kbd>⌃</Kbd>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Arrow Keys
+
+Display arrow key layout.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Kbd, Row, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col align="center" gap="1">
+            <Kbd>▲</Kbd>
+            <Row gap="1">
+                <Kbd>◀</Kbd>
+                <Kbd>▼</Kbd>
+                <Kbd>▶</Kbd>
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Full Keyboard Layout
+
+Display a full QWERTY keyboard row.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Kbd, Col, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="1" align="center">
+            <Row gap="1">
+                <Kbd>q</Kbd>
+                <Kbd>w</Kbd>
+                <Kbd>e</Kbd>
+                <Kbd>r</Kbd>
+                <Kbd>t</Kbd>
+                <Kbd>y</Kbd>
+                <Kbd>u</Kbd>
+                <Kbd>i</Kbd>
+                <Kbd>o</Kbd>
+                <Kbd>p</Kbd>
+            </Row>
+            <Row gap="1">
+                <Kbd>a</Kbd>
+                <Kbd>s</Kbd>
+                <Kbd>d</Kbd>
+                <Kbd>f</Kbd>
+                <Kbd>g</Kbd>
+                <Kbd>h</Kbd>
+                <Kbd>j</Kbd>
+                <Kbd>k</Kbd>
+                <Kbd>l</Kbd>
+            </Row>
+            <Row gap="1">
+                <Kbd>z</Kbd>
+                <Kbd>x</Kbd>
+                <Kbd>c</Kbd>
+                <Kbd>v</Kbd>
+                <Kbd>b</Kbd>
+                <Kbd>n</Kbd>
+                <Kbd>m</Kbd>
+                <Kbd>/</Kbd>
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | - | Key size |
+| `class` | `string` | - | Additional CSS classes |

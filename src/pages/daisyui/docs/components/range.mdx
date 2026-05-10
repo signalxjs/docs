@@ -1,0 +1,307 @@
+---
+title: Range
+description: Range slider for selecting numeric values within a range
+layout: docs
+category: ["Components", "Data Input"]
+order: 540
+---
+
+# Range
+
+Range slider component for selecting numeric values with model binding support.
+
+## Import
+
+```tsx
+import { Range, Row, Col, Heading, Text } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Use `model` for two-way binding:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Range, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ value: 50 });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Range 
+                    model={() => form.value}
+                    color="primary"
+                />
+                
+                <Text size="sm" class="opacity-70">
+                    Value: {form.value}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Range, Col, Heading } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="6">
+            <Col gap="2">
+                <Heading level={4} size="sm">Extra Small</Heading>
+                <Range size="xs" color="primary" />
+            </Col>
+            <Col gap="2">
+                <Heading level={4} size="sm">Small</Heading>
+                <Range size="sm" color="primary" />
+            </Col>
+            <Col gap="2">
+                <Heading level={4} size="sm">Medium (default)</Heading>
+                <Range size="md" color="primary" />
+            </Col>
+            <Col gap="2">
+                <Heading level={4} size="sm">Large</Heading>
+                <Range size="lg" color="primary" />
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Range, Col } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const values = signal({
+        primary: 60,
+        secondary: 60,
+        accent: 60,
+        info: 60,
+        success: 60,
+        warning: 60,
+        error: 60
+    });
+    
+    return () => (
+        <Col gap="4">
+            <Range model={() => values.primary} color="primary" />
+            <Range model={() => values.secondary} color="secondary" />
+            <Range model={() => values.accent} color="accent" />
+            <Range model={() => values.info} color="info" />
+            <Range model={() => values.success} color="success" />
+            <Range model={() => values.warning} color="warning" />
+            <Range model={() => values.error} color="error" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Min/Max
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Range, Card, FormField, Row, Text } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const form = signal({ temperature: 20 });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <FormField label={`Temperature: ${form.temperature}°C`}>
+                    <Range 
+                        model={() => form.temperature}
+                        min={-10}
+                        max={40}
+                        color="warning"
+                    />
+                </FormField>
+                
+                <Row justify="between" class="text-xs opacity-50">
+                    <Text as="span" size="xs">-10°C</Text>
+                    <Text as="span" size="xs">40°C</Text>
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Step
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Range, Card, FormField, Row, Text } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const form = signal({ quantity: 10 });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <FormField label={`Quantity: ${form.quantity} items`}>
+                    <Range 
+                        model={() => form.quantity}
+                        min={0}
+                        max={100}
+                        step={10}
+                        color="primary"
+                    />
+                </FormField>
+                
+                <Row justify="between" class="text-xs opacity-50">
+                    <Text as="span" size="xs">0</Text>
+                    <Text as="span" size="xs">50</Text>
+                    <Text as="span" size="xs">100</Text>
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With FormField
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Range, FormField, Card } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ volume: 50, brightness: 75 });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-6">
+                <FormField label={`Volume: ${form.volume}%`}>
+                    <Range 
+                        model={() => form.volume}
+                        min={0}
+                        max={100}
+                        color="primary"
+                    />
+                </FormField>
+                
+                <FormField label={`Brightness: ${form.brightness}%`}>
+                    <Range 
+                        model={() => form.brightness}
+                        min={0}
+                        max={100}
+                        color="warning"
+                    />
+                </FormField>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Price Range Filter
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Range, Card, Badge, Text, Row, Col, Heading } from '@sigx/daisyui';
+const Demo = component(({ signal }) => {
+    const filter = signal({ minPrice: 0, maxPrice: 500 });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-6">
+                <Heading level={3} size="lg">Price Filter</Heading>
+                
+                <Col gap="4">
+                    <Col gap="2">
+                        <Row justify="between" class="mb-2">
+                            <Text as="span" size="sm">Min Price</Text>
+                            <Badge variant="ghost">${filter.minPrice}</Badge>
+                        </Row>
+                        <Range 
+                            model={() => filter.minPrice}
+                            min={0}
+                            max={filter.maxPrice}
+                            step={10}
+                            color="primary"
+                        />
+                    </Col>
+                    
+                    <Col gap="2">
+                        <Row justify="between" class="mb-2">
+                            <Text as="span" size="sm">Max Price</Text>
+                            <Badge variant="ghost">${filter.maxPrice}</Badge>
+                        </Row>
+                        <Range 
+                            model={() => filter.maxPrice}
+                            min={filter.minPrice}
+                            max={1000}
+                            step={10}
+                            color="primary"
+                        />
+                    </Col>
+                </Col>
+                
+                <Text align="center" weight="medium">
+                    ${filter.minPrice} - ${filter.maxPrice}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Disabled State
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Range } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Range 
+            min={0}
+            max={100}
+            color="primary"
+            disabled
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => signal.property` | - | Model binding for numeric value |
+| `name` | `string` | - | Range name for form submission |
+| `min` | `number` | `0` | Minimum value |
+| `max` | `number` | `100` | Maximum value |
+| `step` | `number` | `1` | Step increment |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Range slider size |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Slider color |
+| `disabled` | `boolean` | `false` | Disable the range slider |
+| `class` | `string` | - | Additional CSS classes |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `onChange` | `(value: number) => void` | Fired when value changes |

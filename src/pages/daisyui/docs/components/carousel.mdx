@@ -1,0 +1,397 @@
+---
+title: Carousel
+description: Carousel component for sliding content
+layout: docs
+category: ["Components", "Data Display"]
+order: 240
+---
+
+# Carousel
+
+Carousel for displaying sliding content with navigation.
+
+## Import
+
+```tsx
+import { Carousel, CarouselItem } from '@sigx/daisyui';
+```
+
+## Basic Carousel
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Carousel, CarouselItem, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const images = [
+        'https://picsum.photos/400/200?random=1',
+        'https://picsum.photos/400/200?random=2',
+        'https://picsum.photos/400/200?random=3',
+        'https://picsum.photos/400/200?random=4'
+    ];
+    
+    return () => (
+        <Card>
+            <Carousel class="rounded-box">
+                {images.map((src, i) => (
+                    <CarouselItem id={`slide${i}`}>
+                        <img src={src} class="w-full" alt={`Slide ${i + 1}`} />
+                    </CarouselItem>
+                ))}
+            </Carousel>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Carousel with Navigation
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Carousel, CarouselItem, Card, Button, Row, Heading } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const state = signal({ currentSlide: 0 });
+    const slides = [1, 2, 3, 4, 5];
+    
+    const goTo = (index) => {
+        state.currentSlide = index;
+        document.getElementById(`item${index}`).scrollIntoView({ behavior: 'smooth', inline: 'start' });
+    };
+    
+    const next = () => goTo((state.currentSlide + 1) % slides.length);
+    const prev = () => goTo((state.currentSlide - 1 + slides.length) % slides.length);
+    
+    return () => (
+        <Card class="p-4 space-y-4">
+            <Carousel class="rounded-box">
+                {slides.map((num, i) => (
+                    <CarouselItem id={`item${i}`} class="w-full">
+                        <Card class="w-full h-48 bg-base-200">
+                            <Card.Body class="items-center justify-center">
+                                <Heading level={3} size="3xl">Slide {num}</Heading>
+                            </Card.Body>
+                        </Card>
+                    </CarouselItem>
+                ))}
+            </Carousel>
+            
+                <Row justify="between" align="center">
+                    <Button variant="circle" onClick={prev}>❮</Button>
+                    <Row gap="2">
+                        {slides.map((_, i) => (
+                            <Button
+                                size="xs"
+                                variant={state.currentSlide === i ? 'primary' : 'ghost'}
+                                onClick={() => goTo(i)}
+                            >
+                                {i + 1}
+                            </Button>
+                        ))}
+                    </Row>
+                    <Button variant="circle" onClick={next}>❯</Button>
+            </Row>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Full-bleed Carousel
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Carousel, CarouselItem, Card, Heading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const cards = [
+        { title: 'Card 1', color: 'bg-primary text-primary-content' },
+        { title: 'Card 2', color: 'bg-secondary text-secondary-content' },
+        { title: 'Card 3', color: 'bg-accent text-accent-content' },
+        { title: 'Card 4', color: 'bg-neutral text-neutral-content' }
+    ];
+    
+    return () => (
+        <Card>
+            <Carousel variant="full" class="w-full">
+                {cards.map((card, i) => (
+                    <CarouselItem id={`fb${i}`} class="w-full">
+                        <Card class={`w-full h-64 ${card.color}`}>
+                            <Card.Body class="items-center justify-center">
+                                <Heading level={2} size="4xl">{card.title}</Heading>
+                            </Card.Body>
+                        </Card>
+                    </CarouselItem>
+                ))}
+            </Carousel>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Carousel with Half-width Items
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Carousel, CarouselItem, Card, Text, Heading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const products = [
+        { name: 'Product 1', price: '$29', img: 'https://picsum.photos/200/200?random=10' },
+        { name: 'Product 2', price: '$49', img: 'https://picsum.photos/200/200?random=11' },
+        { name: 'Product 3', price: '$19', img: 'https://picsum.photos/200/200?random=12' },
+        { name: 'Product 4', price: '$39', img: 'https://picsum.photos/200/200?random=13' },
+        { name: 'Product 5', price: '$59', img: 'https://picsum.photos/200/200?random=14' },
+        { name: 'Product 6', price: '$25', img: 'https://picsum.photos/200/200?random=15' }
+    ];
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <Heading level={3} size="lg">Featured Products</Heading>
+                <Carousel class="space-x-4 rounded-box">
+                    {products.map((product, i) => (
+                        <CarouselItem id={`prod${i}`} class="w-1/2">
+                            <Card class="bg-base-200 w-full">
+                                <img src={product.img} alt={product.name} class="w-full h-32 object-cover" />
+                                <Card.Body class="p-3">
+                                    <Text weight="semibold">{product.name}</Text>
+                                    <Text color="primary" weight="bold">{product.price}</Text>
+                                </Card.Body>
+                            </Card>
+                        </CarouselItem>
+                    ))}
+                </Carousel>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Vertical Carousel
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Carousel, CarouselItem, Card, Heading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const items = [1, 2, 3, 4, 5];
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <Carousel vertical class="h-96 rounded-box">
+                    {items.map((num, i) => (
+                        <CarouselItem id={`vert${i}`} class="h-full">
+                            <Card class={`w-full h-full ${
+                                i % 2 === 0 ? 'bg-primary text-primary-content' : 'bg-secondary text-secondary-content'
+                            }`}>
+                                <Card.Body class="items-center justify-center">
+                                    <Heading level={3} size="4xl">{num}</Heading>
+                                </Card.Body>
+                            </Card>
+                        </CarouselItem>
+                    ))}
+                </Carousel>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Center Snap
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Carousel, CarouselItem, Card, Heading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const items = [1, 2, 3, 4, 5, 6, 7];
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <Carousel snap="center" class="p-4 space-x-4 rounded-box">
+                    {items.map((num, i) => (
+                        <CarouselItem id={`center${i}`}>
+                            <Card class="w-64 h-48 bg-neutral text-neutral-content">
+                                <Card.Body class="items-center justify-center">
+                                    <Heading level={3} size="4xl">{num}</Heading>
+                                </Card.Body>
+                            </Card>
+                        </CarouselItem>
+                    ))}
+                </Carousel>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Carousel with Indicators
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Carousel, CarouselItem, Card, Row, Button, Heading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const slides = [
+        { id: 'a', content: 'First Slide', bg: 'bg-primary text-primary-content' },
+        { id: 'b', content: 'Second Slide', bg: 'bg-secondary text-secondary-content' },
+        { id: 'c', content: 'Third Slide', bg: 'bg-accent text-accent-content' },
+        { id: 'd', content: 'Fourth Slide', bg: 'bg-info text-info-content' }
+    ];
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Carousel class="w-full rounded-box">
+                    {slides.map((slide) => (
+                        <CarouselItem id={slide.id} class="w-full">
+                            <Card class={`w-full h-48 ${slide.bg}`}>
+                                <Card.Body class="items-center justify-center">
+                                    <Heading level={3} size="2xl">{slide.content}</Heading>
+                                </Card.Body>
+                            </Card>
+                        </CarouselItem>
+                    ))}
+                </Carousel>
+                
+                <Row gap="2" justify="center" class="w-full py-2">
+                    {slides.map((slide) => (
+                        <Button size="xs" onClick={() => document.getElementById(slide.id)?.scrollIntoView({ behavior: 'smooth', inline: 'start' })}>
+                            {slide.id.toUpperCase()}
+                        </Button>
+                    ))}
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Auto-play Carousel
+
+```tsx live preview
+import { component, render, onMount, onUnmount } from 'sigx';
+import { Carousel, CarouselItem, Card, Button, Badge, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const state = signal({ 
+        currentSlide: 0,
+        playing: true
+    });
+    
+    const slides = [
+        { text: 'Slide 1', bg: 'from-primary to-secondary' },
+        { text: 'Slide 2', bg: 'from-secondary to-accent' },
+        { text: 'Slide 3', bg: 'from-accent to-info' },
+        { text: 'Slide 4', bg: 'from-info to-success' },
+        { text: 'Slide 5', bg: 'from-success to-warning' }
+    ];
+    
+    let intervalId;
+    
+    const startAutoplay = () => {
+        intervalId = setInterval(() => {
+            if (state.playing) {
+                state.currentSlide = (state.currentSlide + 1) % slides.length;
+            }
+        }, 3000);
+    };
+    
+    const stopAutoplay = () => {
+        if (intervalId) clearInterval(intervalId);
+    };
+    
+    onMount(() => startAutoplay());
+    onUnmount(() => stopAutoplay());
+    
+    const togglePlay = () => {
+        state.playing = !state.playing;
+    };
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <div class="relative w-full h-48 overflow-hidden rounded-box">
+                    {slides.map((slide, i) => (
+                        <div 
+                            class={`absolute inset-0 transition-opacity duration-500 bg-gradient-to-r ${slide.bg} flex items-center justify-center text-white text-3xl font-bold ${
+                                state.currentSlide === i ? 'opacity-100' : 'opacity-0'
+                            }`}
+                        >
+                            <Text size="3xl" weight="bold" color="white">{slide.text}</Text>
+                        </div>
+                    ))}
+                </div>
+                
+                <Row justify="between" align="center">
+                    <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={togglePlay}
+                    >
+                        {state.playing ? '⏸ Pause' : '▶ Play'}
+                    </Button>
+                    
+                    <Row gap="2">
+                        {slides.map((_, i) => (
+                            <Button
+                                size="xs"
+                                variant={state.currentSlide === i ? 'primary' : 'ghost'}
+                                onClick={() => state.currentSlide = i}
+                            >
+                                {i + 1}
+                            </Button>
+                        ))}
+                    </Row>
+                    
+                    <Badge variant="ghost">
+                        {state.currentSlide + 1} / {slides.length}
+                    </Badge>
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Carousel Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `vertical` | `boolean` | `false` | Vertical scrolling |
+| `snap` | `'start' \| 'center' \| 'end'` | `'start'` | Snap alignment |
+| `variant` | `'full'` | - | Full-bleed mode |
+| `class` | `string` | - | Additional CSS classes |
+
+### Carousel Slots
+
+| Slot | Description |
+|------|-------------|
+| `default` | CarouselItem components |
+
+### CarouselItem Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `id` | `string` | - | Unique identifier for navigation |
+| `class` | `string` | - | Additional CSS classes |

@@ -1,0 +1,520 @@
+---
+title: Flex / Row / Col
+description: Flexible layout components using Tailwind CSS flex utilities
+layout: docs
+category: ["Components", "Layout"]
+order: 340
+---
+
+# Flex / Row / Col
+
+Layout components for building flexible layouts with gap, alignment, and justify controls.
+
+## Import
+
+```tsx
+import { Flex, Row, Col } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+### Row (Horizontal)
+
+`Row` arranges children horizontally.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4">
+            <Button>Button 1</Button>
+            <Button>Button 2</Button>
+            <Button>Button 3</Button>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### Col (Vertical)
+
+`Col` arranges children vertically.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Col, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Button>Button 1</Button>
+            <Button>Button 2</Button>
+            <Button>Button 3</Button>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### Flex (Generic)
+
+`Flex` is the base component with configurable direction.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Flex, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Flex direction="row" gap="4">
+            <Button>Button 1</Button>
+            <Button>Button 2</Button>
+            <Button>Button 3</Button>
+        </Flex>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Gap
+
+Control spacing between items with the `gap` prop.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Col, Button, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="6">
+            <Col gap="2">
+                <Text size="sm" color="muted">gap="1"</Text>
+                <Row gap="1">
+                    <Button size="sm">A</Button>
+                    <Button size="sm">B</Button>
+                    <Button size="sm">C</Button>
+                </Row>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" color="muted">gap="4"</Text>
+                <Row gap="4">
+                    <Button size="sm">A</Button>
+                    <Button size="sm">B</Button>
+                    <Button size="sm">C</Button>
+                </Row>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" color="muted">gap="8"</Text>
+                <Row gap="8">
+                    <Button size="sm">A</Button>
+                    <Button size="sm">B</Button>
+                    <Button size="sm">C</Button>
+                </Row>
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Alignment
+
+Use `align` to control cross-axis alignment.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="6">
+            <Col gap="2">
+                <Text size="sm" color="muted">align="start"</Text>
+                <Row gap="4" align="start" background="base-200" rounded padding="2" height="20">
+                    <Row background="primary" padding="2" rounded="md">Short</Row>
+                    <Row background="secondary" padding="4" rounded="md">Tall</Row>
+                    <Row background="accent" padding="2" rounded="md">Short</Row>
+                </Row>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" color="muted">align="center"</Text>
+                <Row gap="4" align="center" background="base-200" rounded padding="2" height="20">
+                    <Row background="primary" padding="2" rounded="md">Short</Row>
+                    <Row background="secondary" padding="4" rounded="md">Tall</Row>
+                    <Row background="accent" padding="2" rounded="md">Short</Row>
+                </Row>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" color="muted">align="end"</Text>
+                <Row gap="4" align="end" background="base-200" rounded padding="2" height="20">
+                    <Row background="primary" padding="2" rounded="md">Short</Row>
+                    <Row background="secondary" padding="4" rounded="md">Tall</Row>
+                    <Row background="accent" padding="2" rounded="md">Short</Row>
+                </Row>
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Justify
+
+Use `justify` to control main-axis distribution.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Col, Button, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="6">
+            <Col gap="2">
+                <Text size="sm" color="muted">justify="start"</Text>
+                <Row gap="2" justify="start" background="base-200" rounded padding="2">
+                    <Button size="sm">A</Button>
+                    <Button size="sm">B</Button>
+                    <Button size="sm">C</Button>
+                </Row>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" color="muted">justify="center"</Text>
+                <Row gap="2" justify="center" background="base-200" rounded padding="2">
+                    <Button size="sm">A</Button>
+                    <Button size="sm">B</Button>
+                    <Button size="sm">C</Button>
+                </Row>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" color="muted">justify="end"</Text>
+                <Row gap="2" justify="end" background="base-200" rounded padding="2">
+                    <Button size="sm">A</Button>
+                    <Button size="sm">B</Button>
+                    <Button size="sm">C</Button>
+                </Row>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" color="muted">justify="between"</Text>
+                <Row gap="2" justify="between" background="base-200" rounded padding="2">
+                    <Button size="sm">A</Button>
+                    <Button size="sm">B</Button>
+                    <Button size="sm">C</Button>
+                </Row>
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Wrap
+
+Enable wrapping when items overflow.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap background="base-200" rounded padding="2" maxWidth="20rem">
+            <Button size="sm">Button 1</Button>
+            <Button size="sm">Button 2</Button>
+            <Button size="sm">Button 3</Button>
+            <Button size="sm">Button 4</Button>
+            <Button size="sm">Button 5</Button>
+            <Button size="sm">Button 6</Button>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Reverse Direction
+
+Use the `reverse` prop to reverse the order of items.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Col, Button, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="6">
+            <Col gap="2">
+                <Text size="sm" color="muted">Row reverse</Text>
+                <Row gap="2" reverse>
+                    <Button size="sm">1</Button>
+                    <Button size="sm">2</Button>
+                    <Button size="sm">3</Button>
+                </Row>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" color="muted">Col reverse</Text>
+                <Col gap="2" reverse>
+                    <Button size="sm">1</Button>
+                    <Button size="sm">2</Button>
+                    <Button size="sm">3</Button>
+                </Col>
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Inline
+
+Use `inline` prop for inline-flex behavior.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Text as="p">
+            This is text with an 
+            <Row inline gap="1" background="base-200" rounded="md" padding={{ x: "1" }} margin={{ x: "1" }}>
+                <Text color="primary">inline</Text>
+                <Text color="secondary">flex</Text>
+            </Row>
+            row in the middle.
+        </Text>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Styling Props
+
+Row and Col components include built-in styling props for common patterns.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Col, Button, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Row gap="4" padding="4" background="base-200" rounded>
+                <Text>Padding, background and rounded</Text>
+            </Row>
+            <Row gap="4" padding="4" background="primary" rounded="lg">
+                <Text>Primary background with lg rounded</Text>
+            </Row>
+            <Row gap="4" padding={{ x: "6", y: "3" }} background="secondary" rounded="full">
+                <Text>Different x/y padding with full rounded</Text>
+            </Row>
+            <Col gap="2" padding="4" background="accent" rounded="xl">
+                <Text>Accent column</Text>
+                <Text>with multiple items</Text>
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Width & Height
+
+Control dimensions with `width`, `height`, `minWidth`, `minHeight`, `maxWidth`, `maxHeight` props.
+
+Supports both Tailwind presets and arbitrary CSS values.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Col, Button, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Row gap="4" width="full" padding="4" background="base-200" rounded>
+                <Text>Full width row (width="full")</Text>
+            </Row>
+            <Row gap="4" width="1/2" padding="4" background="primary" rounded>
+                <Text>Half width row (width="1/2")</Text>
+            </Row>
+            <Row gap="4" width="400px" padding="4" background="secondary" rounded>
+                <Text>Arbitrary width (width="400px")</Text>
+            </Row>
+            <Col gap="2" width="200px" height="100px" padding="4" background="accent" rounded align="center" justify="center">
+                <Text>Fixed size box</Text>
+                <Text>200px × 100px</Text>
+            </Col>
+            <Row gap="4" maxWidth="50%" padding="4" background="neutral" rounded>
+                <Text>Max 50% width (maxWidth="50%")</Text>
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Common Patterns
+
+### Header with Actions
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Row, Button, Heading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row justify="between" align="center" padding="4" background="base-200" rounded>
+            <Heading level={2} size="lg">Page Title</Heading>
+            <Row gap="2">
+                <Button size="sm" variant="ghost">Cancel</Button>
+                <Button size="sm" variant="primary">Save</Button>
+            </Row>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### Form Layout
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Col, Row, FormField, Input, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4" maxWidth="24rem">
+            <Row gap="4">
+                <FormField label="First Name" class="flex-1">
+                    <Input placeholder="John" />
+                </FormField>
+                <FormField label="Last Name" class="flex-1">
+                    <Input placeholder="Doe" />
+                </FormField>
+            </Row>
+            <FormField label="Email">
+                <Input type="email" placeholder="john@example.com" />
+            </FormField>
+            <Row justify="end" gap="2">
+                <Button variant="ghost">Cancel</Button>
+                <Button variant="primary">Submit</Button>
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### Centered Content
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Col, Button, Heading, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4" align="center" justify="center" background="base-200" rounded padding="6" height="48">
+            <Heading level={2} size="xl">Welcome!</Heading>
+            <Text color="muted">Get started with your project</Text>
+            <Button variant="primary">Get Started</Button>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Flex Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `direction` | `'row' \| 'col' \| 'row-reverse' \| 'col-reverse'` | `'row'` | Flex direction |
+| `gap` | `SpacingValue \| SpacingObject` | - | Gap between items. Can be a single value `"4"` or object `{{ x: "4", y: "2" }}` |
+| `align` | `'start' \| 'center' \| 'end' \| 'stretch' \| 'baseline'` | - | Cross-axis alignment |
+| `justify` | `'start' \| 'center' \| 'end' \| 'between' \| 'around' \| 'evenly'` | - | Main-axis distribution |
+| `wrap` | `boolean` | `false` | Enable flex wrap |
+| `inline` | `boolean` | `false` | Use inline-flex instead of flex |
+| `padding` | `SpacingValue \| SpacingObject` | - | Padding. Can be `"4"` or `{{ x: "2", y: "4" }}` or `{{ top: "2", left: "4" }}` |
+| `margin` | `SpacingValue \| SpacingObject` | - | Margin. Same format as padding |
+| `width` | `SizeValue` | - | Width (e.g., `"full"`, `"screen"`, `"48"`, `"1/2"`) |
+| `height` | `SizeValue` | - | Height (e.g., `"full"`, `"screen"`, `"48"`, `"1/2"`) |
+| `minWidth` | `SizeValue` | - | Minimum width |
+| `minHeight` | `SizeValue` | - | Minimum height |
+| `maxWidth` | `SizeValue` | - | Maximum width |
+| `maxHeight` | `SizeValue` | - | Maximum height |
+| `rounded` | `boolean \| 'none' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| '3xl' \| 'full' \| 'box'` | - | Border radius (`true` = `rounded-box`) |
+| `background` | `'base-100' \| 'base-200' \| 'base-300' \| 'primary' \| 'secondary' \| 'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Background color (auto sets text color for semantic colors) |
+| `grow` | `boolean` | `false` | Enable flex-grow |
+| `shrink` | `boolean` | `false` | Enable flex-shrink |
+| `class` | `string` | - | Additional CSS classes |
+
+### SpacingValue
+
+`'0' | '1' | '2' | '3' | '4' | '5' | '6' | '8' | '10' | '12'`
+
+### SpacingObject
+
+```tsx
+{
+    all?: SpacingValue;
+    x?: SpacingValue;
+    y?: SpacingValue;
+    top?: SpacingValue;
+    right?: SpacingValue;
+    bottom?: SpacingValue;
+    left?: SpacingValue;
+}
+```
+
+### SizeValue
+
+Accepts Tailwind presets or arbitrary CSS values:
+
+```tsx
+// Tailwind presets
+width="48"       // → w-48 (12rem)
+width="full"     // → w-full (100%)
+width="1/2"      // → w-1/2 (50%)
+width="screen"   // → w-screen (100vw)
+
+// Arbitrary CSS values (auto-wrapped in [])
+width="400px"    // → w-[400px]
+width="70%"      // → w-[70%]
+width="calc(100% - 2rem)"  // → w-[calc(100%-2rem)]
+```
+
+**Tailwind presets:**
+- Numeric: `'0'` through `'96'`
+- Special: `'auto' | 'full' | 'screen' | 'min' | 'max' | 'fit'`
+- Fractions: `'1/2' | '1/3' | '2/3' | '1/4' | '2/4' | '3/4' | '1/5' | '2/5' | '3/5' | '4/5' | '1/6' | '5/6'`
+
+### Row Props
+
+Same as Flex props, but without `direction`. Adds:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `reverse` | `boolean` | `false` | Reverse row direction |
+
+### Col Props
+
+Same as Flex props, but without `direction`. Adds:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `reverse` | `boolean` | `false` | Reverse column direction |

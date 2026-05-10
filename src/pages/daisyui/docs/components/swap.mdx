@@ -1,0 +1,215 @@
+---
+title: Swap
+description: Swap component toggles between two states with rotate or flip animation
+layout: docs
+category: ["Components", "Feedback"]
+order: 450
+---
+
+# Swap
+
+Swap toggles the visibility of two elements using a checkbox, with optional rotate or flip animation. Built with `Swap.On`, `Swap.Off`, and optional `Swap.Indeterminate` sub-components.
+
+## Import
+
+```tsx
+import { Swap } from '@sigx/daisyui';
+```
+
+## Basic Text Swap
+
+Toggle between two text labels.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Swap } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Swap class="text-4xl">
+            <Swap.On>ON</Swap.On>
+            <Swap.Off>OFF</Swap.Off>
+        </Swap>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Rotate Effect
+
+Apply a rotation animation during the swap transition.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Swap, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Swap rotate class="text-6xl">
+            <Swap.On>
+                <Text class="text-6xl">🌙</Text>
+            </Swap.On>
+            <Swap.Off>
+                <Text class="text-6xl">☀️</Text>
+            </Swap.Off>
+        </Swap>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Flip Effect
+
+Apply a 3D flip animation during the swap transition.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Swap, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Swap flip class="text-6xl">
+            <Swap.On>
+                <Text class="text-6xl">😈</Text>
+            </Swap.On>
+            <Swap.Off>
+                <Text class="text-6xl">😇</Text>
+            </Swap.Off>
+        </Swap>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hamburger Button
+
+Combine Swap with button classes for a hamburger menu toggle.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Swap, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Swap rotate class="btn btn-circle">
+            <Swap.On>
+                <Text class="text-xl">✕</Text>
+            </Swap.On>
+            <Swap.Off>
+                <Text class="text-xl">☰</Text>
+            </Swap.Off>
+        </Swap>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Active (Class-based)
+
+Use the `active` prop to control the swap state without a checkbox interaction.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Swap, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Swap active class="text-4xl">
+            <Swap.On>
+                <Text class="text-4xl">Active content</Text>
+            </Swap.On>
+            <Swap.Off>
+                <Text class="text-4xl">Inactive content</Text>
+            </Swap.Off>
+        </Swap>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Volume Icons
+
+Swap between volume on and off icons with rotation.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Swap, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Swap rotate class="text-4xl">
+            <Swap.On>
+                <Text class="text-4xl">🔊</Text>
+            </Swap.On>
+            <Swap.Off>
+                <Text class="text-4xl">🔇</Text>
+            </Swap.Off>
+        </Swap>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Indeterminate State
+
+The `Swap.Indeterminate` sub-component renders content visible when the checkbox is in an indeterminate state.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Swap, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Swap class="text-4xl">
+            <Swap.On>
+                <Text class="text-4xl">✅</Text>
+            </Swap.On>
+            <Swap.Off>
+                <Text class="text-4xl">❌</Text>
+            </Swap.Off>
+            <Swap.Indeterminate>
+                <Text class="text-4xl">➖</Text>
+            </Swap.Indeterminate>
+        </Swap>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Swap
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `rotate` | `boolean` | `false` | Apply rotation animation effect |
+| `flip` | `boolean` | `false` | Apply 3D flip animation effect |
+| `active` | `boolean` | `false` | Activate swap display via class (no checkbox needed) |
+| `model` | `Signal<boolean>` | `undefined` | Two-way binding for controlled state |
+| `class` | `string` | `undefined` | Additional CSS classes |
+| `onChange` | `(checked: boolean) => void` | `undefined` | Callback when swap state changes |
+
+### Swap.On
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes for the on-state element |
+
+### Swap.Off
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes for the off-state element |
+
+### Swap.Indeterminate
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes for the indeterminate-state element |

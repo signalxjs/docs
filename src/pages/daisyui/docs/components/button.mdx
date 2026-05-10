@@ -1,0 +1,231 @@
+---
+title: Button
+description: Interactive button component with multiple variants, sizes, and states
+layout: docs
+category: ["Components", "Actions"]
+order: 100
+---
+
+# Button
+
+Buttons allow users to take actions with a single tap. They come in various styles and sizes.
+
+## Import
+
+```tsx
+import { Button, ButtonGroup, Row } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Button, Row } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Button>Default</Button> 
+            <Button variant="primary">Primary</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="accent">Accent</Button>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Variants
+
+Use the `variant` prop to change the button style.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Button, Row } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Button variant="neutral">Neutral</Button>
+            <Button variant="primary">Primary</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="accent">Accent</Button>
+            <Button variant="info">Info</Button>
+            <Button variant="success">Success</Button>
+            <Button variant="warning">Warning</Button>
+            <Button variant="error">Error</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button variant="link">Link</Button>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+Use the `size` prop to change button size.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Button, Row } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" align="center" wrap>
+            <Button size="xs">Extra Small</Button>
+            <Button size="sm">Small</Button>
+            <Button size="md">Medium</Button>
+            <Button size="lg">Large</Button>
+            <Button size="xl">Extra Large</Button>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## States
+
+Buttons support `disabled` and `loading` states.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Button, Row } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Button disabled>Disabled</Button>
+            <Button loading>Loading</Button>
+            <Button variant="primary" loading>Saving...</Button>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Styles
+
+Use `outline`, `soft`, or `dash` for alternative styles.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Button, Row } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Button variant="primary" outline>Outline</Button>
+            <Button variant="primary" soft>Soft</Button>
+            <Button variant="primary" dash>Dash</Button>
+            <Button variant="primary">Solid</Button>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Shapes
+
+Use `square` or `circle` for icon-only buttons.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Button, Row, Text } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Button square variant="primary"><Text>A</Text></Button>
+            <Button circle variant="primary"><Text>B</Text></Button>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Wide and Block
+
+Use `wide` for a wider button or `block` for full width.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Button, Stack } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Stack gap="2">
+            <Button wide variant="primary">Wide</Button>
+            <Button block variant="primary">Block</Button>
+        </Stack>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Active
+
+Force the active state with the `active` prop.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Button, Row } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" wrap>
+            <Button variant="primary">Default</Button>
+            <Button variant="primary" active>Active</Button>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Button Group
+
+Group related buttons together.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Button, ButtonGroup } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <ButtonGroup>
+            <Button>Left</Button>
+            <Button>Center</Button>
+            <Button>Right</Button>
+        </ButtonGroup>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Button Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'neutral' \| 'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error' \| 'ghost' \| 'link'` | `undefined` | Button color variant |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Button size |
+| `outline` | `boolean` | `false` | Use outline style |
+| `soft` | `boolean` | `false` | Use soft style |
+| `dash` | `boolean` | `false` | Use dashed-border style |
+| `wide` | `boolean` | `false` | Wider button |
+| `block` | `boolean` | `false` | Full-width button |
+| `square` | `boolean` | `false` | Square shape (icon button) |
+| `circle` | `boolean` | `false` | Circle shape (icon button) |
+| `active` | `boolean` | `false` | Force active state |
+| `disabled` | `boolean` | `false` | Disable the button |
+| `loading` | `boolean` | `false` | Show loading spinner |
+| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type |
+| `class` | `string` | `undefined` | Additional CSS classes |
+
+### ButtonGroup Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes |

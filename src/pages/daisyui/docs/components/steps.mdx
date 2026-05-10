@@ -1,0 +1,206 @@
+---
+title: Steps
+description: Steps component for showing progress through a multi-step process
+layout: docs
+category: ["Components", "Feedback"]
+order: 310
+---
+
+# Steps
+
+Display progress through a multi-step process with numbered or custom-content step indicators.
+
+## Import
+
+```tsx
+import { Steps, Card, Row, Button } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Steps } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Steps>
+            <Steps.Step color="primary">Register</Steps.Step>
+            <Steps.Step color="primary">Choose plan</Steps.Step>
+            <Steps.Step>Purchase</Steps.Step>
+            <Steps.Step>Receive product</Steps.Step>
+        </Steps>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+Each step can have a different color to indicate status.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Steps } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Steps>
+            <Steps.Step color="neutral">Neutral</Steps.Step>
+            <Steps.Step color="primary">Primary</Steps.Step>
+            <Steps.Step color="secondary">Secondary</Steps.Step>
+            <Steps.Step color="accent">Accent</Steps.Step>
+            <Steps.Step color="info">Info</Steps.Step>
+            <Steps.Step color="success">Success</Steps.Step>
+            <Steps.Step color="warning">Warning</Steps.Step>
+            <Steps.Step color="error">Error</Steps.Step>
+        </Steps>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Content (data-content)
+
+Use the `content` prop to display custom symbols in the step circle.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Steps } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Steps>
+            <Steps.Step color="neutral" content="?">Step 1</Steps.Step>
+            <Steps.Step color="neutral" content="!">Step 2</Steps.Step>
+            <Steps.Step color="neutral" content="✓">Step 3</Steps.Step>
+            <Steps.Step color="neutral" content="✕">Step 4</Steps.Step>
+            <Steps.Step color="neutral" content="★">Step 5</Steps.Step>
+            <Steps.Step color="neutral" content="●">Step 6</Steps.Step>
+        </Steps>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Vertical Steps
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Steps } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Steps vertical>
+            <Steps.Step color="primary">Register</Steps.Step>
+            <Steps.Step color="primary">Choose plan</Steps.Step>
+            <Steps.Step>Purchase</Steps.Step>
+            <Steps.Step>Receive product</Steps.Step>
+        </Steps>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Responsive (Vertical on Mobile, Horizontal on Large Screens)
+
+Use `vertical` with a responsive class override to switch layout at breakpoints.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Steps } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Steps vertical class="lg:steps-horizontal">
+            <Steps.Step color="primary">Register</Steps.Step>
+            <Steps.Step color="primary">Choose plan</Steps.Step>
+            <Steps.Step>Purchase</Steps.Step>
+            <Steps.Step>Receive product</Steps.Step>
+        </Steps>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Mixed Colors
+
+Combine different colors to show progress status.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Steps } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Steps>
+            <Steps.Step color="info">Ordered</Steps.Step>
+            <Steps.Step color="info">Shipped</Steps.Step>
+            <Steps.Step color="warning">In transit</Steps.Step>
+            <Steps.Step color="error">Delayed</Steps.Step>
+            <Steps.Step>Delivered</Steps.Step>
+        </Steps>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Scrollable Horizontal Steps
+
+Wrap with overflow utility for many steps.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Steps } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Steps class="overflow-x-auto">
+            <Steps.Step>Start</Steps.Step>
+            <Steps.Step color="secondary">Step 2</Steps.Step>
+            <Steps.Step color="secondary">Step 3</Steps.Step>
+            <Steps.Step color="secondary">Step 4</Steps.Step>
+            <Steps.Step color="secondary">Step 5</Steps.Step>
+            <Steps.Step color="secondary">Step 6</Steps.Step>
+            <Steps.Step color="secondary">Step 7</Steps.Step>
+            <Steps.Step>Step 8</Steps.Step>
+            <Steps.Step>Step 9</Steps.Step>
+            <Steps.Step>End</Steps.Step>
+        </Steps>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Steps Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `StepItem[]` | - | Step items (alternative to compound pattern) |
+| `model` | `Signal<string>` | - | Current step ID (for items mode) |
+| `vertical` | `boolean` | `false` | Vertical layout (`steps-vertical`) |
+| `horizontal` | `boolean` | `false` | Horizontal layout (`steps-horizontal`) |
+| `class` | `string` | - | Additional CSS classes |
+
+### Steps.Step Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `color` | `'neutral' \| 'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Step color |
+| `content` | `string` | - | Custom content in step circle (`data-content` attribute) |
+| `class` | `string` | - | Additional CSS classes |
+
+### Steps.Step Slots
+
+| Slot | Description |
+|------|-------------|
+| `default` | Step label text |

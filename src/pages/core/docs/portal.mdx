@@ -1,0 +1,516 @@
+---
+title: Portal
+description: Render content outside the component tree in SignalX
+layout: docs
+category: Built-in Components
+order: 10
+---
+
+# Portal
+
+The `Portal` component renders its children to a different location in the DOM, outside of the normal component tree. This is essential for modals, tooltips, dropdowns, and other overlay UI.
+
+## Basic Usage
+
+```tsx live
+import { Portal, component, render } from 'sigx';
+
+const App = component(() => {
+    return () => (
+        <div>
+            <p>Content inside the component tree</p>
+            <Portal>
+                <div style={{
+                    position: 'fixed',
+                    bottom: '20px',
+                    right: '20px',
+                    padding: '16px',
+                    background: '#3b82f6',
+                    color: 'white',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    zIndex: 10000
+                }}>
+                    This is portaled to document.body!
+                </div>
+            </Portal>
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+By default, `Portal` renders to `document.body`.
+
+## Specifying a Target
+
+Use the `to` prop to render to a specific container:
+
+```tsx live
+import { Portal, component, render } from 'sigx';
+
+const App = component(() => {
+    return () => (
+        <div>
+            {/* Create a custom target container */}
+            <div 
+                id="custom-portal-target" 
+                style={{ 
+                    padding: '16px', 
+                    border: '2px dashed #3b82f6',
+                    borderRadius: '8px',
+                    minHeight: '60px',
+                    marginBottom: '16px'
+                }}
+            >
+                <strong>Custom Target Container:</strong>
+            </div>
+            
+            {/* Portal to the custom container using CSS selector */}
+            <Portal to="#custom-portal-target">
+                <span style={{ 
+                    background: '#10b981', 
+                    color: 'white', 
+                    padding: '4px 8px', 
+                    borderRadius: '4px',
+                    marginLeft: '8px'
+                }}>
+                    Portaled here!
+                </span>
+            </Portal>
+            
+            <p style={{ color: '#666' }}>The green badge was portaled into the dashed container above.</p>
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+## Conditional Portals
+
+Use the `disabled` prop to render in-place instead of portaling:
+
+```tsx live
+import { component, Portal, render } from 'sigx';
+
+const App = component(({ signal }) => {
+    const state = signal({ disabled: false });
+
+    const boxStyle = {
+        padding: '12px 16px',
+        background: '#8b5cf6',
+        color: 'white',
+        borderRadius: '6px',
+        marginTop: '8px'
+    };
+
+    return () => (
+        <div>
+            <button 
+                onClick={() => state.disabled = !state.disabled}
+                style={{ padding: '8px 16px', cursor: 'pointer' }}
+            >
+                Toggle: {state.disabled ? 'Disabled (in-place)' : 'Enabled (portaled)'}
+            </button>
+            
+            <div style={{ 
+                marginTop: '16px', 
+                padding: '16px', 
+                border: '2px solid #e5e7eb',
+                borderRadius: '8px' 
+            }}>
+                <p>This is the component tree.</p>
+                
+                <Portal disabled={state.disabled}>
+                    <div style={boxStyle}>
+                        {state.disabled 
+                            ? '📍 Rendered in-place (inside the border)' 
+                            : '🚀 Portaled to body (outside the border)'}
+                    </div>
+                </Portal>
+            </div>
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+## Modal Example
+
+A complete modal implementation using Portal:
+
+```tsx live
+import { component, Portal, render, type Define } from 'sigx';
+
+type ModalProps = Define.Prop<'open', boolean, true> & Define.Event<'close'>;
+
+const Modal = component<ModalProps>(({ props, slots, emit }) => {
+    const handleBackdropClick = (e: MouseEvent) => {
+        if (e.target === e.currentTarget) emit('close');
+    };
+
+    return () => {
+        if (!props.open) return null;
+
+        return (
+            <Portal>
+                <div 
+                    onClick={handleBackdropClick}
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        background: 'rgba(0,0,0,0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1000
+                    }}
+                >
+                    <div 
+                        role="dialog" 
+                        aria-modal="true"
+                        style={{
+                            background: 'white',
+                            borderRadius: '12px',
+                            padding: '24px',
+                            minWidth: '300px',
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+                        }}
+                    >
+                        <div style={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center',
+                            marginBottom: '16px'
+                        }}>
+                            <h3 style={{ margin: 0 }}>Modal Title</h3>
+                            <button 
+                                onClick={() => emit('close')} 
+                                aria-label="Close"
+                                style={{ 
+                                    border: 'none', 
+                                    background: 'none', 
+                                    fontSize: '24px', 
+                                    cursor: 'pointer' 
+                                }}
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <div style={{ marginBottom: '16px' }}>
+                            {slots.default?.()}
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                            <button 
+                                onClick={() => emit('close')}
+                                style={{ 
+                                    padding: '8px 16px', 
+                                    cursor: 'pointer',
+                                    borderRadius: '6px'
+                                }}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </Portal>
+        );
+    };
+});
+
+const App = component(({ signal }) => {
+    const state = signal({ showModal: false });
+
+    return () => (
+        <div>
+            <button 
+                onClick={() => state.showModal = true}
+                style={{ padding: '10px 20px', cursor: 'pointer' }}
+            >
+                Open Modal
+            </button>
+
+            <Modal 
+                open={state.showModal} 
+                onClose={() => state.showModal = false}
+            >
+                <p>This modal is rendered via Portal to document.body!</p>
+                <p>Click the backdrop or close button to dismiss.</p>
+            </Modal>
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+## Dropdown Example
+
+A dropdown menu using Portal for proper stacking:
+
+```tsx live
+import { component, Portal, render } from 'sigx';
+
+const App = component(({ signal }) => {
+    const state = signal({ open: false });
+    let buttonRef: HTMLButtonElement | null = null;
+
+    const getPosition = () => {
+        if (!buttonRef) return { top: 0, left: 0 };
+        const rect = buttonRef.getBoundingClientRect();
+        return {
+            top: rect.bottom + window.scrollY + 4,
+            left: rect.left + window.scrollX
+        };
+    };
+
+    return () => {
+        const pos = getPosition();
+        
+        return (
+            <div>
+                <button 
+                    ref={(el) => buttonRef = el}
+                    onClick={() => state.open = !state.open}
+                    style={{ padding: '10px 20px', cursor: 'pointer' }}
+                >
+                    {state.open ? 'Close' : 'Open'} Dropdown
+                </button>
+
+                {state.open && (
+                    <Portal>
+                        <div style={{
+                            position: 'absolute',
+                            top: `${pos.top}px`,
+                            left: `${pos.left}px`,
+                            background: 'white',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                            padding: '8px 0',
+                            minWidth: '150px',
+                            zIndex: 1000
+                        }}>
+                            <div style={{ padding: '8px 16px', cursor: 'pointer' }}>Option 1</div>
+                            <div style={{ padding: '8px 16px', cursor: 'pointer' }}>Option 2</div>
+                            <div style={{ padding: '8px 16px', cursor: 'pointer' }}>Option 3</div>
+                        </div>
+                    </Portal>
+                )}
+            </div>
+        );
+    };
+});
+
+render(<App />, "#sandbox");
+```
+
+## State Preservation
+
+Portal uses the `moveBefore` API (Chrome 133+) when available for state-preserving DOM moves. This means:
+
+- **iframes** maintain their loaded content
+- **videos** continue playing without interruption
+- **form inputs** keep focus and selection
+- **CSS animations** continue smoothly
+
+On older browsers, Portal falls back to `insertBefore` which may reset some state.
+
+## API Reference
+
+### `Portal`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `to` | `string \| Element` | `document.body` | Target container (element or CSS selector) |
+| `disabled` | `boolean` | `false` | When true, renders children in-place |
+
+### Helper Functions
+
+```tsx live
+import { supportsMoveBefore, component, render } from 'sigx';
+
+const App = component(() => {
+    const supported = supportsMoveBefore();
+    
+    return () => (
+        <div style={{
+            padding: '16px',
+            borderRadius: '8px',
+            background: supported ? '#d1fae5' : '#fef3c7',
+            border: `1px solid ${supported ? '#10b981' : '#f59e0b'}`
+        }}>
+            <strong>moveBefore API:</strong> {supported ? '✅ Supported' : '⚠️ Not supported'}
+            <p style={{ margin: '8px 0 0', fontSize: '14px', color: '#666' }}>
+                {supported 
+                    ? 'State-preserving DOM moves are available!' 
+                    : 'Falls back to insertBefore (may reset iframe/video state)'}
+            </p>
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+## Best Practices
+
+### Accessibility & Focus Management
+
+Ensure portaled content is accessible with proper ARIA attributes and focus management:
+
+```tsx live
+import { component, Portal, render, onMounted, type Define } from 'sigx';
+
+type ModalProps = Define.Prop<'open', boolean, true> & Define.Event<'close'>;
+
+const AccessibleModal = component<ModalProps>(({ props, slots, emit }) => {
+    let dialogRef: HTMLDivElement | null = null;
+
+    onMounted(() => {
+        // Auto-focus the first button when modal opens
+        dialogRef?.querySelector('button')?.focus();
+    });
+
+    return () => {
+        if (!props.open) return null;
+
+        return (
+            <Portal>
+                <div 
+                    onClick={(e) => e.target === e.currentTarget && emit('close')}
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        background: 'rgba(0,0,0,0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1000
+                    }}
+                >
+                    <div 
+                        ref={(el) => dialogRef = el}
+                        role="dialog" 
+                        aria-modal="true"
+                        aria-labelledby="modal-title"
+                        style={{
+                            background: 'white',
+                            borderRadius: '12px',
+                            padding: '24px',
+                            minWidth: '300px'
+                        }}
+                    >
+                        <h3 id="modal-title" style={{ marginTop: 0 }}>Accessible Modal</h3>
+                        <p>This modal has:</p>
+                        <ul style={{ fontSize: '14px' }}>
+                            <li><code>role="dialog"</code></li>
+                            <li><code>aria-modal="true"</code></li>
+                            <li><code>aria-labelledby</code> linking to title</li>
+                            <li>Auto-focus on open</li>
+                        </ul>
+                        <button 
+                            onClick={() => emit('close')}
+                            style={{ padding: '8px 16px', cursor: 'pointer' }}
+                        >
+                            Close (focused automatically)
+                        </button>
+                    </div>
+                </div>
+            </Portal>
+        );
+    };
+});
+
+const App = component(({ signal }) => {
+    const state = signal({ open: false });
+    
+    return () => (
+        <div>
+            <button 
+                onClick={() => state.open = true}
+                style={{ padding: '10px 20px', cursor: 'pointer' }}
+            >
+                Open Accessible Modal
+            </button>
+            <AccessibleModal open={state.open} onClose={() => state.open = false} />
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+### Portal Roots & Cleanup
+
+Create dedicated mount points for different overlay types. Portal automatically cleans up when unmounted:
+
+```tsx live
+import { component, Portal, render } from 'sigx';
+
+const App = component(({ signal }) => {
+    const state = signal({ showModal: false, showTooltip: false });
+
+    return () => (
+        <div>
+            {/* Create dedicated portal targets */}
+            <div id="modal-root" />
+            <div id="tooltip-root" />
+            
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                <button 
+                    onClick={() => state.showModal = !state.showModal}
+                    style={{ padding: '8px 16px', cursor: 'pointer' }}
+                >
+                    Toggle Modal
+                </button>
+                <button 
+                    onClick={() => state.showTooltip = !state.showTooltip}
+                    style={{ padding: '8px 16px', cursor: 'pointer' }}
+                >
+                    Toggle Tooltip
+                </button>
+            </div>
+            
+            {state.showModal && (
+                <Portal to="#modal-root">
+                    <div style={{
+                        padding: '16px',
+                        background: '#3b82f6',
+                        color: 'white',
+                        borderRadius: '8px',
+                        marginBottom: '8px'
+                    }}>
+                        📦 Modal content (in #modal-root)
+                    </div>
+                </Portal>
+            )}
+            
+            {state.showTooltip && (
+                <Portal to="#tooltip-root">
+                    <div style={{
+                        padding: '12px',
+                        background: '#10b981',
+                        color: 'white',
+                        borderRadius: '6px'
+                    }}>
+                        💡 Tooltip content (in #tooltip-root)
+                    </div>
+                </Portal>
+            )}
+        </div>
+    );
+});
+
+render(<App />, "#sandbox");
+```
+
+## Next Steps
+
+- [Components](/docs/components) - Component patterns and composition
+- [Lifecycle](/docs/lifecycle) - Mount and cleanup hooks
+- [Lazy Loading](/docs/lazy-loading) - Code splitting with Suspense

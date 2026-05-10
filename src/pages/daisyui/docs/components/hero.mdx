@@ -1,0 +1,283 @@
+---
+title: Hero
+description: Hero section component for landing pages and headers
+layout: docs
+category: ["Components", "Layout"]
+order: 610
+---
+
+# Hero
+
+Hero sections for landing pages and headers with flexible layouts.
+
+## Import
+
+```tsx
+import { Hero, HeroContent, Text } from '@sigx/daisyui';
+```
+
+## Basic Hero
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Hero, HeroContent, Button, Card, Col, Heading, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Hero minHeight="400px" class="bg-base-200">
+                <HeroContent>
+                    <Col gap="6" align="center">
+                        <Heading level={1} size="5xl">Hello there</Heading>
+                        <Text as="p" align="center">
+                            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi.
+                        </Text>
+                        <Button variant="primary">Get Started</Button>
+                    </Col>
+                </HeroContent>
+            </Hero>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hero with Image
+
+### Image on Side
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Hero, HeroContent, Button, Card, Col, Row, Heading, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Hero minHeight="400px" class="bg-base-200">
+                <HeroContent>
+                    <Row gap="8" wrap align="center" justify="center">
+                        <Card.Image
+                            src="https://picsum.photos/400/300"
+                            alt="Hero image"
+                            class="max-w-sm rounded-lg shadow-2xl"
+                        />
+                        <Col gap="6" maxWidth="24rem">
+                            <Heading level={1} size="5xl">Box Office News!</Heading>
+                            <Text as="p">
+                                Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi.
+                            </Text>
+                            <Button variant="primary">Get Started</Button>
+                        </Col>
+                    </Row>
+                </HeroContent>
+            </Hero>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hero with Overlay
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Hero, HeroContent, Button, Card, Col, Heading, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card class="overflow-hidden">
+            <Hero 
+                minHeight="400px"
+                bgImage="https://picsum.photos/800/400"
+                overlay
+            >
+                <HeroContent class="text-neutral-content">
+                    <Col gap="5" align="center">
+                        <Heading level={1} size="5xl">Welcome</Heading>
+                        <Text as="p" align="center">
+                            Explore our amazing platform and discover new possibilities for your projects.
+                        </Text>
+                        <Button variant="primary">Explore Now</Button>
+                    </Col>
+                </HeroContent>
+            </Hero>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hero with Form
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Hero, HeroContent, Button, Card, Input, FormField, Col, Row, Heading, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ email: '' });
+    
+    return () => (
+        <Card>
+            <Hero minHeight="400px" class="bg-base-200">
+                <HeroContent>
+                    <Row gap="8" wrap align="center" justify="center">
+                        <Col gap="6" maxWidth="24rem" align="center">
+                            <Heading level={1} size="5xl" align="center">Join Us Today!</Heading>
+                            <Text as="p" align="center">
+                                Sign up to get exclusive access to our newsletter and early product announcements.
+                            </Text>
+                        </Col>
+                        <Card class="w-full max-w-sm" shadow="xl" bgColor="bg-base-100">
+                            <Card.Body>
+                                <Col gap="6">
+                                    <FormField label="Email">
+                                        <Input 
+                                            model={() => form.email}
+                                            type="email"
+                                            placeholder="email@example.com"
+                                        />
+                                    </FormField>
+                                    <Button variant="primary" class="w-full">Subscribe</Button>
+                                </Col>
+                            </Card.Body>
+                        </Card>
+                    </Row>
+                </HeroContent>
+            </Hero>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hero with Stats
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Hero, HeroContent, Button, Card, Badge, Col, Row, Heading, Stats, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Hero minHeight="500px" class="bg-gradient-to-br from-primary to-secondary text-primary-content">
+                <HeroContent class="text-center">
+                    <Col gap="8" align="center" maxWidth="32rem">
+                        <Badge>New Release</Badge>
+                        <Heading level={1} size="5xl" align="center">Build Amazing Apps</Heading>
+                        <Text as="p" size="xl" align="center" class="opacity-90">
+                            Create stunning user interfaces with SignalX and DaisyUI components.
+                        </Text>
+                        
+                        <Row gap="4" justify="center">
+                            <Button size="lg">Get Started</Button>
+                            <Button size="lg" variant="ghost" class="text-primary-content border-primary-content">
+                                Documentation
+                            </Button>
+                        </Row>
+                        
+                        <Stats class="bg-primary-content text-primary md:stats-horizontal">
+                            <Stats.Item title="Downloads" value="31K" />
+                            <Stats.Item title="Users" value="4,200" />
+                            <Stats.Item title="Components" value="50+" />
+                        </Stats>
+                    </Col>
+                </HeroContent>
+            </Hero>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hero with Features
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Hero, HeroContent, Button, Card, Col, Heading, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const features = [
+        { icon: '⚡', title: 'Fast', desc: 'Optimized for speed' },
+        { icon: '🔒', title: 'Secure', desc: 'Built-in security' },
+        { icon: '📱', title: 'Responsive', desc: 'Works on all devices' }
+    ];
+    
+    return () => (
+        <Card>
+            <Hero minHeight="500px" class="bg-base-200">
+                <HeroContent>
+                    <Col gap="8" align="center" maxWidth="56rem">
+                        <Col gap="4" align="center">
+                            <Heading level={1} size="5xl" align="center">Why Choose Us?</Heading>
+                            <Text as="p" size="lg" align="center" class="opacity-70">
+                                We provide the best tools for building modern web applications.
+                            </Text>
+                        </Col>
+                    
+                        <Row gap="6" wrap justify="center">
+                            {features.map(feature => (
+                                <Card bgColor="bg-base-100" class="w-72">
+                                    <Card.Body center>
+                                        <Text as="span" size="4xl">{feature.icon}</Text>
+                                        <Heading level={3} size="xl">{feature.title}</Heading>
+                                        <Text as="p" color="muted" align="center">{feature.desc}</Text>
+                                    </Card.Body>
+                                </Card>
+                            ))}
+                        </Row>
+                    
+                        <Button variant="primary">Learn More</Button>
+                    </Col>
+                </HeroContent>
+            </Hero>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Notes on current API constraints
+
+This page now favors component composition, but a few styling classes remain intentional due to current component API limitations:
+
+- `HeroContent` always applies an internal `max-w-md` wrapper, which can constrain wide layouts.
+- `Stats.Item` currently has no props for title/value-specific styling.
+- Some responsive behaviors (like `md:stats-horizontal`) still require class utilities.
+
+These are tracked as migration gap candidates for Milestone 5.
+
+## Props
+
+### Hero Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `overlay` | `boolean` | `false` | Show hero overlay |
+| `bgImage` | `string` | - | Background image URL |
+| `minHeight` | `string` | - | Minimum height (e.g., `'400px'`) |
+| `class` | `string` | - | Additional CSS classes |
+
+### Hero Slots
+
+| Slot | Description |
+|------|-------------|
+| `default` | Hero content (overlay + HeroContent) |
+| `overlay` | Content for the overlay layer |
+
+### HeroContent Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | - | Additional CSS classes for layout |
+
+### HeroContent Slots
+
+| Slot | Description |
+|------|-------------|
+| `default` | Content elements |

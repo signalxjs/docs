@@ -1,0 +1,277 @@
+---
+title: Stats
+description: Display statistics with title, value, description, figure, and actions
+layout: docs
+category: ["Components", "Data Display"]
+order: 220
+---
+
+# Stats
+
+Stats display numeric data or key metrics in a structured layout.
+
+## Import
+
+```tsx
+import { Stats } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Stats } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stats shadow>
+            <Stats.Item>
+                <Stats.Title>Total Page Views</Stats.Title>
+                <Stats.Value>89,400</Stats.Value>
+                <Stats.Desc>21% more than last month</Stats.Desc>
+            </Stats.Item>
+        </Stats>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Multiple Stats
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Stats } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stats shadow>
+            <Stats.Item>
+                <Stats.Title>Downloads</Stats.Title>
+                <Stats.Value>31K</Stats.Value>
+                <Stats.Desc>Jan 1st - Feb 1st</Stats.Desc>
+            </Stats.Item>
+            <Stats.Item>
+                <Stats.Title>New Users</Stats.Title>
+                <Stats.Value>4,200</Stats.Value>
+                <Stats.Desc>↗︎ 400 (22%)</Stats.Desc>
+            </Stats.Item>
+            <Stats.Item>
+                <Stats.Title>New Registers</Stats.Title>
+                <Stats.Value>1,200</Stats.Value>
+                <Stats.Desc>↘︎ 90 (14%)</Stats.Desc>
+            </Stats.Item>
+        </Stats>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Vertical Layout
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Stats } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stats vertical shadow>
+            <Stats.Item>
+                <Stats.Title>Downloads</Stats.Title>
+                <Stats.Value>31K</Stats.Value>
+                <Stats.Desc>Jan 1st - Feb 1st</Stats.Desc>
+            </Stats.Item>
+            <Stats.Item>
+                <Stats.Title>New Users</Stats.Title>
+                <Stats.Value>4,200</Stats.Value>
+                <Stats.Desc>↗︎ 400 (22%)</Stats.Desc>
+            </Stats.Item>
+            <Stats.Item>
+                <Stats.Title>New Registers</Stats.Title>
+                <Stats.Value>1,200</Stats.Value>
+                <Stats.Desc>↘︎ 90 (14%)</Stats.Desc>
+            </Stats.Item>
+        </Stats>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Figure / Icons
+
+Use `Stats.Figure` to add icons or images alongside stats.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Stats } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stats shadow>
+            <Stats.Item>
+                <Stats.Figure class="text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-8 w-8 stroke-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                </Stats.Figure>
+                <Stats.Title>Total Likes</Stats.Title>
+                <Stats.Value class="text-primary">25.6K</Stats.Value>
+                <Stats.Desc>21% more than last month</Stats.Desc>
+            </Stats.Item>
+            <Stats.Item>
+                <Stats.Figure class="text-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-8 w-8 stroke-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </Stats.Figure>
+                <Stats.Title>Page Views</Stats.Title>
+                <Stats.Value class="text-secondary">2.6M</Stats.Value>
+                <Stats.Desc>21% more than last month</Stats.Desc>
+            </Stats.Item>
+        </Stats>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Actions
+
+Use `Stats.Actions` to add buttons or links below the stat.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Stats, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stats shadow>
+            <Stats.Item>
+                <Stats.Title>Account balance</Stats.Title>
+                <Stats.Value>$89,400</Stats.Value>
+                <Stats.Actions>
+                    <Button variant="primary" size="sm">Withdraw</Button>
+                    <Button size="sm">Deposit</Button>
+                </Stats.Actions>
+            </Stats.Item>
+        </Stats>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Centered Items
+
+Apply `place-items-center` class to center stat content.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Stats } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stats shadow>
+            <Stats.Item class="place-items-center">
+                <Stats.Title>Downloads</Stats.Title>
+                <Stats.Value>31K</Stats.Value>
+                <Stats.Desc>From January 1st to February 1st</Stats.Desc>
+            </Stats.Item>
+            <Stats.Item class="place-items-center">
+                <Stats.Title>Users</Stats.Title>
+                <Stats.Value>4,200</Stats.Value>
+                <Stats.Desc>↗︎ 40 (2%)</Stats.Desc>
+            </Stats.Item>
+            <Stats.Item class="place-items-center">
+                <Stats.Title>Registers</Stats.Title>
+                <Stats.Value>1,200</Stats.Value>
+                <Stats.Desc>↘︎ 90 (14%)</Stats.Desc>
+            </Stats.Item>
+        </Stats>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Responsive
+
+Use `vertical` with responsive class overrides for mobile-vertical, desktop-horizontal layouts.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Stats } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stats vertical shadow class="lg:stats-horizontal">
+            <Stats.Item>
+                <Stats.Title>Downloads</Stats.Title>
+                <Stats.Value>31K</Stats.Value>
+                <Stats.Desc>Jan 1st - Feb 1st</Stats.Desc>
+            </Stats.Item>
+            <Stats.Item>
+                <Stats.Title>New Users</Stats.Title>
+                <Stats.Value>4,200</Stats.Value>
+                <Stats.Desc>↗︎ 400 (22%)</Stats.Desc>
+            </Stats.Item>
+            <Stats.Item>
+                <Stats.Title>New Registers</Stats.Title>
+                <Stats.Value>1,200</Stats.Value>
+                <Stats.Desc>↘︎ 90 (14%)</Stats.Desc>
+            </Stats.Item>
+        </Stats>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Figure and Avatar
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Stats, Avatar } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Stats shadow>
+            <Stats.Item>
+                <Stats.Figure>
+                    <Avatar size="md" shape="circle" src="https://i.pravatar.cc/150?u=stat1" />
+                </Stats.Figure>
+                <Stats.Value>86%</Stats.Value>
+                <Stats.Title>Tasks done</Stats.Title>
+                <Stats.Desc class="text-secondary">31 tasks remaining</Stats.Desc>
+            </Stats.Item>
+        </Stats>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Stats (container)
+
+| Prop       | Type      | Default | Description                        |
+|------------|-----------|---------|------------------------------------|
+| vertical   | boolean   | false   | Stack stats vertically             |
+| horizontal | boolean   | false   | Force horizontal layout            |
+| shadow     | boolean   | false   | Add shadow to container            |
+| class      | string    | —       | Additional CSS classes             |
+
+### Stats.Item
+
+| Prop  | Type   | Default | Description            |
+|-------|--------|---------|------------------------|
+| class | string | —       | Additional CSS classes |
+
+### Stats.Title / Stats.Value / Stats.Desc / Stats.Figure / Stats.Actions
+
+| Prop  | Type   | Default | Description            |
+|-------|--------|---------|------------------------|
+| class | string | —       | Additional CSS classes |

@@ -1,0 +1,218 @@
+---
+title: Join
+description: Container for grouping multiple items with connected styles
+layout: docs
+category: ["Components", "Layout"]
+order: 105
+---
+
+# Join
+
+Join is a container for grouping multiple items together. It applies border radius to the first and last item, creating a visually connected group of buttons, inputs, or other elements.
+
+## Import
+
+```tsx
+import { Join, Button, Input, Select } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Group buttons together horizontally.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Join, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Join>
+            <Join.Item><Button>Left</Button></Join.Item>
+            <Join.Item><Button>Center</Button></Join.Item>
+            <Join.Item><Button>Right</Button></Join.Item>
+        </Join>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Vertical
+
+Stack items vertically.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Join, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Join vertical>
+            <Join.Item><Button>Top</Button></Join.Item>
+            <Join.Item><Button>Middle</Button></Join.Item>
+            <Join.Item><Button>Bottom</Button></Join.Item>
+        </Join>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Horizontal (explicit)
+
+Explicitly set horizontal direction. Useful for responsive overrides.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Join, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Join horizontal>
+            <Join.Item><Button variant="primary">Left</Button></Join.Item>
+            <Join.Item><Button variant="primary">Center</Button></Join.Item>
+            <Join.Item><Button variant="primary">Right</Button></Join.Item>
+        </Join>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Responsive
+
+Use Tailwind responsive classes to switch direction at different breakpoints.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Join, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Join class="join-vertical lg:join-horizontal">
+            <Join.Item><Button>First</Button></Join.Item>
+            <Join.Item><Button>Second</Button></Join.Item>
+            <Join.Item><Button>Third</Button></Join.Item>
+        </Join>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Inputs and Buttons
+
+Mix different form elements inside a join.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Join, Button, Input } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Join>
+            <Join.Item><Input placeholder="Search..." class="join-item" /></Join.Item>
+            <Join.Item><Button variant="primary">Search</Button></Join.Item>
+        </Join>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Select and Button
+
+Combine selects with buttons in a group.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Join, Button, Select } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Join>
+            <Join.Item>
+                <Select options={[
+                    { label: 'Sci-fi', value: 'scifi' },
+                    { label: 'Drama', value: 'drama' },
+                    { label: 'Action', value: 'action' },
+                ]} class="join-item" />
+            </Join.Item>
+            <Join.Item>
+                <Select options={[
+                    { label: '2024', value: '2024' },
+                    { label: '2023', value: '2023' },
+                    { label: '2022', value: '2022' },
+                ]} class="join-item" />
+            </Join.Item>
+            <Join.Item><Button variant="primary">Search</Button></Join.Item>
+        </Join>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## ButtonGroup
+
+`ButtonGroup` is a convenience wrapper specifically for grouping buttons. It uses the same underlying join classes.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { ButtonGroup, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <ButtonGroup>
+            <Button variant="primary">Left</Button>
+            <Button variant="primary">Center</Button>
+            <Button variant="primary">Right</Button>
+        </ButtonGroup>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## ButtonGroup Vertical
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { ButtonGroup, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <ButtonGroup vertical>
+            <Button>Top</Button>
+            <Button>Middle</Button>
+            <Button>Bottom</Button>
+        </ButtonGroup>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Join Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `vertical` | `boolean` | `false` | Stack items vertically |
+| `horizontal` | `boolean` | `false` | Explicitly set horizontal direction |
+| `class` | `string` | `undefined` | Additional CSS classes |
+
+### Join.Item Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes |
+
+### ButtonGroup Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `vertical` | `boolean` | `false` | Stack buttons vertically |
+| `horizontal` | `boolean` | `false` | Explicitly set horizontal direction |
+| `class` | `string` | `undefined` | Additional CSS classes |

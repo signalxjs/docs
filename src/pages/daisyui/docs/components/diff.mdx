@@ -1,0 +1,178 @@
+---
+title: Diff
+description: Diff component shows a comparison between two items with a draggable resizer
+layout: docs
+category: ["Components", "Feedback"]
+order: 416
+---
+
+# Diff
+
+Diff component shows a side-by-side comparison between two items with a draggable resizer. Built with `Diff.Item1`, `Diff.Item2`, and `Diff.Resizer` sub-components.
+
+## Import
+
+```tsx
+import { Diff } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+A simple diff comparing two text blocks.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Diff, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Diff class="aspect-[16/9] border border-base-300 rounded-xl">
+            <Diff.Item1>
+                <Text class="grid place-content-center w-full h-full bg-primary text-primary-content text-4xl font-bold">DAISY</Text>
+            </Diff.Item1>
+            <Diff.Item2>
+                <Text class="grid place-content-center w-full h-full bg-secondary text-secondary-content text-4xl font-bold">DAISY</Text>
+            </Diff.Item2>
+            <Diff.Resizer />
+        </Diff>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Aspect Ratio
+
+Use Tailwind aspect ratio utilities on the container class.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Diff, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Diff class="aspect-[4/3] border border-base-300 rounded-xl">
+            <Diff.Item1>
+                <Text class="grid place-content-center w-full h-full bg-success text-success-content text-3xl font-bold">4:3 Ratio</Text>
+            </Diff.Item1>
+            <Diff.Item2>
+                <Text class="grid place-content-center w-full h-full bg-warning text-warning-content text-3xl font-bold">4:3 Ratio</Text>
+            </Diff.Item2>
+            <Diff.Resizer />
+        </Diff>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Before / After Text
+
+Show a before and after comparison with styled content.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Diff, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Diff class="aspect-[16/9] border border-base-300 rounded-xl">
+            <Diff.Item1>
+                <Text class="grid place-content-center w-full h-full bg-base-200 text-base-content text-2xl">Before</Text>
+            </Diff.Item1>
+            <Diff.Item2>
+                <Text class="grid place-content-center w-full h-full bg-accent text-accent-content text-2xl">After</Text>
+            </Diff.Item2>
+            <Diff.Resizer />
+        </Diff>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Card Content
+
+Diff items can contain rich content like cards.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Diff, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Diff class="aspect-[16/9] border border-base-300 rounded-xl">
+            <Diff.Item1>
+                <Card class="w-full h-full bg-error text-error-content rounded-none">
+                    <Card.Body>
+                        <Card.Title>Version A</Card.Title>
+                        <Text>This is the original content before any changes were made.</Text>
+                    </Card.Body>
+                </Card>
+            </Diff.Item1>
+            <Diff.Item2>
+                <Card class="w-full h-full bg-info text-info-content rounded-none">
+                    <Card.Body>
+                        <Card.Title>Version B</Card.Title>
+                        <Text>This is the updated content after improvements.</Text>
+                    </Card.Body>
+                </Card>
+            </Diff.Item2>
+            <Diff.Resizer />
+        </Diff>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Sized
+
+Control the size via width and height utility classes.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Diff, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Diff class="w-80 h-48 border border-base-300 rounded-xl">
+            <Diff.Item1>
+                <Text class="grid place-content-center w-full h-full bg-neutral text-neutral-content text-xl font-bold">Small</Text>
+            </Diff.Item1>
+            <Diff.Item2>
+                <Text class="grid place-content-center w-full h-full bg-primary text-primary-content text-xl font-bold">Small</Text>
+            </Diff.Item2>
+            <Diff.Resizer />
+        </Diff>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Diff
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes (e.g., aspect ratio, border, size) |
+
+### Diff.Item1
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes |
+
+### Diff.Item2
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes |
+
+### Diff.Resizer
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes |

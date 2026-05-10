@@ -1,0 +1,457 @@
+---
+title: Text
+description: Typography components for consistent text styling
+layout: docs
+category: ["Components", "Typography"]
+order: 100
+---
+
+# Text
+
+Typography components for consistent text styling without manual CSS classes.
+
+## Import
+
+```tsx
+import { Text, Heading } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+The `Text` component provides consistent text styling with props instead of classes.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <Text>Default text (renders as span)</Text>
+            <Text size="lg">Large text</Text>
+            <Text size="sm" color="muted">Small muted text</Text>
+            <Text weight="bold" color="primary">Bold primary text</Text>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Heading Component
+
+Use `Heading` for semantic heading elements with consistent styling.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Heading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Heading level={1}>Heading 1</Heading>
+            <Heading level={2}>Heading 2</Heading>
+            <Heading level={3}>Heading 3</Heading>
+            <Heading level={4}>Heading 4</Heading>
+            <Heading level={5}>Heading 5</Heading>
+            <Heading level={6}>Heading 6</Heading>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Block Text (Paragraphs)
+
+Use `as="p"` to render block-level text content.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Text as="p">
+                This is a paragraph of text. It renders as a {'<p>'} element and 
+                supports all the same styling props.
+            </Text>
+            <Text as="p" size="sm" color="muted">
+                A smaller, muted paragraph for secondary content.
+            </Text>
+            <Text as="p">
+                You can use <Text color="primary" weight="bold">inline Text</Text> components 
+                within paragraphs for <Text color="accent">colorful</Text> emphasis.
+            </Text>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Text Sizes
+
+Available size options from extra small to 5xl.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const sizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'] as const;
+    
+    return () => (
+        <Col gap="2">
+            {sizes.map(size => (
+                <Text size={size} key={size}>
+                    size="{size}"
+                </Text>
+            ))}
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+Use semantic colors for consistent theming.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Col gap="2">
+                <Text size="sm" color="muted">Base colors</Text>
+                <Row gap="4" wrap>
+                    <Text color="base">base (default)</Text>
+                    <Text color="muted">muted</Text>
+                    <Text color="faint">faint</Text>
+                </Row>
+            </Col>
+            
+            <Col gap="2">
+                <Text size="sm" color="muted">Semantic colors</Text>
+                <Row gap="4" wrap>
+                    <Text color="primary">primary</Text>
+                    <Text color="secondary">secondary</Text>
+                    <Text color="accent">accent</Text>
+                    <Text color="neutral">neutral</Text>
+                </Row>
+            </Col>
+            
+            <Col gap="2">
+                <Text size="sm" color="muted">Status colors</Text>
+                <Row gap="4" wrap>
+                    <Text color="info">info</Text>
+                    <Text color="success">success</Text>
+                    <Text color="warning">warning</Text>
+                    <Text color="error">error</Text>
+                </Row>
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Font Weight
+
+Control text weight with the `weight` prop.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const weights = ['light', 'normal', 'medium', 'semibold', 'bold'] as const;
+    
+    return () => (
+        <Col gap="2">
+            {weights.map(weight => (
+                <Text weight={weight} key={weight}>
+                    weight="{weight}"
+                </Text>
+            ))}
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Text Alignment
+
+Control text alignment with the `align` prop.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2" background="base-200" padding="4" rounded>
+            <Text align="left">Left aligned (default)</Text>
+            <Text align="center">Center aligned</Text>
+            <Text align="right">Right aligned</Text>
+            <Text align="justify">Justify aligned - This text will be justified to fill the available width when long enough.</Text>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Text Decoration
+
+Add italic, underline, strikethrough, or uppercase styling.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Row gap="4" wrap>
+                <Text italic>Italic text</Text>
+                <Text underline>Underlined text</Text>
+                <Text strikethrough>Strikethrough text</Text>
+                <Text uppercase>Uppercase text</Text>
+            </Row>
+            <Text italic underline color="primary">Combined styles</Text>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Truncation
+
+Truncate overflowing text with an ellipsis.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4" maxWidth="20rem">
+            <Text truncate>
+                This is a very long text that will be truncated with an ellipsis when it exceeds the container width.
+            </Text>
+            <Text truncate={2}>
+                This text will truncate after 2 lines. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+                quis nostrud exercitation ullamco laboris.
+            </Text>
+            <Text truncate={3}>
+                This text will truncate after 3 lines. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+                quis nostrud exercitation ullamco laboris. Duis aute irure dolor in reprehenderit in voluptate 
+                velit esse cillum dolore eu fugiat nulla pariatur.
+            </Text>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Element (as prop)
+
+Render as a different element using the `as` prop.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Text as="span">Span element (default)</Text>
+            <Text as="p">Paragraph element</Text>
+            <Text as="label" weight="medium">Label element</Text>
+            <Text as="strong" weight="bold">Strong element</Text>
+            <Text as="em" italic>Em element</Text>
+            <Text as="small" size="sm">Small element</Text>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Margin
+
+Add spacing with the `margin` prop.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col background="base-200" padding="4" rounded>
+            <Text margin={{ bottom: "4" }} size="lg" weight="bold">
+                Title with bottom margin
+            </Text>
+            <Text margin={{ bottom: "2" }} color="muted">
+                Subtitle with smaller margin
+            </Text>
+            <Text>Regular content below</Text>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Heading Sizes
+
+Headings have default sizes based on level, but can be customized.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Heading, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Col gap="2">
+                <Text size="sm" color="muted">Default heading sizes</Text>
+                <Heading level={1}>H1 (default 4xl)</Heading>
+                <Heading level={2}>H2 (default 3xl)</Heading>
+                <Heading level={3}>H3 (default 2xl)</Heading>
+            </Col>
+            
+            <Col gap="2">
+                <Text size="sm" color="muted">Custom heading sizes</Text>
+                <Heading level={1} size="2xl">H1 with size="2xl"</Heading>
+                <Heading level={2} size="lg">H2 with size="lg"</Heading>
+                <Heading level={3} size="base">H3 with size="base"</Heading>
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Practical Examples
+
+### Card with Typography
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Heading, Text, Button, Card } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card class="border border-base-200" shadow="lg">
+            <Card.Body>
+                <Col gap="4" maxWidth="24rem">
+                    <Heading level={2} size="xl">Getting Started</Heading>
+                    <Text as="p" color="muted">
+                        Welcome to our platform! Follow these steps to get started 
+                        with your first project.
+                    </Text>
+                    <Col gap="2">
+                        <Text weight="medium">Features include:</Text>
+                        <Text color="muted" size="sm">• Easy setup and configuration</Text>
+                        <Text color="muted" size="sm">• Comprehensive documentation</Text>
+                        <Text color="muted" size="sm">• Active community support</Text>
+                    </Col>
+                    <Card.Actions>
+                        <Button variant="ghost" size="sm">Learn More</Button>
+                        <Button variant="primary" size="sm">Get Started</Button>
+                    </Card.Actions>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### Status Message
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Col, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Row gap="2" align="center" background="success" padding="3" rounded>
+                <Text color="success-content" weight="medium">✓ Success!</Text>
+                <Text color="success-content" size="sm">Your changes have been saved.</Text>
+            </Row>
+            
+            <Row gap="2" align="center" background="error" padding="3" rounded>
+                <Text color="error-content" weight="medium">✕ Error!</Text>
+                <Text color="error-content" size="sm">Something went wrong.</Text>
+            </Row>
+            
+            <Row gap="2" align="center" background="warning" padding="3" rounded>
+                <Text color="warning-content" weight="medium">⚠ Warning!</Text>
+                <Text color="warning-content" size="sm">Please review before continuing.</Text>
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Text Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `as` | `'span' \| 'p' \| 'label' \| 'strong' \| 'em' \| 'small' \| 'div'` | `'span'` | HTML element to render |
+| `size` | `'xs' \| 'sm' \| 'base' \| 'lg' \| 'xl' \| '2xl' \| '3xl' \| '4xl' \| '5xl'` | - | Font size |
+| `weight` | `'light' \| 'normal' \| 'medium' \| 'semibold' \| 'bold'` | - | Font weight |
+| `color` | `TextColor` | - | Text color (see colors above) |
+| `align` | `'left' \| 'center' \| 'right' \| 'justify'` | - | Text alignment |
+| `italic` | `boolean` | `false` | Italic style |
+| `underline` | `boolean` | `false` | Underline decoration |
+| `strikethrough` | `boolean` | `false` | Strikethrough decoration |
+| `uppercase` | `boolean` | `false` | Uppercase transform |
+| `truncate` | `boolean \| number` | - | Truncate with ellipsis. `true` = single line, number = max lines |
+| `margin` | `SpacingValue \| SpacingObject` | - | Margin around text |
+| `class` | `string` | - | Additional CSS classes |
+
+### Heading Props
+
+Same as Text props, plus:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `level` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `2` | Heading level (renders h1-h6) |
+
+Default sizes by level: h1=4xl, h2=3xl, h3=2xl, h4=xl, h5=lg, h6=base
+
+### TextColor
+
+```tsx
+'base' | 'muted' | 'faint' |
+'primary' | 'primary-content' |
+'secondary' | 'secondary-content' |
+'accent' | 'accent-content' |
+'neutral' | 'neutral-content' |
+'info' | 'info-content' |
+'success' | 'success-content' |
+'warning' | 'warning-content' |
+'error' | 'error-content'
+```

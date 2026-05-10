@@ -1,0 +1,487 @@
+---
+title: App & Plugins
+description: Application bootstrap, plugin system, dependency injection, and lifecycle hooks
+layout: docs
+category: Core Concepts
+order: 80
+---
+
+# App & Plugins
+
+SignalX provides a powerful application model with plugin support, dependency injection, and global lifecycle hooks. The `defineApp()` function is the entry point for configuring and bootstrapping your application.
+
+## Mounting Your Application
+
+SignalX provides two ways to render your application:
+
+| Method | Plugins | DI | Lifecycle Hooks | Unmount |
+|--------|---------|-----|-----------------|---------|
+| `render()` | ❌ | ❌ | ❌ | ❌ |
+| `defineApp()` | ✅ | ✅ | ✅ | ✅ |
+
+### `render()` - Low-Level Rendering
+
+The simplest way to render - directly mounts a JSX element to a container:
+
+```tsx
+import { render } from 'sigx';
+
+// Using CSS selector
+render(<App />, '#app');
+
+// Using element reference
+render(<App />, document.getElementById('app')!);
+```
+
+Use `render()` for simple cases, prototypes, or when you don't need plugins or dependency injection.
+
+### `defineApp()` - Full Application Model
+
+The recommended approach for production applications. Provides plugins, dependency injection, lifecycle hooks, and proper unmounting:
+
+```tsx
+import { defineApp } from 'sigx';
+import App from './App';
+
+const app = defineApp(<App />);
+
+app.mount(document.getElementById('app')!);
+```
+
+The app instance provides a **chainable API** for configuration:
+
+```tsx
+defineApp(<App />)
+    .use(routerPlugin)
+    .use(devToolsPlugin, { debug: true })
+    .provide(ConfigToken, myConfig)
+    .mount(document.getElementById('app')!);
+```
+
+## App Configuration
+
+Configure global error and warning handlers via `app.config`:
+
+```tsx
+const app = defineApp(<App />);
+
+// Global error handler
+app.config.errorHandler = (err, instance, info) => {
+    console.error(`Error in ${instance?.name || 'unknown'}:`, err);
+    // Return true to suppress the error from propagating
+    return false;
+};
+
+// Warning handler (dev mode)
+app.config.warnHandler = (msg, instance, trace) => {
+    console.warn(`[SignalX Warning] ${msg}`);
+};
+
+// Enable performance tracking
+app.config.performance = true;
+```
+
+## Plugins
+
+Plugins extend the application with additional functionality. They can add global providers, register lifecycle hooks, and configure the app.
+
+### Object-Style Plugin
+
+```tsx
+import { type Plugin } from 'sigx';
+
+const myPlugin: Plugin<{ debug?: boolean }> = {
+    name: 'my-plugin',
+    install(app, options) {
+        // Provide values to all components
+        app.provide('myService', new MyService());
+
+        // Register lifecycle hooks
+        app.hook({
+            onComponentMounted: (instance) => {
+                if (options?.debug) {
+                    console.log('Mounted:', instance.name);
+                }
+            }
+        });
+
+        // Configure error handling
+        app.config.errorHandler = (err, instance, info) => {
+            reportError(err, instance?.name, info);
+            return true; // Error handled
+        };
+    }
+};
+
+// Install the plugin
+app.use(myPlugin, { debug: true });
+```
+
+### Function-Style Plugin
+
+For simpler plugins, you can use a function:
+
+```tsx
+import { type PluginInstallFn } from 'sigx';
+
+const simplePlugin: PluginInstallFn = (app) => {
+    app.provide('logger', createLogger());
+};
+
+app.use(simplePlugin);
+```
+
+### Plugin Example: DevTools
+
+Here's a complete example of a development tools plugin:
+
+```tsx
+const devToolsPlugin: Plugin<{ logMounts?: boolean }> = {
+    name: 'devtools',
+    install(app, options) {
+        if (options?.logMounts) {
+            app.hook({
+                onComponentMounted: (instance) => {
+                    console.log(`[DevTools] Mounted: ${instance.name || 'anonymous'}`);
+                },
+                onComponentUnmounted: (instance) => {
+                    console.log(`[DevTools] Unmounted: ${instance.name || 'anonymous'}`);
+                }
+            });
+        }
+
+        // Global error handling
+        app.config.errorHandler = (err, instance, info) => {
+            console.error(`[DevTools] Error in ${instance?.name}:`, err, info);
+            return false; // Don't suppress - let it propagate
+        };
+    }
+};
+
+app.use(devToolsPlugin, { logMounts: true });
+```
+
+### Plugins are Installed Once
+
+SignalX automatically prevents duplicate plugin installation:
+
+```tsx
+app.use(myPlugin); // Installed
+app.use(myPlugin); // Skipped with warning
+```
+
+## Dependency Injection
+
+SignalX provides a powerful dependency injection system using `provide` and `inject`.
+
+### App-Level Provides
+
+Values provided at the app level are available to all components:
+
+```tsx
+// Simple value
+app.provide('apiUrl', 'https://api.example.com');
+
+// Object
+app.provide('config', {
+    version: '1.0.0',
+    debug: true
+});
+```
+
+### Using `defineInjectable`
+
+For type-safe dependency injection with automatic fallback to singletons:
+
+```tsx
+import { defineInjectable, inject } from 'sigx';
+
+// Define an injectable token with a factory function
+const useApiConfig = defineInjectable(() => ({
+    baseUrl: 'https://api.example.com',
+    timeout: 5000
+}));
+
+// Provide a custom value at app level
+app.provide(useApiConfig, {
+    baseUrl: 'https://custom.api.com',
+    timeout: 10000
+});
+
+// In any component - just call the function!
+const MyComponent = component(({ }) => {
+    const config = useApiConfig(); // Returns provided or default value
+    
+    return () => <div>API: {config.baseUrl}</div>;
+});
+```
+
+### Component-Level Provides
+
+Components can also provide values to their descendants:
+
+```tsx
+import { provide, inject } from 'sigx';
+
+const Parent = component(({ }) => {
+    // Provide to all descendants
+    provide('theme', { primary: '#3498db' });
+    
+    return () => <Child />;
+});
+
+const Child = component(({ }) => {
+    // Inject from parent or app
+    const theme = inject('theme');
+    
+    return () => (
+        <div style={`color: ${theme?.primary}`}>
+            Themed content
+        </div>
+    );
+});
+```
+
+### `defineProvide`
+
+Create and provide an instance in one step:
+
+```tsx
+import { defineInjectable, defineProvide } from 'sigx';
+
+const useAuthService = defineInjectable(() => new AuthService());
+
+const App = component(({ }) => {
+    // Creates instance AND provides it to descendants
+    const auth = defineProvide(useAuthService);
+    
+    return () => <LoginForm />;
+});
+```
+
+## Lifecycle Hooks
+
+Register global hooks to observe all components in your application:
+
+```tsx
+app.hook({
+    // Called after setup() completes
+    onComponentCreated: (instance) => {
+        console.log('Created:', instance.name);
+    },
+
+    // Called after component is mounted
+    onComponentMounted: (instance) => {
+        console.log('Mounted:', instance.name);
+    },
+
+    // Called after component re-renders
+    onComponentUpdated: (instance) => {
+        console.log('Updated:', instance.name);
+    },
+
+    // Called before component is unmounted
+    onComponentUnmounted: (instance) => {
+        console.log('Unmounted:', instance.name);
+    },
+
+    // Called when an error occurs
+    // Return true to suppress the error
+    onComponentError: (err, instance, info) => {
+        console.error('Error:', err);
+        return false;
+    }
+});
+```
+
+### Component Instance
+
+The `instance` passed to hooks contains:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `name` | `string?` | Component name (if defined) |
+| `ctx` | `ComponentSetupContext` | The component's setup context |
+| `vnode` | `VNode` | The component's virtual node |
+
+## Mounting
+
+### Basic Mount
+
+```tsx
+app.mount(document.getElementById('app')!);
+```
+
+### Platform-Specific Mount
+
+`app.mount(...)` automatically picks the correct mount function based on the runtime you imported (`sigx` itself wires up DOM mounting):
+
+```tsx
+import { defineApp } from 'sigx';
+import { App } from './App';
+
+defineApp(<App />).mount(document.getElementById('app')!);
+```
+
+Additional renderers (e.g. server, terminal) follow the same pattern — import the runtime package and call `app.mount(...)` with the target it expects.
+
+### Unmounting
+
+Clean up resources when the app is no longer needed:
+
+```tsx
+app.unmount();
+```
+
+## Router Plugin
+
+The `@sigx/router` package provides a router that integrates with the app system:
+
+```tsx
+import { defineApp } from 'sigx';
+import { createRouter, createWebHistory } from '@sigx/router';
+
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        { path: '/', component: Home },
+        { path: '/about', component: About },
+        { path: '/blog/:slug', component: BlogPost }
+    ]
+});
+
+defineApp(<App />)
+    .use(router) // Router implements Plugin interface
+    .mount(document.getElementById('app')!);
+```
+
+Or use `createRouterPlugin` for more configuration:
+
+```tsx
+import { createRouterPlugin } from '@sigx/router';
+
+const routerPlugin = createRouterPlugin({
+    history: createWebHistory(),
+    routes: [/* ... */],
+    base: '/my-app'
+});
+
+app.use(routerPlugin);
+
+// Access router instance
+const router = routerPlugin.router;
+```
+
+## Complete Example
+
+Here's a complete application setup:
+
+```tsx
+import { defineApp, defineInjectable, type Plugin, component } from 'sigx';
+import { createRouter, createWebHistory, RouterView } from '@sigx/router';
+
+// Define services
+const useApi = defineInjectable(() => ({
+    fetch: async (url: string) => {
+        const res = await fetch(url);
+        return res.json();
+    }
+}));
+
+// Create router
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        { path: '/', component: HomePage },
+        { path: '/users/:id', component: UserPage }
+    ]
+});
+
+// Analytics plugin
+const analyticsPlugin: Plugin = {
+    name: 'analytics',
+    install(app) {
+        app.hook({
+            onComponentMounted: (instance) => {
+                trackPageView(instance.name);
+            }
+        });
+    }
+};
+
+// App component
+const App = component(({ }) => {
+    return () => (
+        <div>
+            <nav>...</nav>
+            <RouterView />
+        </div>
+    );
+});
+
+// Bootstrap
+defineApp(<App />)
+    .use(router)
+    .use(analyticsPlugin)
+    .provide(useApi, customApiImplementation)
+    .hook({
+        onComponentError: (err) => {
+            Sentry.captureException(err);
+            return false;
+        }
+    })
+    .mount(document.getElementById('app')!);
+```
+
+## API Reference
+
+### `defineApp(rootComponent)`
+
+Creates an app instance.
+
+**Returns:** `App<TContainer>`
+
+### App Methods
+
+| Method | Description |
+|--------|-------------|
+| `use(plugin, options?)` | Install a plugin |
+| `provide(token, value)` | Provide a value to all components |
+| `hook(hooks)` | Register lifecycle hooks |
+| `mount(container, mountFn?)` | Mount the app |
+| `unmount()` | Unmount and cleanup |
+| `config` | App configuration object |
+
+### Injection Functions
+
+| Function | Description |
+|----------|-------------|
+| `defineInjectable(factory)` | Create an injectable token with factory |
+| `inject(token)` | Get a provided value |
+| `provide(token, value)` | Provide a value (in component) |
+| `defineProvide(useFn)` | Create and provide in one step |
+
+### Types
+
+```tsx
+interface Plugin<Options = any> {
+    name?: string;
+    install(app: App, options?: Options): void;
+}
+
+type PluginInstallFn<Options = any> = (app: App, options?: Options) => void;
+
+interface AppLifecycleHooks {
+    onComponentCreated?(instance: ComponentInstance): void;
+    onComponentMounted?(instance: ComponentInstance): void;
+    onComponentUpdated?(instance: ComponentInstance): void;
+    onComponentUnmounted?(instance: ComponentInstance): void;
+    onComponentError?(err: Error, instance: ComponentInstance, info: string): boolean | void;
+}
+
+interface AppConfig {
+    errorHandler?(err: Error, instance: ComponentInstance | null, info: string): boolean | void;
+    warnHandler?(msg: string, instance: ComponentInstance | null, trace: string): void;
+    performance?: boolean;
+}
+```

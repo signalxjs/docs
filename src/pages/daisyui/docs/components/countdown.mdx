@@ -1,0 +1,169 @@
+---
+title: Countdown
+description: Countdown gives you a transition effect of changing numbers
+layout: docs
+category: ["Components", "Feedback"]
+order: 415
+---
+
+# Countdown
+
+Countdown gives you a transition effect of changing numbers. Uses the `--value` CSS variable (0–999) and optionally `--digits` to set minimum digit display.
+
+## Import
+
+```tsx
+import { Countdown } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Countdown } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Countdown value={42} />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Large Text
+
+Use the `class` prop to add Tailwind utility classes for sizing.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Countdown } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Countdown value={59} digits={2} class="font-mono text-6xl" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Clock Format
+
+Combine multiple Countdown components to create a clock display.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Countdown, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="1" align="center" class="font-mono text-2xl">
+            <Countdown value={10} digits={2} />
+            <Text>:</Text>
+            <Countdown value={24} digits={2} />
+            <Text>:</Text>
+            <Countdown value={53} digits={2} />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Labels
+
+Display countdown values with descriptive labels underneath.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Countdown, Row, Stack, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="5" class="font-mono text-4xl">
+            <Stack gap="1" align="center">
+                <Countdown value={15} digits={2} />
+                <Text class="text-sm">days</Text>
+            </Stack>
+            <Stack gap="1" align="center">
+                <Countdown value={10} digits={2} />
+                <Text class="text-sm">hours</Text>
+            </Stack>
+            <Stack gap="1" align="center">
+                <Countdown value={24} digits={2} />
+                <Text class="text-sm">min</Text>
+            </Stack>
+            <Stack gap="1" align="center">
+                <Countdown value={53} digits={2} />
+                <Text class="text-sm">sec</Text>
+            </Stack>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Boxed Style
+
+Wrap each countdown in a styled container for a card-like appearance.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Countdown, Row, Stack, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="5" class="font-mono text-4xl text-center">
+            <Stack gap="1" align="center" class="bg-neutral rounded-box text-neutral-content p-2">
+                <Countdown value={15} digits={2} />
+                <Text class="text-sm">days</Text>
+            </Stack>
+            <Stack gap="1" align="center" class="bg-neutral rounded-box text-neutral-content p-2">
+                <Countdown value={10} digits={2} />
+                <Text class="text-sm">hours</Text>
+            </Stack>
+            <Stack gap="1" align="center" class="bg-neutral rounded-box text-neutral-content p-2">
+                <Countdown value={24} digits={2} />
+                <Text class="text-sm">min</Text>
+            </Stack>
+            <Stack gap="1" align="center" class="bg-neutral rounded-box text-neutral-content p-2">
+                <Countdown value={53} digits={2} />
+                <Text class="text-sm">sec</Text>
+            </Stack>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Three Digit Values
+
+Use `digits={3}` to display values up to 999 with minimum 3 digits.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Countdown, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" class="font-mono text-4xl">
+            <Countdown value={365} digits={3} />
+            <Countdown value={42} digits={3} />
+            <Countdown value={7} digits={3} />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | `0` | The numeric value to display (0–999) |
+| `digits` | `2 \| 3` | `undefined` | Minimum number of digits to display |
+| `class` | `string` | `undefined` | Additional CSS classes |

@@ -1,0 +1,156 @@
+---
+title: Toast
+description: Toast positions notifications at the corner of the page
+layout: docs
+category: ["Components", "Feedback"]
+order: 465
+---
+
+# Toast
+
+Toast is a container for positioning alert notifications at the edges of the page.
+
+## Import
+
+```tsx
+import { Toast, Alert } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toast, Alert } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Toast position="bottom-end">
+            <Alert variant="info">New message arrived.</Alert>
+        </Toast>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Top Positions
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toast, Alert, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4" class="relative min-h-[200px] w-full">
+            <Toast position="top-start">
+                <Alert variant="info">Top start</Alert>
+            </Toast>
+            <Toast position="top-center">
+                <Alert variant="success">Top center</Alert>
+            </Toast>
+            <Toast position="top-end">
+                <Alert variant="warning">Top end</Alert>
+            </Toast>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Middle Positions
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toast, Alert, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4" class="relative min-h-[200px] w-full">
+            <Toast position="middle-start">
+                <Alert variant="info">Middle start</Alert>
+            </Toast>
+            <Toast position="middle-center">
+                <Alert variant="success">Middle center</Alert>
+            </Toast>
+            <Toast position="middle-end">
+                <Alert variant="warning">Middle end</Alert>
+            </Toast>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Bottom Positions
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toast, Alert, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="4" class="relative min-h-[200px] w-full">
+            <Toast position="bottom-start">
+                <Alert variant="info">Bottom start</Alert>
+            </Toast>
+            <Toast position="bottom-center">
+                <Alert variant="success">Bottom center</Alert>
+            </Toast>
+            <Toast position="bottom-end">
+                <Alert variant="warning">Bottom end</Alert>
+            </Toast>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Multiple Alerts
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toast, Alert } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Toast position="bottom-end">
+            <Alert variant="info">New mail arrived.</Alert>
+            <Alert variant="success">Message sent successfully.</Alert>
+            <Alert variant="warning">Connection is slow.</Alert>
+        </Toast>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Custom Class
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Toast, Alert } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Toast position="top-end" class="z-50">
+            <Alert variant="error">Something went wrong!</Alert>
+        </Toast>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop       | Type             | Default        | Description                          |
+|------------|------------------|----------------|--------------------------------------|
+| `position` | `ToastPosition`  | `"bottom-end"` | Position of the toast container      |
+| `class`    | `string`         | —              | Additional CSS classes               |
+
+### ToastPosition
+
+`"top-start"` | `"top-center"` | `"top-end"` | `"middle-start"` | `"middle-center"` | `"middle-end"` | `"bottom-start"` | `"bottom-center"` | `"bottom-end"`

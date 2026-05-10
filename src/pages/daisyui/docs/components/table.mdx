@@ -1,0 +1,501 @@
+---
+title: Table
+description: Data table components for displaying structured data with zebra striping, pinned rows/columns, and size variants
+layout: docs
+category: ["Components", "Data Display"]
+order: 270
+---
+
+# Table
+
+Tables display structured data in rows and columns using a compound component pattern.
+
+## Import
+
+```tsx
+import { Table } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Table } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Table>
+            <Table.Head>
+                <Table.Row>
+                    <Table.Th>#</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Job</Table.Th>
+                    <Table.Th>Favorite Color</Table.Th>
+                </Table.Row>
+            </Table.Head>
+            <Table.Body>
+                <Table.Row>
+                    <Table.Th>1</Table.Th>
+                    <Table.Td>Cy Ganderton</Table.Td>
+                    <Table.Td>Quality Control Specialist</Table.Td>
+                    <Table.Td>Blue</Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>2</Table.Th>
+                    <Table.Td>Hart Hagerty</Table.Td>
+                    <Table.Td>Desktop Support Technician</Table.Td>
+                    <Table.Td>Purple</Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>3</Table.Th>
+                    <Table.Td>Brice Swyre</Table.Td>
+                    <Table.Td>Tax Accountant</Table.Td>
+                    <Table.Td>Red</Table.Td>
+                </Table.Row>
+            </Table.Body>
+        </Table>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Active Row
+
+Use the `active` prop on `Table.Row` to highlight a row.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Table } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Table>
+            <Table.Head>
+                <Table.Row>
+                    <Table.Th>#</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Job</Table.Th>
+                </Table.Row>
+            </Table.Head>
+            <Table.Body>
+                <Table.Row>
+                    <Table.Th>1</Table.Th>
+                    <Table.Td>Cy Ganderton</Table.Td>
+                    <Table.Td>Quality Control Specialist</Table.Td>
+                </Table.Row>
+                <Table.Row active>
+                    <Table.Th>2</Table.Th>
+                    <Table.Td>Hart Hagerty</Table.Td>
+                    <Table.Td>Desktop Support Technician</Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>3</Table.Th>
+                    <Table.Td>Brice Swyre</Table.Td>
+                    <Table.Td>Tax Accountant</Table.Td>
+                </Table.Row>
+            </Table.Body>
+        </Table>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hover Row
+
+Use the `hover` prop on `Table.Row` to highlight rows on hover.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Table } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Table>
+            <Table.Head>
+                <Table.Row>
+                    <Table.Th>#</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Job</Table.Th>
+                </Table.Row>
+            </Table.Head>
+            <Table.Body>
+                <Table.Row hover>
+                    <Table.Th>1</Table.Th>
+                    <Table.Td>Cy Ganderton</Table.Td>
+                    <Table.Td>Quality Control Specialist</Table.Td>
+                </Table.Row>
+                <Table.Row hover>
+                    <Table.Th>2</Table.Th>
+                    <Table.Td>Hart Hagerty</Table.Td>
+                    <Table.Td>Desktop Support Technician</Table.Td>
+                </Table.Row>
+                <Table.Row hover>
+                    <Table.Th>3</Table.Th>
+                    <Table.Td>Brice Swyre</Table.Td>
+                    <Table.Td>Tax Accountant</Table.Td>
+                </Table.Row>
+            </Table.Body>
+        </Table>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Zebra Striping
+
+Use the `zebra` prop to add alternating row backgrounds.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Table } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Table zebra>
+            <Table.Head>
+                <Table.Row>
+                    <Table.Th>#</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Job</Table.Th>
+                </Table.Row>
+            </Table.Head>
+            <Table.Body>
+                <Table.Row>
+                    <Table.Th>1</Table.Th>
+                    <Table.Td>Cy Ganderton</Table.Td>
+                    <Table.Td>Quality Control Specialist</Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>2</Table.Th>
+                    <Table.Td>Hart Hagerty</Table.Td>
+                    <Table.Td>Desktop Support Technician</Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>3</Table.Th>
+                    <Table.Td>Brice Swyre</Table.Td>
+                    <Table.Td>Tax Accountant</Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>4</Table.Th>
+                    <Table.Td>Marjy Ferencz</Table.Td>
+                    <Table.Td>Office Assistant I</Table.Td>
+                </Table.Row>
+            </Table.Body>
+        </Table>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Footer
+
+Use `Table.Foot` to add a footer section with pinned rows.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Table } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Table>
+            <Table.Head>
+                <Table.Row>
+                    <Table.Th>#</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Job</Table.Th>
+                </Table.Row>
+            </Table.Head>
+            <Table.Body>
+                <Table.Row>
+                    <Table.Th>1</Table.Th>
+                    <Table.Td>Cy Ganderton</Table.Td>
+                    <Table.Td>Quality Control Specialist</Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>2</Table.Th>
+                    <Table.Td>Hart Hagerty</Table.Td>
+                    <Table.Td>Desktop Support Technician</Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>3</Table.Th>
+                    <Table.Td>Brice Swyre</Table.Td>
+                    <Table.Td>Tax Accountant</Table.Td>
+                </Table.Row>
+            </Table.Body>
+            <Table.Foot>
+                <Table.Row>
+                    <Table.Th>#</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Job</Table.Th>
+                </Table.Row>
+            </Table.Foot>
+        </Table>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Pinned Rows
+
+Use `pinRows` to make header and footer rows sticky when scrolling vertically.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Table } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Table pinRows>
+            <Table.Head>
+                <Table.Row>
+                    <Table.Th>#</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Job</Table.Th>
+                </Table.Row>
+            </Table.Head>
+            <Table.Body>
+                <Table.Row><Table.Th>1</Table.Th><Table.Td>Cy Ganderton</Table.Td><Table.Td>Quality Control Specialist</Table.Td></Table.Row>
+                <Table.Row><Table.Th>2</Table.Th><Table.Td>Hart Hagerty</Table.Td><Table.Td>Desktop Support Technician</Table.Td></Table.Row>
+                <Table.Row><Table.Th>3</Table.Th><Table.Td>Brice Swyre</Table.Td><Table.Td>Tax Accountant</Table.Td></Table.Row>
+                <Table.Row><Table.Th>4</Table.Th><Table.Td>Marjy Ferencz</Table.Td><Table.Td>Office Assistant I</Table.Td></Table.Row>
+                <Table.Row><Table.Th>5</Table.Th><Table.Td>Yancy Tear</Table.Td><Table.Td>Community Outreach Specialist</Table.Td></Table.Row>
+                <Table.Row><Table.Th>6</Table.Th><Table.Td>Irma Vadarlis</Table.Td><Table.Td>Editor</Table.Td></Table.Row>
+                <Table.Row><Table.Th>7</Table.Th><Table.Td>Meghann Deatley</Table.Td><Table.Td>Staff Accountant IV</Table.Td></Table.Row>
+                <Table.Row><Table.Th>8</Table.Th><Table.Td>Samber Closson</Table.Td><Table.Td>Accounting Assistant I</Table.Td></Table.Row>
+                <Table.Row><Table.Th>9</Table.Th><Table.Td>Lesly Vivyan</Table.Td><Table.Td>Nurse Practitioner</Table.Td></Table.Row>
+                <Table.Row><Table.Th>10</Table.Th><Table.Td>Zaneta Tetter</Table.Td><Table.Td>VP Quality Control</Table.Td></Table.Row>
+            </Table.Body>
+            <Table.Foot>
+                <Table.Row>
+                    <Table.Th>#</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Job</Table.Th>
+                </Table.Row>
+            </Table.Foot>
+        </Table>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Pinned Columns
+
+Use `pinCols` to make `<th>` columns sticky when scrolling horizontally.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Table } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Table pinCols size="xs">
+            <Table.Head>
+                <Table.Row>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Td>A</Table.Td>
+                    <Table.Td>B</Table.Td>
+                    <Table.Td>C</Table.Td>
+                    <Table.Td>D</Table.Td>
+                    <Table.Td>E</Table.Td>
+                    <Table.Td>F</Table.Td>
+                    <Table.Td>G</Table.Td>
+                    <Table.Td>H</Table.Td>
+                    <Table.Th>Name</Table.Th>
+                </Table.Row>
+            </Table.Head>
+            <Table.Body>
+                <Table.Row>
+                    <Table.Th>Alice</Table.Th>
+                    <Table.Td>90</Table.Td>
+                    <Table.Td>85</Table.Td>
+                    <Table.Td>78</Table.Td>
+                    <Table.Td>92</Table.Td>
+                    <Table.Td>88</Table.Td>
+                    <Table.Td>95</Table.Td>
+                    <Table.Td>80</Table.Td>
+                    <Table.Td>87</Table.Td>
+                    <Table.Th>Alice</Table.Th>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>Bob</Table.Th>
+                    <Table.Td>72</Table.Td>
+                    <Table.Td>68</Table.Td>
+                    <Table.Td>95</Table.Td>
+                    <Table.Td>83</Table.Td>
+                    <Table.Td>76</Table.Td>
+                    <Table.Td>91</Table.Td>
+                    <Table.Td>89</Table.Td>
+                    <Table.Td>74</Table.Td>
+                    <Table.Th>Bob</Table.Th>
+                </Table.Row>
+            </Table.Body>
+        </Table>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+Available sizes: `xs`, `sm`, `md` (default), `lg`, and `xl`.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Table, Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="6">
+            <Col gap="2">
+                <Text size="sm" weight="medium">xs</Text>
+                <Table size="xs">
+                    <Table.Head><Table.Row><Table.Th>#</Table.Th><Table.Th>Name</Table.Th><Table.Th>Value</Table.Th></Table.Row></Table.Head>
+                    <Table.Body>
+                        <Table.Row><Table.Th>1</Table.Th><Table.Td>Item A</Table.Td><Table.Td>100</Table.Td></Table.Row>
+                        <Table.Row><Table.Th>2</Table.Th><Table.Td>Item B</Table.Td><Table.Td>200</Table.Td></Table.Row>
+                    </Table.Body>
+                </Table>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" weight="medium">sm</Text>
+                <Table size="sm">
+                    <Table.Head><Table.Row><Table.Th>#</Table.Th><Table.Th>Name</Table.Th><Table.Th>Value</Table.Th></Table.Row></Table.Head>
+                    <Table.Body>
+                        <Table.Row><Table.Th>1</Table.Th><Table.Td>Item A</Table.Td><Table.Td>100</Table.Td></Table.Row>
+                        <Table.Row><Table.Th>2</Table.Th><Table.Td>Item B</Table.Td><Table.Td>200</Table.Td></Table.Row>
+                    </Table.Body>
+                </Table>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" weight="medium">md (default)</Text>
+                <Table size="md">
+                    <Table.Head><Table.Row><Table.Th>#</Table.Th><Table.Th>Name</Table.Th><Table.Th>Value</Table.Th></Table.Row></Table.Head>
+                    <Table.Body>
+                        <Table.Row><Table.Th>1</Table.Th><Table.Td>Item A</Table.Td><Table.Td>100</Table.Td></Table.Row>
+                        <Table.Row><Table.Th>2</Table.Th><Table.Td>Item B</Table.Td><Table.Td>200</Table.Td></Table.Row>
+                    </Table.Body>
+                </Table>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" weight="medium">lg</Text>
+                <Table size="lg">
+                    <Table.Head><Table.Row><Table.Th>#</Table.Th><Table.Th>Name</Table.Th><Table.Th>Value</Table.Th></Table.Row></Table.Head>
+                    <Table.Body>
+                        <Table.Row><Table.Th>1</Table.Th><Table.Td>Item A</Table.Td><Table.Td>100</Table.Td></Table.Row>
+                        <Table.Row><Table.Th>2</Table.Th><Table.Td>Item B</Table.Td><Table.Td>200</Table.Td></Table.Row>
+                    </Table.Body>
+                </Table>
+            </Col>
+            <Col gap="2">
+                <Text size="sm" weight="medium">xl</Text>
+                <Table size="xl">
+                    <Table.Head><Table.Row><Table.Th>#</Table.Th><Table.Th>Name</Table.Th><Table.Th>Value</Table.Th></Table.Row></Table.Head>
+                    <Table.Body>
+                        <Table.Row><Table.Th>1</Table.Th><Table.Td>Item A</Table.Td><Table.Td>100</Table.Td></Table.Row>
+                        <Table.Row><Table.Th>2</Table.Th><Table.Td>Item B</Table.Td><Table.Td>200</Table.Td></Table.Row>
+                    </Table.Body>
+                </Table>
+            </Col>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Actions
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Table, Button, Badge, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Table>
+            <Table.Head>
+                <Table.Row>
+                    <Table.Th>#</Table.Th>
+                    <Table.Th>Name</Table.Th>
+                    <Table.Th>Status</Table.Th>
+                    <Table.Th>Actions</Table.Th>
+                </Table.Row>
+            </Table.Head>
+            <Table.Body>
+                <Table.Row>
+                    <Table.Th>1</Table.Th>
+                    <Table.Td>Alice Johnson</Table.Td>
+                    <Table.Td><Badge variant="success" size="sm">active</Badge></Table.Td>
+                    <Table.Td>
+                        <Row gap="2">
+                            <Button size="xs">Edit</Button>
+                            <Button size="xs" variant="ghost">Delete</Button>
+                        </Row>
+                    </Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>2</Table.Th>
+                    <Table.Td>Bob Smith</Table.Td>
+                    <Table.Td><Badge variant="warning" size="sm">pending</Badge></Table.Td>
+                    <Table.Td>
+                        <Row gap="2">
+                            <Button size="xs">Edit</Button>
+                            <Button size="xs" variant="ghost">Delete</Button>
+                        </Row>
+                    </Table.Td>
+                </Table.Row>
+                <Table.Row>
+                    <Table.Th>3</Table.Th>
+                    <Table.Td>Carol White</Table.Td>
+                    <Table.Td><Badge variant="error" size="sm">inactive</Badge></Table.Td>
+                    <Table.Td>
+                        <Row gap="2">
+                            <Button size="xs">Edit</Button>
+                            <Button size="xs" variant="ghost">Delete</Button>
+                        </Row>
+                    </Table.Td>
+                </Table.Row>
+            </Table.Body>
+        </Table>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Table Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `zebra` | `boolean` | `false` | Alternate row background colors |
+| `pinRows` | `boolean` | `false` | Make header/footer rows sticky when scrolling vertically |
+| `pinCols` | `boolean` | `false` | Make `<th>` columns sticky when scrolling horizontally |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | — | Table size |
+| `class` | `string` | — | Additional CSS classes |
+
+### Table.Row Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `hover` | `boolean` | `false` | Highlight row on hover |
+| `active` | `boolean` | `false` | Highlight row as active |
+| `class` | `string` | — | Additional CSS classes |
+
+### Sub-Components
+
+| Component | Description |
+|-----------|-------------|
+| `Table.Head` | Table header section (`<thead>`) |
+| `Table.Body` | Table body section (`<tbody>`) |
+| `Table.Foot` | Table footer section (`<tfoot>`) |
+| `Table.Row` | Table row (`<tr>`) — supports `hover` and `active` props |
+| `Table.Th` | Table header cell (`<th>`) |
+| `Table.Td` | Table data cell (`<td>`) |

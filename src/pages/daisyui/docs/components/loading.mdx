@@ -1,0 +1,251 @@
+---
+title: Loading
+description: Loading indicators for async operations
+layout: docs
+category: ["Components", "Feedback"]
+order: 410
+---
+
+# Loading
+
+Loading indicators show users that content is being loaded or processed.
+
+## Import
+
+```tsx
+import { Loading, Row, Col, Text, Button } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Loading />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Loading Spinner
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Loading type="spinner" size="lg" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Loading Dots
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Loading type="dots" size="lg" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Loading Ring
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Loading type="ring" size="lg" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Loading Ball
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Loading type="ball" size="lg" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Loading Bars
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Loading type="bars" size="lg" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Loading Infinity
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Loading type="infinity" size="lg" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## All Types
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading, Row, Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="8" align="center">
+            <Col align="center">
+                <Loading type="spinner" />
+                <Text size="sm" class="mt-2">Spinner</Text>
+            </Col>
+            <Col align="center">
+                <Loading type="dots" />
+                <Text size="sm" class="mt-2">Dots</Text>
+            </Col>
+            <Col align="center">
+                <Loading type="ring" />
+                <Text size="sm" class="mt-2">Ring</Text>
+            </Col>
+            <Col align="center">
+                <Loading type="ball" />
+                <Text size="sm" class="mt-2">Ball</Text>
+            </Col>
+            <Col align="center">
+                <Loading type="bars" />
+                <Text size="sm" class="mt-2">Bars</Text>
+            </Col>
+            <Col align="center">
+                <Loading type="infinity" />
+                <Text size="sm" class="mt-2">Infinity</Text>
+            </Col>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Loading type="spinner" size="xs" />
+            <Loading type="spinner" size="sm" />
+            <Loading type="spinner" size="md" />
+            <Loading type="spinner" size="lg" />
+            <Loading type="spinner" size="xl" />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Loading, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Loading type="spinner" color="primary" />
+            <Loading type="spinner" color="secondary" />
+            <Loading type="spinner" color="accent" />
+            <Loading type="spinner" color="neutral" />
+            <Loading type="spinner" color="info" />
+            <Loading type="spinner" color="success" />
+            <Loading type="spinner" color="warning" />
+            <Loading type="spinner" color="error" />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Loading with Button
+
+```tsx preview code live
+import { component, signal, render } from 'sigx';
+import { Button, Loading, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const isLoading = signal(false);
+
+    const handleClick = () => {
+        isLoading.value = true;
+        setTimeout(() => isLoading.value = false, 2000);
+    };
+
+    return () => (
+        <Button
+            variant="primary"
+            disabled={isLoading.value}
+            onClick={handleClick}
+        >
+            {isLoading.value ? (
+                <>
+                    <Loading type="spinner" size="sm" />
+                    <Text as="span">Processing...</Text>
+                </>
+            ) : (
+                <Text as="span">Click me</Text>
+            )}
+        </Button>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'spinner' \| 'dots' \| 'ring' \| 'ball' \| 'bars' \| 'infinity'` | `'spinner'` | Animation type |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Loading indicator size |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `undefined` | Color variant |
+| `class` | `string` | `undefined` | Additional CSS classes |

@@ -1,0 +1,398 @@
+---
+title: Advanced Reactivity
+description: Advanced reactivity utilities in SignalX - batch, untrack, effectScope, and more
+layout: docs
+category: Advanced
+order: 10
+---
+
+# Advanced Reactivity
+
+SignalX provides advanced utilities for fine-grained control over reactivity. These are escape hatches for performance optimization and edge cases.
+
+## Batching Updates
+
+Use `batch()` to group multiple signal updates into a single reactive flush:
+
+```tsx live
+import { signal, batch, effect } from 'sigx';
+
+const state = signal({ 
+    firstName: 'John', 
+    lastName: 'Doe', 
+    age: 30 
+});
+
+// Effect will log on each update
+effect(() => {
+    console.log(`Name: ${state.firstName} ${state.lastName}, Age: ${state.age}`);
+});
+
+console.log('--- Without batch (effect runs 3 times) ---');
+state.firstName = 'Jane';
+state.lastName = 'Smith';
+state.age = 25;
+
+console.log('--- With batch (effect runs once) ---');
+batch(() => {
+    state.firstName = 'John';
+    state.lastName = 'Doe';
+    state.age = 30;
+});
+```
+
+### When to Use Batch
+
+- **Multiple related updates** - Updating several properties at once
+- **Loop updates** - Modifying signals in a loop
+- **Performance** - Reducing effect re-runs
+
+```tsx
+// Efficient bulk update
+batch(() => {
+    items.forEach((item, i) => {
+        state.items[i] = processItem(item);
+    });
+    state.lastUpdated = Date.now();
+});
+```
+
+### Nested Batching
+
+Batches can be nested - effects only run after the outermost batch completes:
+
+```tsx live
+import { signal, batch, effect } from 'sigx';
+
+const state = signal({ a: 0, b: 0, c: 0, d: 0 });
+
+effect(() => {
+    console.log(`State: a=${state.a}, b=${state.b}, c=${state.c}, d=${state.d}`);
+});
+
+console.log('--- Starting nested batch ---');
+batch(() => {
+    state.a = 1;
+    console.log('Set a=1 (inside outer batch)');
+    batch(() => {
+        state.b = 2;
+        state.c = 3;
+        console.log('Set b=2, c=3 (inside inner batch)');
+    });
+    console.log('Inner batch complete, effect still pending...');
+    state.d = 4;
+    console.log('Set d=4 (still inside outer batch)');
+});
+console.log('Outer batch complete - effect ran once!');
+```
+
+## Reading Without Tracking
+
+Use `untrack()` to read signal values without creating a dependency:
+
+```tsx live
+import { signal, effect, untrack } from 'sigx';
+
+const state = signal({ count: 1, multiplier: 2 });
+
+effect(() => {
+    // This effect depends on count but NOT multiplier
+    const mult = untrack(() => state.multiplier);
+    console.log(`count(${state.count}) * multiplier(${mult}) = ${state.count * mult}`);
+});
+
+console.log('--- Incrementing count (effect WILL run) ---');
+state.count++;
+
+console.log('--- Incrementing multiplier (effect will NOT run) ---');
+state.multiplier++;
+console.log('Multiplier changed but effect did not re-run');
+```
+
+### Use Cases
+
+1. **One-time reads** - Read initial/default values:
+   ```tsx
+   const initialValue = untrack(() => config.defaultValue);
+   ```
+
+2. **Avoid circular dependencies**:
+   ```tsx
+   effect(() => {
+       const current = state.value;
+       // Use untrack to avoid triggering this effect again
+       untrack(() => history.push(current));
+   });
+   ```
+
+3. **Conditional dependencies**:
+   ```tsx
+   effect(() => {
+       if (state.useAdvanced) {
+           // Only track advancedData when useAdvanced is true
+           console.log(state.advancedData);
+       } else {
+           // Don't track advancedData when not needed
+           untrack(() => console.log(state.advancedData));
+       }
+   });
+   ```
+
+## Getting Raw Objects
+
+Use `toRaw()` to get the underlying non-reactive object from a signal:
+
+```tsx live
+import { signal, toRaw, isReactive } from 'sigx';
+
+const state = signal({ 
+    users: ['Alice', 'Bob'], 
+    settings: { theme: 'dark' } 
+});
+
+console.log('state is reactive:', isReactive(state));
+
+// Get the raw, non-reactive object
+const raw = toRaw(state);
+
+console.log('raw is reactive:', isReactive(raw));
+console.log('Raw object:', JSON.stringify(raw, null, 2));
+```
+
+### Nested Objects
+
+`toRaw()` only unwraps the immediate proxy. For nested objects:
+
+```tsx
+const state = signal({ 
+    user: { 
+        profile: { name: 'John' } 
+    } 
+});
+
+// Only unwraps outer proxy
+const raw = toRaw(state);
+// raw.user is still reactive if accessed through the original proxy
+
+// For deep unwrapping, use structuredClone or manual deep copy
+const deepRaw = JSON.parse(JSON.stringify(toRaw(state)));
+```
+
+## Checking Reactivity
+
+Use `isReactive()` to check if a value is a reactive proxy:
+
+```tsx live
+import { signal, isReactive, toRaw } from 'sigx';
+
+const state = signal({ count: 0 });
+const plain = { count: 0 };
+
+console.log('state is reactive:', isReactive(state));
+console.log('plain is reactive:', isReactive(plain));
+
+// Useful for debugging or conditional logic
+function logValue(value: any) {
+    if (isReactive(value)) {
+        console.log('Reactive:', JSON.stringify(toRaw(value)));
+    } else {
+        console.log('Plain:', JSON.stringify(value));
+    }
+}
+
+logValue(state);
+logValue(plain);
+```
+
+## Effect Scopes
+
+Use `effectScope()` to group effects and stop them together:
+
+```tsx live
+import { signal, effect, effectScope } from 'sigx';
+
+const scope = effectScope();
+const state = signal({ count: 0 });
+
+scope.run(() => {
+    // These effects are tracked by the scope
+    effect(() => console.log('Count:', state.count));
+    effect(() => console.log('Double:', state.count * 2));
+});
+
+console.log('--- Updating count (effects run) ---');
+state.count = 5;
+
+console.log('--- Stopping scope ---');
+scope.stop();
+
+console.log('--- Updating count again (effects do NOT run) ---');
+state.count = 10;
+console.log('Count is now', state.count, 'but effects were stopped');
+```
+
+### Detached Scopes
+
+Create a detached scope that doesn't stop when its parent stops:
+
+```tsx live
+import { signal, effect, effectScope } from 'sigx';
+
+const state = signal({ value: 0 });
+const parentScope = effectScope();
+let detachedScope: ReturnType<typeof effectScope>;
+
+parentScope.run(() => {
+    // Detached scope - independent lifetime
+    detachedScope = effectScope(true);
+    
+    effect(() => console.log('Parent effect - value:', state.value));
+    
+    detachedScope.run(() => {
+        // This effect survives parent.stop()
+        effect(() => console.log('Detached effect - value:', state.value));
+    });
+});
+
+console.log('--- Updating value (both effects run) ---');
+state.value = 1;
+
+console.log('--- Stopping parent scope ---');
+parentScope.stop();
+
+console.log('--- Updating value (only detached runs) ---');
+state.value = 2;
+```
+
+### Use Cases
+
+1. **Component cleanup** - Group all component effects:
+   ```tsx
+   const MyComponent = component((ctx) => {
+       const scope = effectScope();
+       
+       ctx.onMounted(() => {
+           scope.run(() => {
+               effect(() => { /* ... */ });
+               effect(() => { /* ... */ });
+           });
+       });
+       
+       ctx.onUnmounted(() => {
+           scope.stop();
+       });
+   });
+   ```
+
+2. **Feature modules** - Enable/disable features:
+   ```tsx
+   let featureScope: EffectScope | null = null;
+   
+   function enableFeature() {
+       featureScope = effectScope();
+       featureScope.run(() => {
+           // All feature effects
+       });
+   }
+   
+   function disableFeature() {
+       featureScope?.stop();
+       featureScope = null;
+   }
+   ```
+
+## API Reference
+
+### `batch(fn)`
+
+Batch multiple reactive updates into a single flush.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fn` | `() => void` | Function containing signal updates |
+
+### `untrack(fn)`
+
+Execute a function without tracking dependencies.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fn` | `() => T` | Function to execute |
+
+**Returns:** The return value of `fn`
+
+### `toRaw(proxy)`
+
+Get the raw object from a reactive proxy.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `proxy` | `T` | A reactive proxy |
+
+**Returns:** The underlying raw object, or the value itself if not reactive
+
+### `isReactive(value)`
+
+Check if a value is a reactive proxy.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `value` | `unknown` | Value to check |
+
+**Returns:** `boolean`
+
+### `effectScope(detached?)`
+
+Create a scope for grouping effects.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `detached` | `boolean` | `false` | If true, scope is independent of parent |
+
+**Returns:** `EffectScope` with `run()` and `stop()` methods
+
+## Best Practices
+
+1. **Use batch for bulk operations**:
+   ```tsx
+   // Good
+   batch(() => {
+       state.items = newItems;
+       state.count = newItems.length;
+       state.lastModified = Date.now();
+   });
+   ```
+
+2. **Use untrack for initial reads**:
+   ```tsx
+   effect(() => {
+       const initial = untrack(() => state.initialValue);
+       // Only track changes to state.current
+       if (state.current !== initial) {
+           // Handle change
+       }
+   });
+   ```
+
+3. **Use toRaw for external APIs**:
+   ```tsx
+   // Always use toRaw when passing to non-SignalX code
+   thirdPartyLib.process(toRaw(state.data));
+   ```
+
+4. **Scope effects appropriately**:
+   ```tsx
+   // Group related effects for easy cleanup
+   const featureScope = effectScope();
+   featureScope.run(() => {
+       // Feature effects
+   });
+   // One call stops everything
+   featureScope.stop();
+   ```
+
+## Next Steps
+
+- [Factories](/docs/advanced/factories) - Injectable service pattern
+- [Messaging](/docs/advanced/messaging) - Pub/sub communication
+- [Effects](/docs/effects) - Basic effect usage

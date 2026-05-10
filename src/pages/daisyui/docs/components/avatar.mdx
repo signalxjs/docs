@@ -1,0 +1,218 @@
+---
+title: Avatar
+description: User profile images with various sizes and shapes
+layout: docs
+category: ["Components", "Data Display"]
+order: 210
+---
+
+# Avatar
+
+Avatars represent users or entities with images or placeholders.
+
+## Import
+
+```tsx
+import { Avatar } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Avatar } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Avatar src="https://i.pravatar.cc/150?u=1" alt="User avatar" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Avatar, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Avatar size="xs" src="https://i.pravatar.cc/150?u=1" />
+            <Avatar size="sm" src="https://i.pravatar.cc/150?u=2" />
+            <Avatar size="md" src="https://i.pravatar.cc/150?u=3" />
+            <Avatar size="lg" src="https://i.pravatar.cc/150?u=4" />
+            <Avatar size="xl" src="https://i.pravatar.cc/150?u=5" />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Shapes
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Avatar, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Avatar shape="circle" src="https://i.pravatar.cc/150?u=10" />
+            <Avatar shape="rounded" src="https://i.pravatar.cc/150?u=11" />
+            <Avatar shape="square" src="https://i.pravatar.cc/150?u=12" />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Mask Shapes
+
+Use mask-based shapes for unique avatar outlines.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Avatar, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Avatar shape="squircle" src="https://i.pravatar.cc/150?u=13" />
+            <Avatar shape="hexagon" src="https://i.pravatar.cc/150?u=14" />
+            <Avatar shape="heart" src="https://i.pravatar.cc/150?u=15" />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Online / Offline Status
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Avatar, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Avatar src="https://i.pravatar.cc/150?u=30" online />
+            <Avatar src="https://i.pravatar.cc/150?u=31" offline />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Placeholder
+
+When no image is provided, show initials or text.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Avatar, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Avatar placeholder="AB" />
+            <Avatar placeholder="CD" class="bg-primary text-primary-content" />
+            <Avatar placeholder="EF" class="bg-secondary text-secondary-content" />
+            <Avatar placeholder="GH" class="bg-accent text-accent-content" />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Ring
+
+Add a ring border around the avatar.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Avatar, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Avatar src="https://i.pravatar.cc/150?u=40" ring />
+            <Avatar src="https://i.pravatar.cc/150?u=41" ring ringColor="secondary" />
+            <Avatar src="https://i.pravatar.cc/150?u=42" ring ringColor="accent" />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Avatar Group
+
+Display multiple avatars overlapping.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Avatar } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Avatar.Group>
+            <Avatar src="https://i.pravatar.cc/150?u=20" size="sm" />
+            <Avatar src="https://i.pravatar.cc/150?u=21" size="sm" />
+            <Avatar src="https://i.pravatar.cc/150?u=22" size="sm" />
+            <Avatar src="https://i.pravatar.cc/150?u=23" size="sm" />
+            <Avatar placeholder="+5" size="sm" class="bg-neutral text-neutral-content" />
+        </Avatar.Group>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Avatar Group with Custom Spacing
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Avatar } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Avatar.Group spacing={3}>
+            <Avatar src="https://i.pravatar.cc/150?u=50" size="sm" />
+            <Avatar src="https://i.pravatar.cc/150?u=51" size="sm" />
+            <Avatar src="https://i.pravatar.cc/150?u=52" size="sm" />
+        </Avatar.Group>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | `undefined` | Image URL |
+| `alt` | `string` | `'Avatar'` | Alt text for image |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Avatar size |
+| `shape` | `'circle' \| 'rounded' \| 'square' \| 'squircle' \| 'hexagon' \| 'heart'` | `'circle'` | Avatar shape |
+| `online` | `boolean` | `false` | Show online indicator |
+| `offline` | `boolean` | `false` | Show offline indicator |
+| `placeholder` | `string` | `undefined` | Text to show when no image (e.g., initials) |
+| `ring` | `boolean` | `false` | Add ring border |
+| `ringColor` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error' \| 'neutral'` | `'primary'` | Ring border color |
+| `class` | `string` | `undefined` | Additional CSS classes |
+
+## Avatar.Group Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `spacing` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| 8 \| 10` | `6` | Overlap spacing |
+| `class` | `string` | `undefined` | Additional CSS classes |

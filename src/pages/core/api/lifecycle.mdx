@@ -1,0 +1,291 @@
+---
+title: Lifecycle
+description: SignalX component lifecycle hooks API reference
+layout: docs
+category: Reference
+order: 40
+---
+
+# Lifecycle API
+
+Hooks for responding to component lifecycle events.
+
+## onMounted
+
+Register a callback to run after the component is mounted to the DOM.
+
+```tsx
+function onMounted(fn: (ctx: MountContext) => void): void;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fn` | `(ctx: MountContext) => void` | Callback receiving mount context |
+
+### MountContext
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `el` | `PlatformElement` | The component's root DOM element |
+
+### Examples
+
+```tsx
+import { component, onMounted } from 'sigx';
+
+const MyComponent = component(({ signal }) => {
+    const state = signal({ width: 0 });
+
+    onMounted(({ el }) => {
+        // Access DOM element
+        state.width = el.offsetWidth;
+        
+        // Set up DOM-dependent logic
+        const observer = new ResizeObserver(entries => {
+            state.width = entries[0].contentRect.width;
+        });
+        observer.observe(el);
+    });
+
+    return () => <div>Width: {state.width}px</div>;
+});
+```
+
+### Notes
+
+- Called after the component's DOM is created and inserted
+- Safe to access `el` and perform DOM measurements
+- Can be called multiple times to register multiple callbacks
+- Must be called during component setup (synchronously)
+
+---
+
+## onUnmounted
+
+Register a callback to run before the component is removed from the DOM.
+
+```tsx
+function onUnmounted(fn: (ctx: MountContext) => void): void;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fn` | `(ctx: MountContext) => void` | Cleanup callback |
+
+### Examples
+
+```tsx
+import { component, onMounted, onUnmounted } from 'sigx';
+
+const Timer = component(({ signal }) => {
+    const state = signal({ seconds: 0 });
+    let intervalId: number;
+
+    onMounted(() => {
+        intervalId = setInterval(() => {
+            state.seconds++;
+        }, 1000);
+    });
+
+    onUnmounted(() => {
+        // Clean up resources
+        clearInterval(intervalId);
+    });
+
+    return () => <div>Elapsed: {state.seconds}s</div>;
+});
+```
+
+### Common Cleanup Tasks
+
+```tsx
+onUnmounted(() => {
+    // Clear timers
+    clearInterval(timerId);
+    clearTimeout(timeoutId);
+    
+    // Remove event listeners
+    window.removeEventListener('resize', handleResize);
+    
+    // Close connections
+    websocket.close();
+    
+    // Cancel subscriptions
+    subscription.unsubscribe();
+    
+    // Disconnect observers
+    resizeObserver.disconnect();
+    intersectionObserver.disconnect();
+});
+```
+
+---
+
+## onCreated
+
+Register a callback to run after the component instance is created.
+
+```tsx
+function onCreated(fn: () => void): void;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fn` | `() => void` | Callback to run |
+
+### Examples
+
+```tsx
+import { component, onCreated } from 'sigx';
+
+const MyComponent = component(({ signal }) => {
+    const state = signal({ data: null });
+
+    onCreated(() => {
+        // Run initialization logic
+        console.log('Component instance created');
+        
+        // Start data fetching
+        fetchData().then(data => {
+            state.data = data;
+        });
+    });
+
+    return () => <div>{state.data}</div>;
+});
+```
+
+### Notes
+
+- Called synchronously after setup completes
+- Before DOM mounting
+- Useful for initialization that doesn't need DOM access
+
+---
+
+## onUpdated
+
+Register a callback to run after the component re-renders.
+
+```tsx
+function onUpdated(fn: () => void): void;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fn` | `() => void` | Callback to run after updates |
+
+### Examples
+
+```tsx
+import { component, onUpdated } from 'sigx';
+
+const Chart = component(({ props, signal }) => {
+    let chartInstance: Chart | null = null;
+    
+    onMounted(({ el }) => {
+        chartInstance = new Chart(el, props.data);
+    });
+
+    onUpdated(() => {
+        // Sync external library with new data
+        chartInstance?.update(props.data);
+    });
+
+    onUnmounted(() => {
+        chartInstance?.destroy();
+    });
+
+    return () => <canvas />;
+});
+```
+
+### Notes
+
+- Called after reactive changes cause re-render
+- DOM is already updated when callback runs
+- Useful for syncing with external libraries
+
+---
+
+## Context Methods
+
+These hooks are also available on the setup context:
+
+```tsx
+const MyComponent = component((ctx) => {
+    // Equivalent to standalone hooks
+    ctx.onMounted(({ el }) => { /* ... */ });
+    ctx.onUnmounted(({ el }) => { /* ... */ });
+    ctx.onCreated(() => { /* ... */ });
+    ctx.onUpdated(() => { /* ... */ });
+
+    return () => <div />;
+});
+```
+
+---
+
+## Lifecycle Order
+
+```
+1. Setup function runs
+2. onCreated callbacks
+3. First render
+4. DOM mounting
+5. onMounted callbacks
+   │
+   ├─── Reactive updates ─── onUpdated callbacks
+   │
+6. onUnmounted callbacks
+7. DOM removal
+```
+
+---
+
+## Async Setup
+
+Components can have async setup functions. On the server, the setup is awaited. On the client, it runs synchronously for hydration.
+
+```tsx
+const AsyncComponent = component(async ({ signal }) => {
+    const data = await fetchData();
+    const state = signal({ data });
+
+    onMounted(() => {
+        console.log('Mounted with data');
+    });
+
+    return () => <div>{state.data}</div>;
+});
+```
+
+---
+
+## Types
+
+### MountContext
+
+```tsx
+interface MountContext<TElement = PlatformElement> {
+    el: TElement;
+}
+```
+
+### PlatformElement
+
+```tsx
+// In browser (runtime-dom)
+type PlatformElement = HTMLElement;
+
+// Configurable per platform
+type PlatformElement = PlatformTypes extends { element: infer E } ? E : any;
+```

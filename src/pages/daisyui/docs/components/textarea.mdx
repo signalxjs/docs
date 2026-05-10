@@ -1,0 +1,236 @@
+---
+title: Textarea
+description: Multi-line text input for longer text content
+layout: docs
+category: ["Components", "Data Input"]
+order: 520
+---
+
+# Textarea
+
+Multi-line text input component with model binding support.
+
+## Import
+
+```tsx
+import { Textarea, Col } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Use `model` for two-way binding:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Textarea, Card, Col, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ bio: '' });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Textarea 
+                    model={() => form.bio}
+                    placeholder="Tell us about yourself..."
+                    variant="bordered"
+                />
+                
+                <Col gap="1">
+                    <Text size="sm" class="opacity-70">Characters: {form.bio.length}</Text>
+                    <Text size="sm" class="opacity-70">Preview: {form.bio || '(empty)'}</Text>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Textarea, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Textarea size="xs" placeholder="Extra small" variant="bordered" />
+            <Textarea size="sm" placeholder="Small" variant="bordered" />
+            <Textarea size="md" placeholder="Medium (default)" variant="bordered" />
+            <Textarea size="lg" placeholder="Large" variant="bordered" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Textarea, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Textarea color="primary" placeholder="Primary" variant="bordered" />
+            <Textarea color="secondary" placeholder="Secondary" variant="bordered" />
+            <Textarea color="accent" placeholder="Accent" variant="bordered" />
+            <Textarea color="success" placeholder="Success" variant="bordered" />
+            <Textarea color="warning" placeholder="Warning" variant="bordered" />
+            <Textarea color="error" placeholder="Error" variant="bordered" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Variants
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Textarea, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Textarea placeholder="Default (no variant)" />
+            <Textarea placeholder="Bordered" variant="bordered" />
+            <Textarea placeholder="Ghost" variant="ghost" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Rows
+
+Control the visible height with `rows`:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Textarea, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Textarea rows={2} placeholder="2 rows" variant="bordered" />
+            <Textarea rows={4} placeholder="4 rows" variant="bordered" />
+            <Textarea rows={8} placeholder="8 rows" variant="bordered" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Character Counter
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Textarea, FormField, Card } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ message: '' });
+    const maxLength = 280;
+    const remaining = () => maxLength - form.message.length;
+    const isOverLimit = () => remaining() < 0;
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <FormField 
+                    label="Message" 
+                    hint={`${remaining()} characters remaining`}
+                    error={isOverLimit() ? 'Message is too long' : ''}
+                >
+                    <Textarea 
+                        model={() => form.message}
+                        placeholder="What's on your mind?"
+                        rows={4}
+                        color={isOverLimit() ? 'error' : undefined}
+                        variant="bordered"
+                    />
+                </FormField>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With FormField
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Textarea, FormField, Card } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ feedback: '' });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <FormField 
+                    label="Feedback" 
+                    required
+                    hint="Please provide detailed feedback"
+                >
+                    <Textarea 
+                        model={() => form.feedback}
+                        placeholder="Share your thoughts..."
+                        rows={5}
+                        variant="bordered"
+                    />
+                </FormField>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Disabled State
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Textarea } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Textarea 
+            placeholder="This textarea is disabled" 
+            variant="bordered"
+            disabled 
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => signal.property` | - | Model binding for two-way sync |
+| `name` | `string` | - | Textarea name for form submission |
+| `placeholder` | `string` | - | Placeholder text |
+| `rows` | `number` | `3` | Number of visible text rows |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Textarea size |
+| `variant` | `'bordered' \| 'ghost'` | - | Visual variant |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Border color |
+| `disabled` | `boolean` | `false` | Disable the textarea |
+| `autoComplete` | `string` | - | Browser autocomplete hint (`'off'`, `'on'`, etc.) |
+| `class` | `string` | - | Additional CSS classes |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `onInput` | `(e: InputEvent) => void` | Fired on each keystroke (raw DOM event) |
+| `onChange` | `(e: Event) => void` | Fired when focus leaves the textarea |

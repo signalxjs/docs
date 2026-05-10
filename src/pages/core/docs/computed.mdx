@@ -1,0 +1,181 @@
+---
+title: Computed Values
+description: Derive reactive values from signals with computed
+layout: docs
+category: Core Concepts
+order: 30
+---
+
+# Computed Values
+
+Computed values automatically derive from other signals and update when their dependencies change. They are **lazy** (only compute when accessed) and **cached** (memoize results).
+
+## Creating Computed Values
+
+Access computed values using `.value`, just like primitive signals:
+
+```tsx code console live
+import { signal, computed } from 'sigx';
+
+const firstName = signal({ value: 'John' });
+const lastName = signal({ value: 'Doe' });
+
+// Access computed via .value
+const fullName = computed(() => {
+    return `${firstName.value} ${lastName.value}`;
+});
+
+console.log(fullName.value);  // "John Doe"
+
+firstName.value = 'Jane';
+console.log(fullName.value);  // "Jane Doe"
+```
+
+## Computed with Object Signals
+
+When using object signals (the recommended pattern), access properties directly:
+
+```tsx code console live
+import { signal, computed } from 'sigx';
+
+const state = signal({
+    firstName: 'John',
+    lastName: 'Doe'
+});
+
+const fullName = computed(() => {
+    return `${state.firstName} ${state.lastName}`;
+});
+
+console.log(fullName.value);  // "John Doe"
+state.firstName = 'Jane';
+console.log(fullName.value);  // "Jane Doe"
+```
+
+## Computed in Components
+
+```tsx code preview live
+import { component, computed, render } from 'sigx';
+
+const ShoppingCart = component(({ signal }) => {
+    const state = signal({
+        items: [
+            { name: 'Apple', price: 1.50, qty: 3 },
+            { name: 'Banana', price: 0.75, qty: 5 },
+        ]
+    });
+    
+    // Computed values
+    const total = computed(() => {
+        return state.items.reduce(
+            (sum, item) => sum + item.price * item.qty, 
+            0
+        );
+    });
+    
+    const itemCount = computed(() => {
+        return state.items.reduce((sum, item) => sum + item.qty, 0);
+    });
+    
+    return () => (
+        <div>
+            <p>{itemCount.value} items</p>  {/* Access via .value */}
+            <p>Total: ${total.value.toFixed(2)}</p>
+        </div>
+    );
+});
+
+render(<ShoppingCart />, "#sandbox");
+```
+
+## Writable Computed
+
+Create computed values with custom setters. Set values using `.value =`:
+
+```tsx code console live
+import { signal, computed } from 'sigx';
+
+const state = signal({ firstName: 'John', lastName: 'Doe' });
+
+const fullName = computed({
+    get: () => `${state.firstName} ${state.lastName}`,
+    set: (value: string) => {
+        const [first, last] = value.split(' ');
+        state.firstName = first;
+        state.lastName = last || '';
+    }
+});
+
+console.log(fullName.value);  // "John Doe"
+fullName.value = 'Jane Smith';  // Set via .value
+console.log(state.firstName);  // "Jane"
+```
+
+## Computed vs Effects
+
+| Computed | Effect |
+|----------|--------|
+| Returns a value via `.value` | Runs side effects |
+| Lazy - only runs when accessed | Eager - runs immediately |
+| Cached - memoizes result | No caching |
+| Pure - no side effects | Can have side effects |
+
+```tsx
+// ✅ Use computed for derived values
+const doubled = computed(() => state.count * 2);
+console.log(doubled.value);  // Access via .value
+
+// ✅ Use effect for side effects
+effect(() => {
+    document.title = `Count: ${state.count}`;
+});
+```
+
+## Chaining Computed Values
+
+Computed values can depend on other computed values:
+
+```tsx code console live
+import { signal, computed } from 'sigx';
+
+const state = signal({ a: 1, b: 2 });
+
+const sum = computed(() => state.a + state.b);
+const doubled = computed(() => sum.value * 2);  // Access via .value
+
+console.log(doubled.value);  // 6
+
+state.a = 5;
+console.log(doubled.value);  // 14
+```
+
+## Type Guard
+
+Use `isComputed()` to check if a value is a computed signal:
+
+```tsx code console live
+import { computed, isComputed } from 'sigx';
+
+const doubled = computed(() => 42);
+
+console.log(isComputed(doubled));       // true
+console.log(isComputed({ value: 1 }));  // false
+```
+
+## Performance
+
+Computed values offer significant performance benefits:
+- **Lazy evaluation**: Only computes when the value is actually read
+- **Dependency tracking**: Automatically knows which signals to watch
+- **Caching**: Won't recompute if dependencies haven't changed
+- **Minimal updates**: Only dependent effects/computeds update
+
+Computed values are:
+- **Lazy** - Only calculated when accessed
+- **Cached** - Result is memoized until dependencies change
+- **Efficient** - Fine-grained dependency tracking
+
+## Next Steps
+
+- [Effects](/docs/effects) - Run side effects reactively
+- [Components](/docs/components) - Use computed in components

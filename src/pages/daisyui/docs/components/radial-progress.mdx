@@ -1,0 +1,181 @@
+---
+title: Radial Progress
+description: Radial progress shows a circular progress indicator with customizable size and color
+layout: docs
+category: ["Components", "Feedback"]
+order: 430
+---
+
+# Radial Progress
+
+Radial progress shows a circular progress indicator. Uses CSS custom properties `--value`, `--size`, and `--thickness` for full control.
+
+## Import
+
+```tsx
+import { RadialProgress } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { RadialProgress } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <RadialProgress value={70}>70%</RadialProgress>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+Apply semantic colors to the progress ring.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { RadialProgress, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4">
+            <RadialProgress value={60} color="primary">60%</RadialProgress>
+            <RadialProgress value={70} color="secondary">70%</RadialProgress>
+            <RadialProgress value={80} color="accent">80%</RadialProgress>
+            <RadialProgress value={90} color="neutral">90%</RadialProgress>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Status Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { RadialProgress, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4">
+            <RadialProgress value={50} color="info">50%</RadialProgress>
+            <RadialProgress value={70} color="success">70%</RadialProgress>
+            <RadialProgress value={85} color="warning">85%</RadialProgress>
+            <RadialProgress value={40} color="error">40%</RadialProgress>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Size
+
+Use the `size` prop to control the diameter of the circle.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { RadialProgress, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <RadialProgress value={70} size="4rem">70%</RadialProgress>
+            <RadialProgress value={70} size="6rem">70%</RadialProgress>
+            <RadialProgress value={70} size="8rem">70%</RadialProgress>
+            <RadialProgress value={70} size="12rem">70%</RadialProgress>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Thickness
+
+Use the `thickness` prop to control the stroke width of the progress ring.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { RadialProgress, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4">
+            <RadialProgress value={70} thickness="2px">thin</RadialProgress>
+            <RadialProgress value={70} thickness="4px">4px</RadialProgress>
+            <RadialProgress value={70}>default</RadialProgress>
+            <RadialProgress value={70} thickness="1rem">thick</RadialProgress>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Styled Background
+
+Combine with Tailwind utility classes for styled backgrounds.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { RadialProgress, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4">
+            <RadialProgress
+                value={75}
+                color="primary"
+                class="bg-primary text-primary-content border-primary border-4"
+            >
+                75%
+            </RadialProgress>
+            <RadialProgress
+                value={90}
+                color="success"
+                class="bg-success text-success-content border-success border-4"
+            >
+                90%
+            </RadialProgress>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Different Values
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { RadialProgress, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4">
+            <RadialProgress value={0}>0%</RadialProgress>
+            <RadialProgress value={25}>25%</RadialProgress>
+            <RadialProgress value={50}>50%</RadialProgress>
+            <RadialProgress value={75}>75%</RadialProgress>
+            <RadialProgress value={100}>100%</RadialProgress>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | `0` | Progress value (0-100) |
+| `size` | `string` | `'5rem'` | Diameter of the circle (CSS value, sets `--size`) |
+| `thickness` | `string` | `undefined` | Stroke width (CSS value, sets `--thickness`) |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `undefined` | Color of the progress ring |
+| `class` | `string` | `undefined` | Additional CSS classes |

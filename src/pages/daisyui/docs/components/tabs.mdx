@@ -1,0 +1,327 @@
+---
+title: Tabs
+description: Tabbed navigation for organizing content
+layout: docs
+category: ["Components", "Navigation"]
+order: 320
+---
+
+# Tabs
+
+Tabs organize content into separate views where only one view can be visible at a time.
+
+## Import
+
+```tsx
+import { Tabs, Row, Col } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Simple tabs without content panels - just tab buttons:
+
+```tsx live preview
+import { component, signal, render } from 'sigx';
+import { Tabs } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const activeTab = signal('tab1');
+    
+    const tabs = [
+        { id: 'tab1', label: 'Tab 1' },
+        { id: 'tab2', label: 'Tab 2' },
+        { id: 'tab3', label: 'Tab 3' },
+    ];
+    
+    return () => (
+        <Tabs 
+            tabs={tabs}
+            activeTab={activeTab.value}
+            onChange={(id) => activeTab.value = id}
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Tabs with Content
+
+When tabs include a `content` property, the component uses DaisyUI's native radio input pattern for seamless content switching:
+
+```tsx live preview
+import { component, signal, render } from 'sigx';
+import { Tabs } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const activeTab = signal('tab1');
+    
+    const tabs = [
+        { id: 'tab1', label: 'Tab 1', content: 'This is the content for Tab 1. Click other tabs to switch!' },
+        { id: 'tab2', label: 'Tab 2', content: 'Welcome to Tab 2. Each tab has its own content panel.' },
+        { id: 'tab3', label: 'Tab 3', content: 'Tab 3 content goes here. The switching is handled by CSS!' },
+    ];
+    
+    return () => (
+        <Tabs 
+            tabs={tabs}
+            activeTab={activeTab.value}
+            onChange={(id) => activeTab.value = id}
+            variant="lift"
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Variants
+
+### Box
+
+```tsx live preview
+import { component, signal, render } from 'sigx';
+import { Tabs } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const activeTab = signal('home');
+    
+    const tabs = [
+        { id: 'home', label: 'Home', content: 'Welcome home! This is the home tab content.' },
+        { id: 'profile', label: 'Profile', content: 'Your profile settings and information.' },
+        { id: 'settings', label: 'Settings', content: 'Application settings and preferences.' },
+    ];
+    
+    return () => (
+        <Tabs 
+            tabs={tabs}
+            activeTab={activeTab.value}
+            onChange={(id) => activeTab.value = id}
+            variant="box"
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### Border
+
+```tsx live preview
+import { component, signal, render } from 'sigx';
+import { Tabs } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const activeTab = signal('overview');
+    
+    const tabs = [
+        { id: 'overview', label: 'Overview', content: 'Project overview and summary information.' },
+        { id: 'tasks', label: 'Tasks', content: 'Your assigned tasks and to-do items.' },
+        { id: 'timeline', label: 'Timeline', content: 'Project timeline and milestones.' },
+    ];
+    
+    return () => (
+        <Tabs 
+            tabs={tabs}
+            activeTab={activeTab.value}
+            onChange={(id) => activeTab.value = id}
+            variant="border"
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+### Lift
+
+```tsx live preview
+import { component, signal, render } from 'sigx';
+import { Tabs } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const activeTab = signal('info');
+    
+    const tabs = [
+        { id: 'info', label: 'Info', content: 'General information about the topic.' },
+        { id: 'docs', label: 'Documentation', content: 'Read the documentation here.' },
+        { id: 'faq', label: 'FAQ', content: 'Frequently asked questions and answers.' },
+    ];
+    
+    return () => (
+        <Tabs 
+            tabs={tabs}
+            activeTab={activeTab.value}
+            onChange={(id) => activeTab.value = id}
+            variant="lift"
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Rich Content
+
+Tab content can include JSX elements and SignalX components:
+
+```tsx live preview
+import { component, signal, render } from 'sigx';
+import { Tabs, Button, Badge, Row, Col, Heading, Text, Card } from '@sigx/daisyui';
+const Demo = component(() => {
+    const activeTab = signal('dashboard');
+    
+    // Define tabs with JSX content in setup - runs once
+    const tabs = [
+        { 
+            id: 'dashboard', 
+            label: 'Dashboard', 
+            content: (
+                <Col gap="4">
+                    <Heading level={3} size="lg">Dashboard Overview</Heading>
+                    <Text>Welcome to your dashboard. Here's a quick summary of your activity.</Text>
+                    <Row gap="2">
+                        <Badge variant="primary">Active</Badge>
+                        <Badge variant="success">Online</Badge>
+                    </Row>
+                </Col>
+            )
+        },
+        { 
+            id: 'analytics', 
+            label: 'Analytics', 
+            content: (
+                <Col gap="4">
+                    <Heading level={3} size="lg">Analytics</Heading>
+                    <Text>View your performance metrics and statistics.</Text>
+                    <Button size="sm" variant="primary">View Full Report</Button>
+                </Col>
+            )
+        },
+        { 
+            id: 'reports', 
+            label: 'Reports', 
+            content: (
+                <Col gap="4">
+                    <Heading level={3} size="lg">Reports</Heading>
+                    <Text>Download and manage your reports here.</Text>
+                    <Button size="sm" variant="outline">Download PDF</Button>
+                </Col>
+            )
+        },
+    ];
+    
+    return () => (
+        <Tabs 
+            tabs={tabs}
+            activeTab={activeTab.value}
+            onChange={(id) => activeTab.value = id}
+            variant="lift"
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, signal, render } from 'sigx';
+import { Tabs, Text, Col, Card } from '@sigx/daisyui';
+const Demo = component(() => {
+    const activeTab = signal('a');
+    const tabs = [
+        { id: 'a', label: 'Tab A' },
+        { id: 'b', label: 'Tab B' },
+        { id: 'c', label: 'Tab C' },
+    ];
+    
+    return () => (
+        <Col gap="8">
+            <Card>
+                <Card.Body>
+                <Text size="sm" class="mb-2">Extra Small</Text>
+                <Tabs tabs={tabs} activeTab={activeTab.value} onChange={(id) => activeTab.value = id} size="xs" variant="lift" />
+                </Card.Body>
+            </Card>
+            <Card>
+                <Card.Body>
+                <Text size="sm" class="mb-2">Small</Text>
+                <Tabs tabs={tabs} activeTab={activeTab.value} onChange={(id) => activeTab.value = id} size="sm" variant="lift" />
+                </Card.Body>
+            </Card>
+            <Card>
+                <Card.Body>
+                <Text size="sm" class="mb-2">Medium (default)</Text>
+                <Tabs tabs={tabs} activeTab={activeTab.value} onChange={(id) => activeTab.value = id} size="md" variant="lift" />
+                </Card.Body>
+            </Card>
+            <Card>
+                <Card.Body>
+                <Text size="sm" class="mb-2">Large</Text>
+                <Tabs tabs={tabs} activeTab={activeTab.value} onChange={(id) => activeTab.value = id} size="lg" variant="lift" />
+                </Card.Body>
+            </Card>
+            <Card>
+                <Card.Body>
+                <Text size="sm" class="mb-2">Extra Large</Text>
+                <Tabs tabs={tabs} activeTab={activeTab.value} onChange={(id) => activeTab.value = id} size="xl" variant="lift" />
+                </Card.Body>
+            </Card>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Disabled Tabs
+
+```tsx live preview
+import { component, signal, render } from 'sigx';
+import { Tabs } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const activeTab = signal('enabled1');
+    
+    const tabs = [
+        { id: 'enabled1', label: 'Enabled', content: 'This tab is enabled and clickable.' },
+        { id: 'disabled', label: 'Disabled', content: 'You should not see this.', disabled: true },
+        { id: 'enabled2', label: 'Also Enabled', content: 'This tab is also enabled.' },
+    ];
+    
+    return () => (
+        <Tabs 
+            tabs={tabs}
+            activeTab={activeTab.value}
+            onChange={(id) => activeTab.value = id}
+            variant="box"
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tabs` | `Tab[]` | required | Array of tab objects with `id`, `label`, and optional `content` |
+| `activeTab` | `string` | required | ID of the currently active tab |
+| `onChange` | `(id: string) => void` | required | Called when a tab is clicked |
+| `variant` | `'box' \| 'border' \| 'lift'` | `undefined` | Tab style variant |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Tab size |
+| `position` | `'top' \| 'bottom'` | `'top'` | Position of tabs relative to content |
+| `contentClass` | `string` | `undefined` | Additional CSS classes for tab content panels |
+| `class` | `string` | `undefined` | Additional CSS classes for the tabs container |
+
+### Tab Object
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `id` | `string` | Unique tab identifier |
+| `label` | `string \| JSX.Element` | Tab label (text or JSX) |
+| `content` | `string \| JSX.Element` | Optional tab content panel |
+| `disabled` | `boolean` | Whether the tab is disabled |

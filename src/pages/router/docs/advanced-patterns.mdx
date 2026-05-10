@@ -1,0 +1,301 @@
+---
+title: Advanced Patterns
+description: Advanced routing patterns for @sigx/router - pattern matching, nested layouts, dynamic routes, and more
+layout: docs
+category: Advanced
+order: 60
+---
+
+# Advanced Patterns
+
+This guide covers advanced routing techniques for building complex applications with `@sigx/router`.
+
+## Pattern Matching
+
+Use `router.match()` for declarative, type-safe route rendering. Each key maps a route name to a render function that receives that route's params. Use `_` as a catch-all fallback.
+
+```tsx
+import { component } from 'sigx';
+import { useRouter } from '@sigx/router';
+
+const App = component(() => {
+    const router = useRouter();
+
+    return () => router.match({
+        home: () => <HomePage />,
+        'blog-post': ({ slug }) => <BlogPost slug={slug} />,
+        'user-profile': ({ id }) => <UserProfile userId={id} />,
+        _: () => <NotFound />
+    });
+});
+```
+
+Values can also be static (non-function) for simple mappings:
+
+```tsx
+router.match({
+    home: <HomePage />,
+    about: <AboutPage />,
+    _: <NotFound />
+});
+```
+
+## Nested Layouts
+
+Define parent routes with `children` and render nested content with `<RouterView />`. The parent component acts as a layout shell — child routes render inside the parent's `<RouterView />`.
+
+```tsx
+import { createRouter, RouterView, RouterLink } from '@sigx/router';
+import { component } from 'sigx';
+
+const AdminLayout = component(() => {
+    return () => (
+        <div class="admin">
+            <aside>
+                <RouterLink to="/admin/dashboard">Dashboard</RouterLink>
+                <RouterLink to="/admin/users">Users</RouterLink>
+                <RouterLink to="/admin/settings">Settings</RouterLink>
+            </aside>
+            <main>
+                <RouterView />
+            </main>
+        </div>
+    );
+});
+
+const router = createRouter({
+    routes: [
+        {
+            path: '/admin',
+            component: AdminLayout,
+            children: [
+                { path: 'dashboard', name: 'admin-dashboard', component: Dashboard },
+                { path: 'users', name: 'admin-users', component: UserList },
+                { path: 'users/:id', name: 'admin-user', component: UserDetail },
+                { path: 'settings', name: 'admin-settings', component: Settings },
+            ],
+        },
+    ],
+});
+```
+
+Each `<RouterView />` automatically tracks its depth. The root `RouterView` renders the parent (`AdminLayout`), and the `RouterView` inside `AdminLayout` renders the matched child.
+
+## Route Props
+
+The `props` option on a route record controls how props are passed to the route's component. There are three modes:
+
+### Boolean Mode
+
+Set `props: true` to pass route params directly as component props:
+
+```tsx
+const routes = [
+    { path: '/users/:id', component: UserProfile, props: true },
+];
+
+// UserProfile receives { id: '123' } as props when visiting /users/123
+const UserProfile = component<{ id: string }>((ctx) => {
+    return () => <h1>User {ctx.props.id}</h1>;
+});
+```
+
+### Object Mode
+
+Pass a static props object, useful for routes that share a component with different configurations:
+
+```tsx
+const routes = [
+    { path: '/blog', component: PostList, props: { category: 'all' } },
+    { path: '/blog/featured', component: PostList, props: { category: 'featured' } },
+];
+```
+
+### Function Mode
+
+Derive props from the current route for full flexibility:
+
+```tsx
+const routes = [
+    {
+        path: '/search',
+        component: SearchResults,
+        props: (route) => ({
+            query: route.query.q,
+            page: Number(route.query.page) || 1,
+        }),
+    },
+];
+```
+
+## Dynamic Routes
+
+Add and remove routes at runtime with `addRoute()` and `removeRoute()`. This is useful for plugin systems, feature flags, or lazy feature modules that register their own routes.
+
+### Adding Routes
+
+`addRoute()` returns a removal function for easy cleanup:
+
+```tsx
+// Add a top-level route
+const removeRoute = router.addRoute({
+    path: '/analytics',
+    name: 'analytics',
+    component: AnalyticsDashboard,
+});
+
+// Add a child route to an existing parent
+router.addRoute(
+    { path: 'reports', name: 'analytics-reports', component: Reports },
+    'analytics' // parent route name
+);
+```
+
+### Removing Routes
+
+Remove by name or use the removal function returned by `addRoute()`:
+
+```tsx
+router.removeRoute('analytics');
+
+// Or use the function returned by addRoute
+const remove = router.addRoute({ path: '/temp', name: 'temp', component: Temp });
+remove(); // removes the route
+```
+
+### Plugin System Example
+
+```tsx
+function installAnalyticsPlugin(router) {
+    const cleanup = router.addRoute({
+        path: '/analytics',
+        name: 'analytics',
+        component: AnalyticsDashboard,
+        meta: { title: 'Analytics' },
+        children: [
+            { path: 'overview', name: 'analytics-overview', component: Overview },
+            { path: 'reports', name: 'analytics-reports', component: Reports },
+        ],
+    });
+
+    // Return cleanup for uninstall
+    return cleanup;
+}
+```
+
+### Checking Routes
+
+```tsx
+if (!router.hasRoute('analytics')) {
+    router.addRoute({ path: '/analytics', name: 'analytics', component: Analytics });
+}
+
+// List all registered routes
+const allRoutes = router.getRoutes();
+```
+
+## Lazy Loading
+
+Load route components on demand using dynamic imports wrapped with `lazy()` from `sigx`:
+
+```tsx
+import { lazy } from 'sigx';
+import { createRouter } from '@sigx/router';
+
+const router = createRouter({
+    routes: [
+        { path: '/', component: Home },
+        { path: '/settings', component: lazy(() => import('./Settings')) },
+        { path: '/admin', component: lazy(() => import('./AdminLayout')),
+            children: [
+                { path: 'dashboard', component: lazy(() => import('./Dashboard')) },
+                { path: 'users', component: lazy(() => import('./UserManagement')) },
+            ],
+        },
+    ],
+});
+```
+
+> **Note:** Async component imports currently require wrapping with `lazy()` from `sigx`. The router does not resolve raw dynamic imports on its own.
+
+## Route Meta
+
+Attach arbitrary metadata to routes via the `meta` field. Access it from route guards, hooks, or anywhere you have the current route.
+
+### Defining Meta
+
+```tsx
+const routes = [
+    {
+        path: '/',
+        name: 'home',
+        component: Home,
+        meta: { title: 'Home', requiresAuth: false },
+    },
+    {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: Dashboard,
+        meta: { title: 'Dashboard', requiresAuth: true, roles: ['admin', 'editor'] },
+    },
+    {
+        path: '/settings',
+        name: 'settings',
+        component: Settings,
+        meta: {
+            title: 'Settings',
+            requiresAuth: true,
+            breadcrumbs: [
+                { label: 'Home', to: '/' },
+                { label: 'Settings' },
+            ],
+        },
+    },
+];
+```
+
+### Page Title Updates
+
+```tsx
+router.afterEach((to) => {
+    document.title = to.meta.title
+        ? `${to.meta.title} — My App`
+        : 'My App';
+});
+```
+
+### Auth Guard with Meta
+
+```tsx
+router.beforeEach((to) => {
+    if (to.meta.requiresAuth && !isAuthenticated()) {
+        return '/login';
+    }
+});
+```
+
+### Breadcrumbs from Meta
+
+```tsx
+import { component } from 'sigx';
+import { useRoute, RouterLink } from '@sigx/router';
+
+const Breadcrumbs = component(() => {
+    const route = useRoute();
+
+    return () => {
+        const crumbs = route.meta.breadcrumbs;
+        if (!crumbs) return null;
+
+        return (
+            <nav aria-label="Breadcrumb">
+                {crumbs.map((crumb, i) =>
+                    crumb.to
+                        ? <RouterLink to={crumb.to}>{crumb.label}</RouterLink>
+                        : <span>{crumb.label}</span>
+                )}
+            </nav>
+        );
+    };
+});
+```

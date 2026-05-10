@@ -1,0 +1,348 @@
+---
+title: Messaging
+description: Pub/sub communication pattern in SignalX
+layout: docs
+category: Advanced
+order: 30
+---
+
+# Messaging
+
+SignalX provides a lightweight pub/sub messaging system with `createTopic()`. Topics enable decoupled communication between components without prop drilling or global state.
+
+## Creating Topics
+
+```tsx
+import { createTopic } from 'sigx';
+
+// Create a typed topic
+const userUpdated = createTopic<{ id: number; name: string }>();
+
+// Publish a message
+userUpdated.publish({ id: 1, name: 'John' });
+
+// Subscribe to messages
+const subscription = userUpdated.subscribe((user) => {
+    console.log('User updated:', user.name);
+});
+
+// Unsubscribe when done
+subscription.unsubscribe();
+```
+
+## Auto-Cleanup in Components
+
+When subscribing inside a component, subscriptions are automatically cleaned up on unmount:
+
+```tsx
+import { component, createTopic } from 'sigx';
+
+// Define topic outside component (shared)
+const notifications = createTopic<{ message: string; type: 'info' | 'error' }>();
+
+const NotificationDisplay = component(({ signal }) => {
+    const state = signal({ messages: [] as string[] });
+
+    // Auto-unsubscribes when component unmounts
+    notifications.subscribe((notification) => {
+        state.messages = [...state.messages, notification.message];
+    });
+
+    return () => (
+        <div class="notifications">
+            {state.messages.map(msg => (
+                <div class="notification">{msg}</div>
+            ))}
+        </div>
+    );
+});
+
+// Any component can publish
+const ActionButton = component(() => {
+    const handleClick = () => {
+        notifications.publish({ 
+            message: 'Action completed!', 
+            type: 'info' 
+        });
+    };
+
+    return () => (
+        <button onClick={handleClick}>Do Action</button>
+    );
+});
+```
+
+## Topic Options
+
+Topics can have optional namespace and name for debugging:
+
+```tsx
+const userEvents = createTopic<UserEvent>({
+    namespace: 'user',
+    name: 'events'
+});
+```
+
+## Read-Only Subscribers
+
+Use `toSubscriber()` to create a read-only version of a topic:
+
+```tsx
+import { createTopic, toSubscriber } from 'sigx';
+
+// Full topic (can publish and subscribe)
+const internalEvents = createTopic<Event>();
+
+// Read-only subscriber (can only subscribe)
+export const events = toSubscriber(internalEvents);
+
+// In another module:
+events.subscribe((e) => console.log(e));
+events.publish(); // Error: publish doesn't exist
+```
+
+This is useful for exposing topics from services while keeping publish control internal.
+
+## Event Bus Pattern
+
+Create a centralized event bus for cross-component communication:
+
+```tsx
+import { createTopic } from 'sigx';
+
+// Define event types
+type AppEvents = {
+    'user:login': { userId: number };
+    'user:logout': void;
+    'cart:add': { productId: number; quantity: number };
+    'cart:clear': void;
+};
+
+// Create typed topics for each event
+const eventBus = {
+    userLogin: createTopic<{ userId: number }>(),
+    userLogout: createTopic<void>(),
+    cartAdd: createTopic<{ productId: number; quantity: number }>(),
+    cartClear: createTopic<void>(),
+};
+
+export default eventBus;
+
+// Usage
+import eventBus from './eventBus';
+
+// Subscribe
+eventBus.userLogin.subscribe(({ userId }) => {
+    console.log('User logged in:', userId);
+});
+
+// Publish
+eventBus.userLogin.publish({ userId: 123 });
+```
+
+## Component Communication Example
+
+```tsx
+import { component, createTopic, signal } from 'sigx';
+
+// Shared topic for cart updates
+const cartUpdated = createTopic<{ itemCount: number }>();
+
+// Cart service
+const cartItems = signal({ items: [] as string[] });
+
+function addToCart(item: string) {
+    cartItems.items = [...cartItems.items, item];
+    cartUpdated.publish({ itemCount: cartItems.items.length });
+}
+
+// Header shows cart count
+const Header = component(({ signal }) => {
+    const state = signal({ cartCount: 0 });
+
+    cartUpdated.subscribe(({ itemCount }) => {
+        state.cartCount = itemCount;
+    });
+
+    return () => (
+        <header>
+            <span>Cart ({state.cartCount})</span>
+        </header>
+    );
+});
+
+// Product can add to cart
+const Product = component<{ name: string }>(({ props }) => {
+    return () => (
+        <div class="product">
+            <span>{props.name}</span>
+            <button onClick={() => addToCart(props.name)}>
+                Add to Cart
+            </button>
+        </div>
+    );
+});
+
+// App combines them
+const App = component(() => {
+    return () => (
+        <div>
+            <Header />
+            <Product name="Widget" />
+            <Product name="Gadget" />
+        </div>
+    );
+});
+```
+
+## Using with Factories
+
+Combine topics with factories for complex event handling:
+
+```tsx
+import { defineFactory, createTopic, InstanceLifetimes } from 'sigx';
+
+interface AnalyticsEvent {
+    event: string;
+    properties: Record<string, any>;
+}
+
+const useAnalytics = defineFactory((ctx) => {
+    const eventTopic = createTopic<AnalyticsEvent>();
+    const eventQueue: AnalyticsEvent[] = [];
+    let flushTimer: number | null = null;
+
+    const track = (event: string, properties: Record<string, any> = {}) => {
+        const analyticsEvent = { event, properties };
+        eventQueue.push(analyticsEvent);
+        eventTopic.publish(analyticsEvent);
+        scheduleFlush();
+    };
+
+    const scheduleFlush = () => {
+        if (flushTimer) return;
+        flushTimer = window.setTimeout(flush, 1000);
+    };
+
+    const flush = async () => {
+        if (eventQueue.length === 0) return;
+        
+        const events = [...eventQueue];
+        eventQueue.length = 0;
+        
+        await fetch('/api/analytics', {
+            method: 'POST',
+            body: JSON.stringify({ events })
+        });
+        
+        flushTimer = null;
+    };
+
+    ctx.onDeactivated(() => {
+        if (flushTimer) {
+            clearTimeout(flushTimer);
+            flush(); // Flush remaining events
+        }
+        eventTopic.destroy();
+    });
+
+    return {
+        track,
+        onEvent: (handler: (event: AnalyticsEvent) => void) => 
+            eventTopic.subscribe(handler)
+    };
+}, InstanceLifetimes.Singleton);
+
+// Usage
+const analytics = useAnalytics();
+analytics.track('page_view', { path: '/home' });
+analytics.track('button_click', { button: 'signup' });
+```
+
+## API Reference
+
+### `createTopic<T>(options?)`
+
+Create a new pub/sub topic.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `options.namespace` | `string` | Optional namespace for debugging |
+| `options.name` | `string` | Optional name for debugging |
+
+**Returns:** `Topic<T>`
+
+### `Topic<T>`
+
+| Method | Type | Description |
+|--------|------|-------------|
+| `publish` | `(data: T) => void` | Send message to all subscribers |
+| `subscribe` | `(handler: (data: T) => void) => Subscription` | Register a handler |
+| `destroy` | `() => void` | Remove all subscribers |
+
+### `toSubscriber<T>(topic)`
+
+Create a read-only subscriber from a topic.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `topic` | `Topic<T>` | The topic to wrap |
+
+**Returns:** `{ subscribe: (handler: (data: T) => void) => Subscription }`
+
+### `Subscription`
+
+| Method | Type | Description |
+|--------|------|-------------|
+| `unsubscribe` | `() => void` | Remove the subscription |
+
+## Best Practices
+
+1. **Define topics at module level** for sharing:
+   ```tsx
+   // events.ts
+   export const userEvents = createTopic<UserEvent>();
+   ```
+
+2. **Use TypeScript for type safety**:
+   ```tsx
+   const topic = createTopic<{ id: number; name: string }>();
+   topic.publish({ id: 1, name: 'Test' }); // Type-checked
+   ```
+
+3. **Clean up manual subscriptions**:
+   ```tsx
+   const sub = topic.subscribe(handler);
+   // Later:
+   sub.unsubscribe();
+   ```
+
+4. **Use toSubscriber for encapsulation**:
+   ```tsx
+   // Internal: full control
+   const _events = createTopic<Event>();
+   // External: read-only
+   export const events = toSubscriber(_events);
+   ```
+
+5. **Destroy topics when no longer needed**:
+   ```tsx
+   ctx.onDeactivated(() => {
+       topic.destroy();
+   });
+   ```
+
+## When to Use Topics vs Props
+
+| Use Props When | Use Topics When |
+|----------------|-----------------|
+| Parent-child communication | Sibling communication |
+| Data flows down | Events flow laterally |
+| Tight coupling is fine | Loose coupling needed |
+| Simple component trees | Complex/deep trees |
+
+## Next Steps
+
+- [Factories](/docs/advanced/factories) - Injectable services
+- [Components](/docs/components) - Component patterns
+- [App & Plugins](/docs/app-plugins) - Application structure

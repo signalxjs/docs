@@ -1,0 +1,96 @@
+---
+title: DOM Properties
+description: Control how props are applied to DOM elements — attributes vs properties and the prop prefix
+layout: docs
+category: Core Concepts
+order: 76
+---
+
+# DOM Properties
+
+When you pass props to intrinsic HTML/SVG elements in JSX, SignalX decides whether to set each prop as an **HTML attribute** (`setAttribute`) or as a **DOM property** (direct assignment on the element object). Understanding this distinction matters when you need precise control over how values reach the DOM.
+
+## How SignalX resolves props
+
+Props are resolved in priority order:
+
+| Priority | Condition | Method |
+|----------|-----------|--------|
+| 1 | `style` | Object → `el.style[prop]`, string → `el.style.cssText` |
+| 2 | `on*` events | `addEventListener` / `removeEventListener` |
+| 3 | `className` | `setAttribute('class', ...)` |
+| 4 | **`prop:` prefix** | **Direct DOM property** — strips prefix, sets `el[prop] = value` |
+| 5 | SVG element | `setAttribute` (case-preserving), except `innerHTML`/`textContent` |
+| 6 | `value`/`checked` on form elements | DOM property (direct assignment) |
+| 7 | Key exists on element (`key in el`) | DOM property (with `setAttribute` fallback) |
+| 8 | Custom element (tag contains `-`) | DOM property |
+| 9 | Fallback | `setAttribute` / `removeAttribute` |
+
+For most HTML props, step 7 handles things automatically — if the browser's DOM interface defines the property (e.g. `hidden`, `tabIndex`, `title`), SignalX sets it as a property. Unknown keys fall through to `setAttribute`.
+
+## The `prop:` prefix
+
+To **force** any value to be set as a DOM property, prefix the prop name with `prop:`:
+
+```tsx
+// Direct property assignment: element.innerHTML = html
+<div prop:innerHTML={renderMarkdownToHtml(content)} />
+
+// Force .value on any element, bypassing the attribute path
+<input prop:value={rawValue} />
+
+// Works for any DOM property
+<div prop:textContent="plain text" />
+<div prop:innerText="formatted text" />
+```
+
+At runtime, the `prop:` prefix is stripped and the value is assigned directly:
+
+```ts
+// <div prop:innerHTML={html} />
+// becomes:
+element.innerHTML = html;
+```
+
+### When to use `prop:`
+
+| Scenario | Use `prop:`? | Why |
+|----------|-------------|-----|
+| Setting `innerHTML` with HTML strings | **Yes** | Makes intent explicit — you're setting a DOM property, not an attribute |
+| Setting `value` on `<input>` | Optional | Form element `value`/`checked` are already handled as properties (step 6) |
+| Setting a property not in the DOM interface | **Yes** | Unknown keys would fall through to `setAttribute` otherwise |
+| Standard HTML attributes (`class`, `id`, `href`) | No | These work correctly through the normal attribute path |
+
+### TypeScript support
+
+The `prop:` prefix is typed via an index signature on `HTMLAttributes`:
+
+```ts
+[key: `prop:${string}`]: any;
+```
+
+This means any `prop:`-prefixed prop is accepted on any element without TypeScript errors. The value type is `any` because DOM property types vary per element and property.
+
+## SVG elements
+
+SVG attributes are **always** set via `setAttribute` to preserve case sensitivity (e.g. `viewBox`, `preserveAspectRatio`). The exceptions are `innerHTML` and `textContent`, which are set as properties even on SVG elements when accessed without a prefix.
+
+To force a property on an SVG element, use the `prop:` prefix:
+
+```tsx
+<svg prop:innerHTML='<circle cx="50" cy="50" r="40" />' />
+```
+
+## Null and undefined handling
+
+- **DOM property path** (`key in el`): `null`/`undefined` → removes the attribute via `removeAttribute`
+- **setAttribute path**: `false`/`null`/`undefined` → removes the attribute
+- **`prop:` prefix**: value is assigned directly (including `null`/`undefined`)
+
+```tsx
+// Removes the title attribute from the DOM
+<div title={null} />
+
+// Sets element.textContent = null (becomes empty string)
+<div prop:textContent={null} />
+```

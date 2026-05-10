@@ -1,0 +1,257 @@
+---
+title: SSR Routing
+description: Configure @sigx/router for server-side rendering with memory history and client hydration
+layout: docs
+category: Advanced
+order: 50
+---
+
+# SSR Routing
+
+On the server there is no browser `History` API, so the router needs a different
+history backend. `@sigx/router` ships two history implementations:
+
+| History | Environment | Purpose |
+|---|---|---|
+| `createWebHistory()` | Browser | Uses the browser History API for SPA navigation |
+| `createHashHistory()` | Browser (static hosts) | Uses `/#/path` URLs — no server-side SPA fallback needed (GitHub Pages, S3, Electron) |
+| `createMemoryHistory()` | Server / Tests | Keeps navigation state in memory — no DOM required |
+
+The core idea is simple: **create the router per-request on the server** with
+`createMemoryHistory`, and **once on the client** with `createWebHistory`.
+
+## Setup — Router Factory
+
+Define your routes once and export two factory functions — one for each
+environment:
+
+```ts
+// src/router.ts
+import {
+    createRouter,
+    createWebHistory,
+    createMemoryHistory,
+    type RouteRecordRaw,
+} from '@sigx/router';
+import { Home } from './pages/Home';
+import { About } from './pages/About';
+import { BlogIndex } from './pages/BlogIndex';
+import { BlogPost } from './pages/BlogPost';
+
+export const routes: RouteRecordRaw[] = [
+    { path: '/', name: 'home', component: Home },
+    { path: '/about', name: 'about', component: About },
+    { path: '/blog', name: 'blog', component: BlogIndex },
+    { path: '/blog/:slug', name: 'blog-post', component: BlogPost },
+];
+
+/** Browser — uses the History API */
+export function createClientRouter() {
+    return createRouter({
+        history: createWebHistory(),
+        routes,
+    });
+}
+
+/** Server — receives the request URL and resolves the route in memory */
+export function createServerRouter(url: string) {
+    return createRouter({
+        history: createMemoryHistory({ initialLocation: url }),
+        routes,
+    });
+}
+```
+
+> **Why a factory?** Each incoming HTTP request must get its own router instance.
+> Sharing a single router across requests would leak state between users.
+
+## Server-Side Rendering
+
+The server entry creates a fresh app + router for every request and renders it
+to HTML with `@sigx/server-renderer`.
+
+```tsx
+// src/entry-server.tsx
+import { defineApp } from 'sigx';
+import { createSSR } from '@sigx/server-renderer';
+import { App } from './App';
+import { createServerRouter } from './router';
+
+const ssr = createSSR();
+
+export async function render(url: string) {
+    const router = createServerRouter(url);
+    const app = defineApp(<App />).use(router);
+    return await ssr.render(app);
+}
+```
+
+Then wire it into your HTTP server (Express shown here, but any Node framework
+works):
+
+```ts
+// server.ts
+import express from 'express';
+import { render } from './entry-server';
+
+const app = express();
+
+app.use(express.static('dist/client'));
+
+app.get('*', async (req, res) => {
+    try {
+        const html = await render(req.url);
+        res.status(200).set({ 'Content-Type': 'text/html' }).send(`
+            <!DOCTYPE html>
+            <html>
+            <head><title>My App</title></head>
+            <body>
+                <div id="root">${html}</div>
+                <script type="module" src="/entry-client.js"></script>
+            </body>
+            </html>
+        `);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.listen(3000);
+```
+
+### Streaming
+
+For large pages you can stream HTML to the client instead of buffering the
+full string. `createSSR()` supports several streaming modes:
+
+```ts
+// ReadableStream (Web Streams API)
+const stream = ssr.renderStream(app);
+
+// Node.js Readable stream
+const nodeStream = ssr.renderNodeStream(app);
+
+// Callback-based streaming for fine-grained control
+await ssr.renderStreamWithCallbacks(app, {
+    onShellReady(html) { /* send the initial shell */ },
+    onAsyncChunk(chunk) { /* stream async component updates */ },
+    onComplete() { /* finalize the response */ },
+    onError(err) { /* handle errors */ },
+});
+```
+
+## Client Hydration
+
+On the client, create the router with `createWebHistory()` and **hydrate**
+instead of mounting:
+
+```tsx
+// src/entry-client.tsx
+import { defineApp } from 'sigx';
+import { ssrClientPlugin } from '@sigx/server-renderer/client';
+import { App } from './App';
+import { createClientRouter } from './router';
+
+const router = createClientRouter();
+
+function startHydration() {
+    defineApp(<App />)
+        .use(router)
+        .use(ssrClientPlugin)
+        .hydrate('#root');
+}
+
+// Wait for streaming to finish before hydrating
+if (window.__SIGX_STREAMING_COMPLETE__) {
+    startHydration();
+} else {
+    window.addEventListener('sigx:ready', startHydration, { once: true });
+}
+```
+
+The client reuses the same `routes` array, so route matching is identical on
+both sides. Once hydrated, navigation is handled entirely in the browser via
+`createWebHistory()`.
+
+## Common Patterns
+
+### Route-Based Data Loading
+
+Load data on the server before rendering by calling your data-fetching logic
+inside component setup. Because SSR renders the component tree synchronously (or
+with async support via `createSSR`), the data is available before HTML is sent.
+
+```tsx
+import { component, signal } from 'sigx';
+import { useParams } from '@sigx/router';
+
+export const BlogPost = component(() => {
+    const params = useParams();
+    const post = signal<Post | null>(null);
+
+    // Runs during SSR and on client navigation
+    async function loadPost() {
+        const res = await fetch(`/api/posts/${params.slug}`);
+        post.value = await res.json();
+    }
+
+    loadPost();
+
+    return () => (
+        <article>
+            {post.value ? (
+                <>
+                    <h1>{post.value.title}</h1>
+                    <div>{post.value.body}</div>
+                </>
+            ) : (
+                <p>Loading…</p>
+            )}
+        </article>
+    );
+});
+```
+
+### Redirects During SSR
+
+Use a navigation guard to redirect before the page is rendered. On the server
+the redirect happens in memory — the Express handler can check the final URL
+and send a 302:
+
+```ts
+// router.ts — add a guard to the routes
+export const routes: RouteRecordRaw[] = [
+    { path: '/old-page', redirect: '/new-page' },
+    // ...other routes
+];
+```
+
+For programmatic redirects in the server handler:
+
+```ts
+export async function render(url: string) {
+    const router = createServerRouter(url);
+    const app = defineApp(<App />).use(router);
+    const html = await ssr.render(app);
+
+    // Check if the router resolved to a different path (redirect)
+    const finalPath = router.currentRoute.path;
+    return { html, redirect: finalPath !== url ? finalPath : null };
+}
+
+// server.ts
+app.get('*', async (req, res) => {
+    const { html, redirect } = await render(req.url);
+    if (redirect) {
+        return res.redirect(302, redirect);
+    }
+    res.status(200).send(/* ... */);
+});
+```
+
+## Next Steps
+
+- [Getting Started](/router/docs/getting-started) — Basic router setup
+- [Navigation](/router/docs/navigation) — Programmatic navigation
+- [Route Guards](/router/docs/guards) — Protect routes with guards

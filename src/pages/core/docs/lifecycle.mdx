@@ -1,0 +1,196 @@
+---
+title: Lifecycle
+description: Understanding component lifecycle in SignalX
+layout: docs
+category: Core Concepts
+order: 50
+---
+
+# Component Lifecycle
+
+SignalX components have a simple lifecycle that gives you control over initialization, mounting, updates, and cleanup.
+
+## onCreated
+
+The `onCreated` hook runs after the component's setup function completes, before it's mounted to the DOM:
+
+```tsx
+import { component, onCreated } from 'sigx';
+
+const MyComponent = component(({ signal }) => {
+    const state = signal({ initialized: false });
+    
+    onCreated(() => {
+        console.log('Component created!');
+        state.initialized = true;
+    });
+    
+    return () => <div>Hello World</div>;
+});
+```
+
+## onMounted
+
+The `onMounted` hook runs after the component is first rendered and attached to the DOM. It receives a context object with the element:
+
+```tsx
+import { component, onMounted } from 'sigx';
+
+const MyComponent = component(({ signal }) => {
+    const state = signal({ mounted: false });
+    
+    onMounted((ctx) => {
+        console.log('Component mounted!');
+        console.log('Element:', ctx.el);  // The DOM element
+        state.mounted = true;
+    });
+    
+    return () => <div>Hello World</div>;
+});
+```
+
+### Using Context Method
+
+You can also use `onMounted` from the setup context:
+
+```tsx
+const MyComponent = component((ctx) => {
+    ctx.onMounted(({ el }) => {
+        console.log('Mounted to:', el);
+    });
+    
+    return () => <div>Hello</div>;
+});
+```
+
+## onUpdated
+
+The `onUpdated` hook runs after the component re-renders due to reactive state changes:
+
+```tsx
+import { component, onUpdated } from 'sigx';
+
+const Counter = component(({ signal }) => {
+    const state = signal({ count: 0 });
+    
+    onUpdated(() => {
+        console.log('Component updated! Count is now:', state.count);
+    });
+    
+    return () => (
+        <button onClick={() => state.count++}>
+            Count: {state.count}
+        </button>
+    );
+});
+```
+
+## onUnmounted
+
+Use `onUnmounted` to run cleanup when a component is removed:
+
+```tsx
+import { component, onUnmounted } from 'sigx';
+
+const Timer = component(({ signal }) => {
+    const state = signal({ count: 0 });
+    
+    const intervalId = setInterval(() => {
+        state.count++;
+    }, 1000);
+    
+    // Cleanup when component unmounts
+    onUnmounted(() => {
+        clearInterval(intervalId);
+    });
+    
+    return () => <div>Timer: {state.count}</div>;
+});
+```
+
+### Using Context Method
+
+```tsx
+const Timer = component((ctx) => {
+    const state = ctx.signal({ count: 0 });
+    
+    const intervalId = setInterval(() => {
+        state.count++;
+    }, 1000);
+    
+    ctx.onUnmounted(() => {
+        clearInterval(intervalId);
+    });
+    
+    return () => <div>Timer: {state.count}</div>;
+});
+```
+
+## Full Lifecycle Example
+
+```tsx
+import { component, onCreated, onMounted, onUpdated, onUnmounted } from 'sigx';
+
+const WebSocketComponent = component(({ signal, props }) => {
+    const state = signal({ 
+        messages: [] as string[],
+        connected: false 
+    });
+    
+    let ws: WebSocket | null = null;
+    
+    onCreated(() => {
+        console.log('Component created, preparing to connect...');
+    });
+    
+    onMounted(() => {
+        // Connect when mounted
+        ws = new WebSocket(props.url);
+        
+        ws.onopen = () => {
+            state.connected = true;
+        };
+        
+        ws.onmessage = (e) => {
+            state.messages.push(e.data);
+        };
+    });
+    
+    onUpdated(() => {
+        console.log('Messages updated:', state.messages.length);
+    });
+    
+    onUnmounted(() => {
+        // Disconnect when unmounted
+        ws?.close();
+    });
+    
+    return () => (
+        <div>
+            <p>Status: {state.connected ? 'Connected' : 'Disconnected'}</p>
+            <ul>
+                {state.messages.map(msg => <li>{msg}</li>)}
+            </ul>
+        </div>
+    );
+});
+```
+
+## Lifecycle Order
+
+1. **Setup function runs** - Component is created, signals initialized
+2. **`onCreated` callbacks run** - Setup complete, before render
+3. **Render function runs** - JSX is evaluated
+4. **DOM is created** - Elements inserted into document
+5. **`onMounted` callbacks run** - Access to real DOM elements
+6. *(Component lives, effects run on changes)*
+7. **`onUpdated` callbacks run** - After each re-render
+8. **`onUnmounted` callbacks run** - Component is being removed
+9. **DOM is removed** - Elements removed from document
+
+## Important Notes
+
+- All lifecycle hooks must be called **synchronously** during setup
+- Calling them outside a component setup will log a warning
+- Effects automatically clean up when the component unmounts
+- Multiple lifecycle hook calls are allowed - all callbacks will run

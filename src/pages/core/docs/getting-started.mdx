@@ -1,0 +1,190 @@
+---
+title: Getting Started
+description: Learn how to build reactive web applications with SignalX
+layout: docs
+category: Getting Started
+order: 10
+---
+
+# Getting Started
+
+SignalX is a lightweight reactive component framework that brings fine-grained reactivity to your applications with minimal overhead.
+
+## What is SignalX?
+
+SignalX combines the best ideas from modern reactive frameworks:
+
+- **Signals** - Fine-grained reactive primitives with deep object reactivity
+- **Components** - Intuitive `component` API with props, slots, and events
+- **TypeScript** - Full type inference and IDE support out of the box
+- **Tiny** - Lightweight core runtime with tree-shakeable packages
+- **Multi-platform** - Run in browsers, terminals, or server-side
+
+## Quick Installation
+
+Create a new SignalX project with our CLI:
+
+```bash
+npm create sigx@latest my-app
+cd my-app
+npm install
+npm run dev
+```
+
+Or add to an existing Vite project:
+
+```bash
+npm install sigx @sigx/vite
+```
+
+Configure Vite:
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { sigxPlugin } from '@sigx/vite';
+
+export default defineConfig({
+    plugins: [sigxPlugin()],
+});
+```
+
+## Your First Component
+
+```tsx live
+import { component, render } from 'sigx';
+
+const Counter = component(({ signal }) => {
+    // Create reactive state - objects use direct property access
+    const state = signal({ count: 0 });
+    
+    return () => (
+        <div>
+            <p>Count: {state.count}</p>
+            <button onClick={() => state.count++}>
+                Increment
+            </button>
+        </div>
+    );
+});
+
+render(<Counter />, "#sandbox");
+```
+
+## Key Concepts
+
+### Signals with Objects (Recommended Pattern)
+
+```tsx live
+import { component, render } from 'sigx';
+
+const MyComponent = component(({ signal }) => {
+    // Group state in an object - properties are directly reactive
+    const state = signal({
+        count: 0,
+        name: 'World',
+        items: []
+    });
+    
+    return () => (
+        <div>
+            <p>{state.name}: {state.count}</p>
+            <button onClick={() => state.count++}>+</button>
+        </div>
+    );
+});
+
+render(<MyComponent />, "#sandbox");
+```
+
+### Typed Props and Events
+
+```tsx live
+import { component, render, type Define } from 'sigx';
+
+type CounterProps = 
+    & Define.Prop<'initialValue', number, false>
+    & Define.Event<'change', number>;
+
+const Counter = component<CounterProps>(({ signal, props, emit }) => {
+    const state = signal({ 
+        count: props.initialValue ?? 0 
+    });
+    
+    const increment = () => {
+        state.count++;
+        emit('change', state.count);
+    };
+    
+    return () => (
+        <div>
+            <span>{state.count}</span>
+            <button onClick={increment}>+</button>
+        </div>
+    );
+});
+
+const App = component(() => {
+    const handleChange = (newCount: number) => {
+        console.log('Count changed to:', newCount);
+    };
+    
+    return () => (
+        <Counter initialValue={10} onChange={handleChange} />
+    );
+});
+// Usage
+render(<App />, "#sandbox");
+```
+
+## Application Setup
+
+Use `defineApp` to create and mount your application:
+
+```tsx live
+import { defineApp, component } from 'sigx';
+
+const App = component(({ signal }) => {
+    const state = signal({ message: 'Hello SignalX!' });
+    
+    return () => <h1>{state.message}</h1>;
+});
+
+// Create and mount the app
+defineApp(<App />).mount('#sandbox');
+```
+
+### With Plugins
+
+```tsx live
+import { defineApp, component, type Plugin } from 'sigx';
+
+const loggingPlugin: Plugin = {
+    name: 'logging',
+    install(app) {
+        app.hook({
+            onComponentMounted: (instance) => {
+                console.log(`Mounted: ${instance.name}`);
+            }
+        });
+    }
+};
+
+const App = component(({ signal }) => {
+    const state = signal({ message: 'Hello SignalX!' });
+    
+    return () => <h1>{state.message}</h1>;
+}, { name: 'App' });
+
+defineApp(<App />)
+    .use(loggingPlugin)
+    .mount('#sandbox');
+```
+
+## Next Steps
+
+- [Signals](/docs/signals) - Deep dive into reactive state
+- [Components](/docs/components) - Component model and patterns
+- [Computed](/docs/computed) - Derived reactive values
+- [Effects](/docs/effects) - Side effects and reactions
+- [Lifecycle](/docs/lifecycle) - Component lifecycle hooks

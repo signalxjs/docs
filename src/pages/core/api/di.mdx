@@ -1,0 +1,417 @@
+---
+title: Dependency Injection
+description: SignalX dependency injection API reference
+layout: docs
+category: Reference
+order: 50
+---
+
+# Dependency Injection API
+
+Provide and inject dependencies throughout the component tree.
+
+## provide
+
+Provide a value to all descendant components.
+
+```tsx
+function provide<T>(token: any, value: T): void;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `any` | Unique key (Symbol recommended) |
+| `value` | `T` | Value to provide |
+
+### Examples
+
+```tsx
+import { component, provide } from 'sigx';
+
+// Create a unique token
+const ThemeToken = Symbol('theme');
+
+const App = component(({ signal }) => {
+    const theme = signal({ mode: 'dark', primary: '#007bff' });
+    
+    // Provide to all descendants
+    provide(ThemeToken, theme);
+
+    return () => (
+        <div>
+            <Header />
+            <Content />
+        </div>
+    );
+});
+```
+
+---
+
+## inject
+
+Inject a value provided by an ancestor component.
+
+```tsx
+function inject<T>(token: any): T | undefined;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `any` | Token used in `provide()` |
+
+### Returns
+
+The provided value, or `undefined` if not found.
+
+### Examples
+
+```tsx
+import { component, inject } from 'sigx';
+
+const ThemeToken = Symbol('theme');
+
+const Button = component(({ slots }) => {
+    const theme = inject(ThemeToken);
+
+    return () => (
+        <button style={{ background: theme?.primary }}>
+            {slots.default()}
+        </button>
+    );
+});
+```
+
+---
+
+## createInjectable
+
+Create a self-providing injectable with automatic token management.
+
+```tsx
+function createInjectable<T>(
+    token: any,
+    factory: () => T
+): () => T;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `any` | Unique token |
+| `factory` | `() => T` | Factory function |
+
+### Returns
+
+A hook function that injects the value, creating it if needed.
+
+### Examples
+
+```tsx
+import { createInjectable, signal } from 'sigx';
+
+// Define injectable
+const useUser = createInjectable(
+    Symbol('user'),
+    () => signal({ name: '', loggedIn: false })
+);
+
+// Use in any component
+const Profile = component(() => {
+    const user = useUser();
+
+    return () => (
+        <div>
+            {user.loggedIn 
+                ? <span>Welcome, {user.name}</span>
+                : <span>Please log in</span>
+            }
+        </div>
+    );
+});
+
+const LoginForm = component(({ signal }) => {
+    const user = useUser();
+    const form = signal({ name: '' });
+
+    const login = () => {
+        user.name = form.name;
+        user.loggedIn = true;
+    };
+
+    return () => (
+        <form onSubmit={login}>
+            <input 
+                value={form.name}
+                onInput={(e) => form.name = e.target.value}
+            />
+            <button type="submit">Login</button>
+        </form>
+    );
+});
+```
+
+---
+
+## defineInjectable
+
+Create an injectable factory function.
+
+```tsx
+function defineInjectable<T>(factory: () => T): () => T;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `factory` | `() => T` | Factory creating the injectable |
+
+### Returns
+
+A function that returns the injectable instance.
+
+### Examples
+
+```tsx
+import { defineInjectable, signal } from 'sigx';
+
+const useCounter = defineInjectable(() => {
+    const state = signal({ count: 0 });
+    
+    return {
+        get count() { return state.count; },
+        increment: () => state.count++,
+        decrement: () => state.count--
+    };
+});
+
+// Usage - same instance across components
+const Display = component(() => {
+    const counter = useCounter();
+    return () => <div>Count: {counter.count}</div>;
+});
+
+const Controls = component(() => {
+    const counter = useCounter();
+    return () => (
+        <div>
+            <button onClick={counter.decrement}>-</button>
+            <button onClick={counter.increment}>+</button>
+        </div>
+    );
+});
+```
+
+---
+
+## defineProvide
+
+Provide an injectable and return its instance.
+
+```tsx
+function defineProvide<T>(useFn: () => T): T;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `useFn` | `() => T` | Injectable created by `defineInjectable` |
+
+### Returns
+
+The created instance (also provided to descendants).
+
+### Examples
+
+```tsx
+import { component, defineInjectable, defineProvide } from 'sigx';
+
+const useStore = defineInjectable(() => {
+    const state = signal({ items: [] });
+    return {
+        get items() { return state.items; },
+        add: (item) => state.items = [...state.items, item]
+    };
+});
+
+// Root component creates and provides
+const App = component(() => {
+    const store = defineProvide(useStore);
+    
+    // Can use store here
+    store.add('Initial item');
+
+    return () => (
+        <div>
+            <ItemList />
+            <AddItemForm />
+        </div>
+    );
+});
+
+// Children inject it
+const ItemList = component(() => {
+    const store = useStore();
+    return () => (
+        <ul>
+            {store.items.map(item => <li>{item}</li>)}
+        </ul>
+    );
+});
+```
+
+---
+
+## injectApp
+
+Inject the application instance.
+
+```tsx
+function injectApp(): App | undefined;
+```
+
+### Returns
+
+The current app instance, or `undefined` if not in an app context.
+
+### Examples
+
+```tsx
+import { component, injectApp } from 'sigx';
+
+const PluginUser = component(() => {
+    const app = injectApp();
+    
+    // Access app-level functionality
+    const router = app?.router;
+    const config = app?.config;
+
+    return () => <div>...</div>;
+});
+```
+
+---
+
+## Patterns
+
+### Service Pattern
+
+```tsx
+// services/auth.ts
+import { defineInjectable, signal } from 'sigx';
+
+export const useAuth = defineInjectable(() => {
+    const state = signal({ 
+        user: null as User | null,
+        loading: false 
+    });
+
+    return {
+        get user() { return state.user; },
+        get isAuthenticated() { return !!state.user; },
+        get loading() { return state.loading; },
+        
+        login: async (email: string, password: string) => {
+            state.loading = true;
+            try {
+                state.user = await authApi.login(email, password);
+            } finally {
+                state.loading = false;
+            }
+        },
+        
+        logout: () => {
+            state.user = null;
+        }
+    };
+});
+```
+
+### Config Pattern
+
+```tsx
+// Provide configuration at app root
+const ConfigToken = Symbol('config');
+
+const App = component(() => {
+    provide(ConfigToken, {
+        apiUrl: 'https://api.example.com',
+        debug: true
+    });
+    
+    return () => <Router />;
+});
+
+// Inject anywhere
+const ApiClient = component(() => {
+    const config = inject(ConfigToken);
+    // Use config.apiUrl
+});
+```
+
+### Theme Pattern
+
+```tsx
+const ThemeToken = Symbol('theme');
+
+const useTheme = createInjectable(ThemeToken, () => 
+    signal({ 
+        mode: 'light' as 'light' | 'dark',
+        colors: { primary: '#007bff' }
+    })
+);
+
+const ThemeProvider = component(({ slots }) => {
+    const theme = useTheme();
+    
+    return () => (
+        <div class={`theme-${theme.mode}`}>
+            {slots.default()}
+        </div>
+    );
+});
+
+const ThemeToggle = component(() => {
+    const theme = useTheme();
+    
+    const toggle = () => {
+        theme.mode = theme.mode === 'light' ? 'dark' : 'light';
+    };
+    
+    return () => (
+        <button onClick={toggle}>
+            {theme.mode === 'light' ? '🌙' : '☀️'}
+        </button>
+    );
+});
+```
+
+---
+
+## Types
+
+### InjectionKey
+
+For type-safe injection, use typed tokens:
+
+```tsx
+import type { InjectionKey } from 'sigx';
+
+interface User {
+    id: number;
+    name: string;
+}
+
+const UserToken: InjectionKey<User> = Symbol('user');
+
+// Type-safe provide/inject
+provide(UserToken, { id: 1, name: 'John' });
+const user = inject(UserToken); // User | undefined
+```

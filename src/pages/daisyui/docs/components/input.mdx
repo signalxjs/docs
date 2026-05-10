@@ -1,0 +1,467 @@
+---
+title: Input
+description: Text input fields for forms with model binding, validation states, and sizes
+layout: docs
+category: ["Components", "Data Input"]
+order: 510
+---
+
+# Input
+
+Text input component for single-line text entry with model binding support.
+
+## Import
+
+```tsx
+import { Input, Col } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Use `model` for two-way binding:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, Card, Col, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ 
+        name: '',
+        email: ''
+    });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Input 
+                    model={() => form.name}
+                    placeholder="Enter your name"
+                    variant="bordered"
+                />
+                <Input 
+                    model={() => form.email}
+                    type="email"
+                    placeholder="Enter your email"
+                    variant="bordered"
+                />
+                <Col gap="1">
+                    <Text size="sm" class="opacity-70">Name: {form.name || '(empty)'}</Text>
+                    <Text size="sm" class="opacity-70">Email: {form.email || '(empty)'}</Text>
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Input Types
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, FormField, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ 
+        text: '',
+        email: '',
+        password: '',
+        search: '',
+        url: ''
+    });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <FormField label="Text">
+                    <Input model={() => form.text} type="text" placeholder="Plain text" variant="bordered" />
+                </FormField>
+                <FormField label="Email">
+                    <Input model={() => form.email} type="email" placeholder="you@example.com" variant="bordered" />
+                </FormField>
+                <FormField label="Password">
+                    <Input model={() => form.password} type="password" placeholder="••••••••" variant="bordered" />
+                </FormField>
+                <FormField label="Search">
+                    <Input model={() => form.search} type="search" placeholder="Search..." variant="bordered" />
+                </FormField>
+                <FormField label="URL">
+                    <Input model={() => form.url} type="url" placeholder="https://example.com" variant="bordered" />
+                </FormField>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Input size="xs" placeholder="Extra small" variant="bordered" />
+            <Input size="sm" placeholder="Small" variant="bordered" />
+            <Input size="md" placeholder="Medium (default)" variant="bordered" />
+            <Input size="lg" placeholder="Large" variant="bordered" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Input color="primary" placeholder="Primary" variant="bordered" />
+            <Input color="secondary" placeholder="Secondary" variant="bordered" />
+            <Input color="accent" placeholder="Accent" variant="bordered" />
+            <Input color="info" placeholder="Info" variant="bordered" />
+            <Input color="success" placeholder="Success" variant="bordered" />
+            <Input color="warning" placeholder="Warning" variant="bordered" />
+            <Input color="error" placeholder="Error" variant="bordered" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Variants
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Input placeholder="Default (no variant)" />
+            <Input placeholder="Bordered" variant="bordered" />
+            <Input placeholder="Ghost" variant="ghost" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With FormField
+
+Wrap inputs with `FormField` for labels, helper text, and error messages:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, FormField, Card } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ email: '', password: '' });
+    const emailError = () => form.email && !form.email.includes('@') ? 'Please enter a valid email' : '';
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <FormField 
+                    label="Email" 
+                    required 
+                    error={emailError()}
+                >
+                    <Input 
+                        model={() => form.email}
+                        type="email"
+                        placeholder="you@example.com"
+                        color={emailError() ? 'error' : undefined}
+                        variant="bordered"
+                    />
+                </FormField>
+                
+                <FormField 
+                    label="Password" 
+                    hint="Must be at least 8 characters"
+                >
+                    <Input 
+                        model={() => form.password}
+                        type="password" 
+                        placeholder="••••••••" 
+                        variant="bordered"
+                    />
+                </FormField>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Number Input
+
+For number inputs, the model value is automatically converted to a number:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, FormField, Card } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ quantity: 1, price: 9.99 });
+    const total = () => form.quantity * form.price;
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <FormField label="Quantity">
+                    <Input 
+                        model={() => form.quantity}
+                        type="number" 
+                        variant="bordered"
+                    />
+                </FormField>
+                
+                <FormField label="Price">
+                    <Input 
+                        model={() => form.price}
+                        type="number" 
+                        variant="bordered"
+                    />
+                </FormField>
+                
+                <Text size="lg" weight="bold">
+                    Total: ${total().toFixed(2)}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Disabled and ReadOnly
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    return () => (
+        <Col gap="4">
+            <Input placeholder="Disabled input" variant="bordered" disabled />
+            <Input value="Read-only value" variant="bordered" readOnly />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Max Length
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, FormField, Card } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ username: '' });
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <FormField 
+                    label="Username" 
+                    hint={`${form.username.length}/20 characters`}
+                >
+                    <Input 
+                        model={() => form.username}
+                        placeholder="Choose a username"
+                        maxLength={20}
+                        variant="bordered"
+                    />
+                </FormField>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Login Form Example
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, FormField, Button, Card, Checkbox, Divider, Heading } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ 
+        email: '', 
+        password: '',
+        remember: false
+    });
+    
+    const errors = signal({
+        email: '',
+        password: ''
+    });
+    
+    const validate = () => {
+        let valid = true;
+        
+        if (!form.email) {
+            errors.email = 'Email is required';
+            valid = false;
+        } else if (!form.email.includes('@')) {
+            errors.email = 'Invalid email format';
+            valid = false;
+        } else {
+            errors.email = '';
+        }
+        
+        if (!form.password) {
+            errors.password = 'Password is required';
+            valid = false;
+        } else if (form.password.length < 8) {
+            errors.password = 'Password must be at least 8 characters';
+            valid = false;
+        } else {
+            errors.password = '';
+        }
+        
+        return valid;
+    };
+    
+    const handleSubmit = () => {
+        if (validate()) {
+            alert('Login successful!');
+        }
+    };
+    
+    return () => (
+        <Card class="max-w-md mx-auto">
+            <Card.Body class="space-y-4">
+                <Heading level={2} size="xl" align="center">Sign In</Heading>
+                
+                <FormField label="Email" required error={errors.email}>
+                    <Input 
+                        model={() => form.email}
+                        type="email"
+                        placeholder="you@example.com"
+                        color={errors.email ? 'error' : undefined}
+                        variant="bordered"
+                    />
+                </FormField>
+                
+                <FormField label="Password" required error={errors.password}>
+                    <Input 
+                        model={() => form.password}
+                        type="password"
+                        placeholder="••••••••"
+                        color={errors.password ? 'error' : undefined}
+                        variant="bordered"
+                    />
+                </FormField>
+                
+                <Checkbox 
+                    model={() => form.remember}
+                    label="Remember me"
+                    color="primary"
+                />
+                
+                <Button variant="primary" block onClick={handleSubmit}>
+                    Sign In
+                </Button>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Autocomplete Control
+
+Use `autoComplete` to control browser autofill behavior:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Input, FormField, Card } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ email: '', password: '' });
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <FormField label="Email">
+                    <Input 
+                        model={() => form.email}
+                        type="email"
+                        placeholder="user@example.com"
+                        autoComplete="off"
+                        variant="bordered"
+                    />
+                </FormField>
+                
+                <FormField label="New Password">
+                    <Input 
+                        model={() => form.password}
+                        type="password"
+                        placeholder="(unchanged)"
+                        autoComplete="new-password"
+                        variant="bordered"
+                    />
+                </FormField>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+Common `autoComplete` values: `'off'`, `'on'`, `'email'`, `'username'`, `'current-password'`, `'new-password'`, `'name'`, `'tel'`, `'address-line1'`.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => signal.property` | - | Model binding for two-way sync |
+| `name` | `string` | - | Input name for form submission |
+| `type` | `'text' \| 'email' \| 'password' \| 'number' \| 'search' \| 'url' \| 'tel'` | `'text'` | Input type |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Input size |
+| `variant` | `'bordered' \| 'ghost'` | - | Visual variant |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Border color |
+| `placeholder` | `string` | - | Placeholder text |
+| `disabled` | `boolean` | `false` | Disable the input |
+| `readOnly` | `boolean` | `false` | Read-only state |
+| `maxLength` | `number` | - | Maximum character length |
+| `autoComplete` | `string` | - | Browser autocomplete hint (`'off'`, `'new-password'`, `'email'`, etc.) |
+| `class` | `string` | - | Additional CSS classes |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `onInput` | `(e: InputEvent) => void` | Fired on each keystroke (raw DOM event) |
+| `onChange` | `(e: Event) => void` | Fired when focus leaves the input |
+| `onFocus` | `(e: FocusEvent) => void` | Fired when input gains focus |
+| `onBlur` | `(e: FocusEvent) => void` | Fired when input loses focus |
+
+## Related Components
+
+- [Textarea](./textarea) - Multi-line text input
+- [Select](./select) - Dropdown selection
+- [Checkbox](./checkbox) - Boolean checkbox
+- [Toggle](./toggle) - Toggle switch
+- [Radio](./radio) - Radio button group
+- [Range](./range) - Range slider
+- [FormField](./form-field) - Form field wrapper
+- [File Input](./file-input) - File upload input

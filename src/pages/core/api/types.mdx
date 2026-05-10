@@ -1,0 +1,456 @@
+---
+title: Types
+description: SignalX TypeScript type helpers reference
+layout: docs
+category: Reference
+order: 70
+---
+
+# Types API
+
+TypeScript type helpers for defining component contracts.
+
+## Define.Prop
+
+Define a single component prop with type and required status.
+
+```tsx
+type Define.Prop<
+    TName extends string,
+    TType,
+    Required extends boolean = false
+> = Required extends false
+    ? { [K in TName]?: TType }
+    : { [K in TName]: TType };
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `TName` | `string` | Prop name |
+| `TType` | `any` | Prop type |
+| `Required` | `boolean` | Is required (default: false) |
+
+### Examples
+
+```tsx
+import { component, type Define } from 'sigx';
+
+// Required prop
+type NameProp = Define.Prop<'name', string, true>;
+
+// Optional prop
+type CountProp = Define.Prop<'count', number>;
+
+// With default in component
+type ColorProp = Define.Prop<'color', 'red' | 'blue'>;
+
+// Combined props
+type ButtonProps = 
+    & Define.Prop<'label', string, true>
+    & Define.Prop<'variant', 'primary' | 'secondary'>
+    & Define.Prop<'disabled', boolean>;
+
+const Button = component<ButtonProps>(({ props }) => {
+    // props.label is string (required)
+    // props.variant is 'primary' | 'secondary' | undefined
+    // props.disabled is boolean | undefined
+    
+    return () => (
+        <button 
+            class={props.variant || 'primary'}
+            disabled={props.disabled}
+        >
+            {props.label}
+        </button>
+    );
+});
+```
+
+---
+
+## Define.Event
+
+Define a custom event with its detail type.
+
+```tsx
+type Define.Event<TName extends string, TDetail = void> = {
+    [K in TName]?: EventDefinition<TDetail>;
+};
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `TName` | `string` | Event name |
+| `TDetail` | `any` | Event payload type (default: void) |
+
+### Examples
+
+```tsx
+import { component, type Define } from 'sigx';
+
+// Event without payload
+type CloseEvent = Define.Event<'close'>;
+
+// Event with payload
+type ChangeEvent = Define.Event<'change', { value: string }>;
+
+// Combined
+type InputProps = 
+    & Define.Event<'change', string>
+    & Define.Event<'blur'>
+    & Define.Event<'submit', { data: FormData }>;
+
+const Input = component<InputProps>(({ emit }) => {
+    return () => (
+        <input
+            onInput={(e) => emit('change', e.target.value)}
+            onBlur={() => emit('blur')}
+        />
+    );
+});
+
+// Usage - events become onEventName props
+<Input 
+    onChange={(value) => console.log(value)}
+    onBlur={() => console.log('blurred')}
+    onSubmit={({ data }) => console.log(data)}
+/>
+```
+
+---
+
+## Define.Slot
+
+Define a named slot with optional scoped props.
+
+```tsx
+type Define.Slot<TName extends string, TProps = void> = {
+    __slots?: {
+        [K in TName]: TProps extends void
+            ? () => JSXElement | JSXElement[] | null
+            : (props: TProps) => JSXElement | JSXElement[] | null
+    }
+};
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `TName` | `string` | Slot name |
+| `TProps` | `any` | Scoped slot props (default: void) |
+
+### Examples
+
+```tsx
+import { component, type Define } from 'sigx';
+
+// Simple slots
+type CardProps = 
+    & Define.Slot<'default'>
+    & Define.Slot<'header'>
+    & Define.Slot<'footer'>;
+
+const Card = component<CardProps>(({ slots }) => {
+    return () => (
+        <div class="card">
+            {slots.header?.()}
+            <div class="body">{slots.default()}</div>
+            {slots.footer?.()}
+        </div>
+    );
+});
+
+// Scoped slots
+type ListProps<T> = 
+    & Define.Prop<'items', T[], true>
+    & Define.Slot<'item', { item: T; index: number }>
+    & Define.Slot<'empty'>;
+
+const List = component<ListProps<any>>(({ props, slots }) => {
+    return () => (
+        <ul>
+            {props.items.length === 0 
+                ? slots.empty?.()
+                : props.items.map((item, index) => (
+                    <li>{slots.item?.({ item, index })}</li>
+                ))
+            }
+        </ul>
+    );
+});
+
+// Usage
+<List 
+    items={users}
+    slots={{
+        item: ({ item, index }) => (
+            <span>{index + 1}. {item.name}</span>
+        ),
+        empty: () => <span>No users found</span>
+    }}
+/>
+```
+
+---
+
+## Define.Model
+
+Define a two-way bound prop (modelValue + update event + model caller prop).
+
+```tsx
+type Define.Model<TNameOrType, TType = void> = TType extends void
+    ? Define.Prop<"modelValue", TNameOrType> 
+        & Define.Event<"update:modelValue", TNameOrType>
+        & { model?: () => TNameOrType }
+    : TNameOrType extends string
+        ? Define.Prop<TNameOrType, TType> 
+            & Define.Event<`update:${TNameOrType}`, TType>
+            & { [K in `model:${TNameOrType}`]?: () => TType }
+        : never;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `TNameOrType` | `string \| type` | Prop name or type for 'modelValue' |
+| `TType` | `any` | Prop type (when TNameOrType is name) |
+
+### What It Creates
+
+For `Define.Model<string>`:
+- `modelValue?: string` — the value prop (component reads this)
+- `update:modelValue` event — component emits this to update
+- `model?: () => string` — caller uses this for two-way binding
+
+For `Define.Model<'min', number>`:
+- `min?: number` — the named prop
+- `update:min` event — component emits this
+- `model:min?: () => number` — caller uses this for binding
+
+### Examples
+
+```tsx
+import { component, type Define } from 'sigx';
+
+// Default 'modelValue' prop
+type InputProps = Define.Model<string>;
+
+// Named model prop
+type RangeProps = 
+    & Define.Model<'min', number>
+    & Define.Model<'max', number>;
+// Creates: { min?: number, max?: number, ... }
+
+const TextInput = component<Define.Model<string>>(({ props, emit }) => {
+    return () => (
+        <input
+            value={props.modelValue || ''}
+            onInput={(e) => emit('update:modelValue', e.target.value)}
+        />
+    );
+});
+
+// Usage with model binding
+const Form = component(({ signal }) => {
+    const state = signal({ name: '' });
+    
+    return () => (
+        <TextInput model={() => state.name} />
+    );
+});
+```
+
+---
+
+## Define.Expose
+
+Define the API exposed by a component via ref.
+
+```tsx
+type Define.Expose<T> = {
+    __exposed?: { __type: T };
+};
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `T` | `object` | Shape of exposed API |
+
+### Examples
+
+```tsx
+import { component, type Define } from 'sigx';
+
+type FormApi = {
+    submit: () => void;
+    reset: () => void;
+    validate: () => boolean;
+};
+
+type FormProps = Define.Expose<FormApi>;
+
+const Form = component<FormProps>(({ expose, signal }) => {
+    const state = signal({ data: {} });
+    
+    expose({
+        submit: () => console.log('Submit:', state.data),
+        reset: () => state.data = {},
+        validate: () => Object.keys(state.data).length > 0
+    });
+    
+    return () => <form>...</form>;
+});
+
+// Usage with typed ref
+let formApi: FormApi;
+<Form ref={(api) => formApi = api!} />
+
+formApi.validate();
+formApi.submit();
+```
+
+---
+
+## ComponentRef
+
+Extract the ref type from a component for typed refs.
+
+```tsx
+type ComponentRef<T extends { __ref: any }> = Ref<T["__ref"]>;
+```
+
+### Examples
+
+```tsx
+import { component, ComponentRef, type Define } from 'sigx';
+
+const Counter = component<Define.Expose<{ increment: () => void }>>(
+    ({ expose, signal }) => {
+        const state = signal({ count: 0 });
+        expose({ increment: () => state.count++ });
+        return () => <div>{state.count}</div>;
+    }
+);
+
+// Type the ref variable
+const counterRef: ComponentRef<typeof Counter> = { current: null };
+
+<Counter ref={counterRef} />
+
+// Type-safe access
+counterRef.current?.increment();
+```
+
+---
+
+## Exposed
+
+Extract the exposed type from a component.
+
+```tsx
+type Exposed<T extends { __ref: any }> = T["__ref"];
+```
+
+### Examples
+
+```tsx
+import { component, Exposed, type Define } from 'sigx';
+
+const Modal = component<Define.Expose<{ open: () => void; close: () => void }>>(
+    ({ expose }) => {
+        expose({ open: () => {}, close: () => {} });
+        return () => <div />;
+    }
+);
+
+// Extract exposed type
+type ModalApi = Exposed<typeof Modal>;
+// { open: () => void; close: () => void }
+
+let modalApi: ModalApi;
+<Modal ref={(api) => modalApi = api!} />
+```
+
+---
+
+## Ref
+
+Ref type accepting both object and callback refs.
+
+```tsx
+type Ref<T> = { current: T | null } | ((instance: T | null) => void);
+```
+
+### Examples
+
+```tsx
+// Object ref
+const myRef = { current: null };
+<Component ref={myRef} />
+myRef.current?.method();
+
+// Callback ref
+let api: MyApi;
+<Component ref={(instance) => api = instance!} />
+```
+
+---
+
+## Combining Types
+
+```tsx
+import { 
+    component, 
+    type Define,
+} from 'sigx';
+
+// Full component type definition
+type DataTableProps<T> = 
+    // Props
+    & Define.Prop<'data', T[], true>
+    & Define.Prop<'columns', Column[], true>
+    & Define.Prop<'loading', boolean>
+    & Define.Prop<'selectable', boolean>
+    // Events
+    & Define.Event<'select', T>
+    & Define.Event<'sort', { column: string; direction: 'asc' | 'desc' }>
+    // Slots
+    & Define.Slot<'empty'>
+    & Define.Slot<'row', { item: T; index: number }>
+    & Define.Slot<'footer'>
+    // Two-way binding
+    & Define.Model<'selected', T[]>
+    // Exposed API
+    & Define.Expose<{
+        refresh: () => Promise<void>;
+        clearSelection: () => void;
+    }>;
+
+const DataTable = component<DataTableProps<any>>(({ 
+    props, emit, slots, expose, signal 
+}) => {
+    const state = signal({ internalSelected: [] as any[] });
+    
+    expose({
+        refresh: async () => { /* ... */ },
+        clearSelection: () => {
+            state.internalSelected = [];
+            emit('update:selected', []);
+        }
+    });
+    
+    return () => (
+        <table>
+            {/* ... */}
+        </table>
+    );
+});
+```

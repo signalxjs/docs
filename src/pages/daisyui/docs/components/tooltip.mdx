@@ -1,0 +1,184 @@
+---
+title: Tooltip
+description: Tooltip displays informational text when hovering over or focusing on an element
+layout: docs
+category: ["Components", "Feedback"]
+order: 450
+---
+
+# Tooltip
+
+Tooltip displays informational text when hovering over or focusing on an element.
+
+## Import
+
+```tsx
+import { Tooltip, Button, Badge, Row, Flex } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Tooltip, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Tooltip tip="hello">
+            <Button>Hover me</Button>
+        </Tooltip>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Force Open
+
+Use the `open` prop to force the tooltip to be visible.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Tooltip, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Tooltip tip="I am always visible" open>
+            <Button>Force open</Button>
+        </Tooltip>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Positions
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Tooltip, Button, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" class="p-16 flex-wrap justify-center">
+            <Tooltip tip="top" position="top">
+                <Button>Top</Button>
+            </Tooltip>
+            <Tooltip tip="bottom" position="bottom">
+                <Button>Bottom</Button>
+            </Tooltip>
+            <Tooltip tip="left" position="left">
+                <Button>Left</Button>
+            </Tooltip>
+            <Tooltip tip="right" position="right">
+                <Button>Right</Button>
+            </Tooltip>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Tooltip, Button, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="2" class="p-8 flex-wrap justify-center">
+            <Tooltip tip="neutral" color="neutral" open>
+                <Button>neutral</Button>
+            </Tooltip>
+            <Tooltip tip="primary" color="primary" open>
+                <Button variant="primary">primary</Button>
+            </Tooltip>
+            <Tooltip tip="secondary" color="secondary" open>
+                <Button variant="secondary">secondary</Button>
+            </Tooltip>
+            <Tooltip tip="accent" color="accent" open>
+                <Button variant="accent">accent</Button>
+            </Tooltip>
+            <Tooltip tip="info" color="info" open>
+                <Button variant="info">info</Button>
+            </Tooltip>
+            <Tooltip tip="success" color="success" open>
+                <Button variant="success">success</Button>
+            </Tooltip>
+            <Tooltip tip="warning" color="warning" open>
+                <Button variant="warning">warning</Button>
+            </Tooltip>
+            <Tooltip tip="error" color="error" open>
+                <Button variant="error">error</Button>
+            </Tooltip>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Content
+
+Use `Tooltip.Content` for rich tooltip content instead of plain text.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Tooltip, Button, Badge, Flex, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Tooltip open>
+            <Button>Hover for details</Button>
+            <Tooltip.Content class="bg-base-200 text-base-content p-4 rounded-box shadow-lg">
+                <Flex direction="column" gap="2">
+                    <Text weight="bold">Custom Tooltip</Text>
+                    <Text size="sm">This tooltip has rich content</Text>
+                    <Badge variant="success" size="sm">Active</Badge>
+                </Flex>
+            </Tooltip.Content>
+        </Tooltip>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Responsive
+
+Use Tailwind responsive prefixes on the `class` prop to control tooltip visibility at different breakpoints.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Tooltip, Button } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Tooltip tip="Only visible on large screens" class="lg:tooltip-open" position="right">
+            <Button>Responsive tooltip</Button>
+        </Tooltip>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+### Tooltip
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tip` | `string` | `undefined` | Tooltip text (sets `data-tip` attribute) |
+| `position` | `'top' \| 'bottom' \| 'left' \| 'right'` | `undefined` (top) | Position of the tooltip |
+| `color` | `'neutral' \| 'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | `undefined` | Color variant |
+| `open` | `boolean` | `false` | Force the tooltip to be visible |
+| `class` | `string` | `undefined` | Additional CSS classes |
+
+### Tooltip.Content
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `class` | `string` | `undefined` | Additional CSS classes |

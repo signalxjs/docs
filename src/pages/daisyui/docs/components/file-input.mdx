@@ -1,0 +1,143 @@
+---
+title: File Input
+description: File Input is a styled file upload control
+layout: docs
+category: ["Components", "Data Input"]
+order: 530
+---
+
+# File Input
+
+File Input is a styled file upload control with DaisyUI styling.
+
+## Import
+
+```tsx
+import { FileInput } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { FileInput } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <FileInput class="w-full max-w-xs" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { FileInput, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <FileInput class="w-full max-w-xs" />
+            <FileInput color="primary" class="w-full max-w-xs" />
+            <FileInput color="secondary" class="w-full max-w-xs" />
+            <FileInput color="accent" class="w-full max-w-xs" />
+            <FileInput color="neutral" class="w-full max-w-xs" />
+            <FileInput color="info" class="w-full max-w-xs" />
+            <FileInput color="success" class="w-full max-w-xs" />
+            <FileInput color="warning" class="w-full max-w-xs" />
+            <FileInput color="error" class="w-full max-w-xs" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { FileInput, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <FileInput size="xs" class="w-full max-w-xs" />
+            <FileInput size="sm" class="w-full max-w-xs" />
+            <FileInput size="md" class="w-full max-w-xs" />
+            <FileInput size="lg" class="w-full max-w-xs" />
+            <FileInput size="xl" class="w-full max-w-xs" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Ghost
+
+Ghost variant gives a minimal background style.
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { FileInput } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <FileInput ghost class="w-full max-w-xs" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Disabled
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { FileInput } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <FileInput disabled class="w-full max-w-xs" />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Accept Filter
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { FileInput, Col, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Col gap="2">
+            <Text>Images only</Text>
+            <FileInput accept="image/*" class="w-full max-w-xs" />
+            <Text>PDF and Word documents</Text>
+            <FileInput accept=".pdf,.doc,.docx" class="w-full max-w-xs" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Size of the file input |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | — | Color variant |
+| `ghost` | `boolean` | `false` | Ghost/minimal style |
+| `accept` | `string` | — | Accepted file types (e.g. `"image/*"`, `".pdf"`) |
+| `multiple` | `boolean` | `false` | Allow multiple file selection |
+| `disabled` | `boolean` | `false` | Disable the input |
+| `class` | `string` | — | Additional CSS classes |
+| `onChange` | `(files: FileList \| null) => void` | — | Fired when files are selected |

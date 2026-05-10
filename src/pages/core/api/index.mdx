@@ -1,0 +1,120 @@
+---
+title: Overview
+description: Complete SignalX API reference
+layout: docs
+category: Reference
+order: 10
+---
+
+# API Reference
+
+Complete reference for all SignalX (`sigx`) exports. SignalX re-exports everything from:
+- `@sigx/reactivity` - Reactive primitives
+- `@sigx/runtime-core` - Component system
+- `@sigx/runtime-dom` - DOM rendering
+
+## Quick Navigation
+
+### Reactivity
+- [`signal`](/api/reactivity#signal) - Create reactive state
+- [`effect`](/api/reactivity#effect) - Run side effects
+- [`computed`](/api/reactivity#computed) - Derived values
+- [`watch`](/api/reactivity#watch) - Watch with callbacks
+- [`batch`](/api/reactivity#batch) - Batch updates
+- [`untrack`](/api/reactivity#untrack) - Read without tracking
+- [`toRaw`](/api/reactivity#toraw) - Get raw object
+- [`isReactive`](/api/reactivity#isreactive) - Check if reactive
+- [`effectScope`](/api/reactivity#effectscope) - Group effects
+
+### Components
+- [`component`](/api/components#component) - Define component
+- [`Fragment`](/api/components#fragment) - Render without wrapper
+- [`lazy`](/api/components#lazy) - Lazy load component
+- [`Suspense`](/api/components#suspense) - Async boundary
+- [`Portal`](/api/components#portal) - Render to different DOM location
+
+### Lifecycle
+- [`onMounted`](/api/lifecycle#onmounted) - After mount
+- [`onUnmounted`](/api/lifecycle#onunmounted) - Before unmount
+- [`onCreated`](/api/lifecycle#oncreated) - After creation
+- [`onUpdated`](/api/lifecycle#onupdated) - After update
+
+### Dependency Injection
+- [`provide`](/api/di#provide) - Provide value to descendants
+- [`inject`](/api/di#inject) - Inject from ancestors
+- [`createInjectable`](/api/di#createinjectable) - Create injectable
+- [`defineProvide`](/api/di#defineprovide) - Provide + create
+
+### App & Plugins
+- [`defineApp`](/api/app#defineapp) - Create application
+- [`Plugin`](/api/app#plugin) - Plugin type
+
+### Advanced
+- [`defineFactory`](/api/advanced#definefactory) - Injectable factory
+- [`createTopic`](/api/advanced#createtopic) - Pub/sub messaging
+- [`toSubscriber`](/api/advanced#tosubscriber) - Read-only subscriber
+
+### Types
+- [`Define.Prop`](/api/types#defineprop) - Prop type helper
+- [`Define.Event`](/api/types#defineevent) - Event type helper
+- [`Define.Slot`](/api/types#defineslot) - Slot type helper
+- [`Define.Model`](/api/types#definemodel) - Two-way binding helper
+- [`Define.Expose`](/api/types#defineexpose) - Exposed API helper
+- [`ComponentRef`](/api/types#componentref) - Component ref type
+- [`Exposed`](/api/types#exposed) - Extract exposed type
+
+## Import
+
+All APIs are available from the main `sigx` package:
+
+```tsx
+import { 
+    // Reactivity
+    signal, effect, computed, watch,
+    batch, untrack, toRaw, isReactive, effectScope,
+    
+    // Components
+    component, Fragment, lazy, Suspense, Portal,
+    
+    // Lifecycle
+    onMounted, onUnmounted, onCreated, onUpdated,
+    
+    // DI
+    provide, inject, createInjectable, defineProvide,
+    
+    // App
+    defineApp,
+    
+    // Types
+    type Define, ComponentRef, Exposed,
+    
+    // Advanced
+    defineFactory, createTopic, toSubscriber,
+    InstanceLifetimes
+} from 'sigx';
+```
+
+## TypeScript
+
+SignalX is written in TypeScript and provides full type inference. All component props, events, slots, and exposed APIs are fully typed.
+
+```tsx
+// Full type safety
+type MyProps = 
+    & Define.Prop<'name', string, true>
+    & Define.Prop<'count', number>
+    & Define.Event<'change', number>
+    & Define.Slot<'header'>
+    & Define.Expose<{ reset: () => void }>;
+
+const MyComponent = component<MyProps>(({ props, emit, slots, expose }) => {
+    // props.name is string (required)
+    // props.count is number | undefined (optional)
+    // emit('change', 5) is type-checked
+    // slots.header is typed correctly
+    
+    expose({ reset: () => {} }); // Type-checked
+    
+    return () => <div>{props.name}</div>;
+});
+```

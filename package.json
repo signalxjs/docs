@@ -1,0 +1,67 @@
+{
+    "name": "@sigx/docs",
+    "version": "0.1.0",
+    "private": true,
+    "packageManager": "pnpm@10.33.4",
+    "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+    },
+    "description": "SignalX framework documentation site",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "ssg build",
+        "preview": "vite preview",
+        "typecheck": "tsgo --noEmit"
+    },
+    "dependencies": {
+        "@sigx/daisyui": "^0.3.2",
+        "@sigx/live-code": "^0.1.1",
+        "@sigx/monaco-editor": "^0.1.1",
+        "@sigx/router": "^0.3.2",
+        "@sigx/ssg": "^0.3.2",
+        "@sigx/store": "^0.3.2",
+        "@sigx/vite": "^0.4.1",
+        "monaco-editor": "^0.55.1",
+        "sigx": "^0.4.1"
+    },
+    "devDependencies": {
+        "@mdx-js/rollup": "^3.1.0",
+        "@tailwindcss/vite": "4.2.2",
+        "@typescript/native-preview": "7.0.0-dev.20260507.1",
+        "daisyui": "5.5.14",
+        "remark-gfm": "^4.0.1",
+        "tailwindcss": "4.2.2",
+        "typescript": "^5.9.3",
+        "vite": "^8.0.3"
+    },
+    "keywords": [
+        "sigx",
+        "signalx",
+        "documentation"
+    ],
+    "author": "Andreas Ekdahl",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/signalxjs/docs.git"
+    },
+    "homepage": "https://signalx.dev",
+    "bugs": {
+        "url": "https://github.com/signalxjs/docs/issues"
+    },
+    "pnpm": {
+        "overrides": {
+            "@sigx/reactivity": "^0.4.1",
+            "@sigx/runtime-core": "^0.4.1",
+            "@sigx/runtime-dom": "^0.4.1",
+            "@sigx/server-renderer": "^0.4.1",
+            "sigx": "^0.4.1"
+        },
+        "peerDependencyRules": {
+            "allowedVersions": {
+                "sigx": "0.4.x"
+            }
+        }
+    }
+}

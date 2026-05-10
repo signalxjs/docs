@@ -1,0 +1,384 @@
+---
+title: Advanced
+description: SignalX advanced utilities API reference
+layout: docs
+category: Reference
+order: 80
+---
+
+# Advanced API
+
+Factories, messaging, and other advanced utilities.
+
+## defineFactory
+
+Create an injectable factory with lifecycle management.
+
+```tsx
+function defineFactory<T>(
+    setup: (ctx: SetupFactoryContext, ...args: any[]) => T,
+    lifetime: InstanceLifetimes,
+    typeIdentifier?: string
+): (...args: any[]) => T & { dispose?: () => void };
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `setup` | `(ctx, ...args) => T` | Factory setup function |
+| `lifetime` | `InstanceLifetimes` | Instance lifetime mode |
+| `typeIdentifier` | `string` | Optional unique identifier |
+
+### SetupFactoryContext
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `onDeactivated` | `(fn: () => void) => void` | Register cleanup callback |
+| `subscriptions` | `SubscriptionHandler` | Subscription manager |
+| `overrideDispose` | `(fn) => void` | Custom disposal logic |
+
+### Examples
+
+```tsx
+import { defineFactory, InstanceLifetimes } from 'sigx';
+
+// Singleton service
+const useApi = defineFactory((ctx) => {
+    const cache = new Map();
+    
+    ctx.onDeactivated(() => {
+        cache.clear();
+    });
+    
+    return {
+        fetch: async (url: string) => {
+            if (cache.has(url)) return cache.get(url);
+            const data = await fetch(url).then(r => r.json());
+            cache.set(url, data);
+            return data;
+        },
+        invalidate: (url: string) => cache.delete(url)
+    };
+}, InstanceLifetimes.Singleton);
+
+// Factory with parameters
+const useRepository = defineFactory((ctx, entityName: string) => {
+    return {
+        getAll: () => fetch(`/api/${entityName}`),
+        getById: (id: number) => fetch(`/api/${entityName}/${id}`)
+    };
+}, InstanceLifetimes.Transient);
+
+// Usage
+const api = useApi();
+const usersRepo = useRepository('users');
+```
+
+---
+
+## InstanceLifetimes
+
+Enum for factory instance lifetimes.
+
+```tsx
+enum InstanceLifetimes {
+    Transient = 0,  // New instance every time
+    Scoped = 1,     // One per scope/provider
+    Singleton = 2   // Single global instance
+}
+```
+
+### Examples
+
+```tsx
+import { defineFactory, InstanceLifetimes } from 'sigx';
+
+// New instance every call
+const useTransient = defineFactory(setup, InstanceLifetimes.Transient);
+
+// Shared within a scope
+const useScoped = defineFactory(setup, InstanceLifetimes.Scoped);
+
+// Single global instance
+const useSingleton = defineFactory(setup, InstanceLifetimes.Singleton);
+```
+
+---
+
+## SubscriptionHandler
+
+Helper class for managing cleanup subscriptions.
+
+```tsx
+class SubscriptionHandler {
+    add(unsub: () => void): void;
+    unsubscribe(): void;
+}
+```
+
+### Examples
+
+```tsx
+const useWebSocket = defineFactory((ctx) => {
+    let ws: WebSocket;
+    
+    return {
+        connect: (url: string) => {
+            ws = new WebSocket(url);
+            
+            // Auto-cleanup on factory deactivation
+            ctx.subscriptions.add(() => ws.close());
+            
+            return ws;
+        }
+    };
+}, InstanceLifetimes.Singleton);
+```
+
+---
+
+## createTopic
+
+Create a pub/sub topic for messaging.
+
+```tsx
+function createTopic<T>(options?: {
+    namespace?: string;
+    name?: string;
+}): Topic<T>;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options.namespace` | `string` | Optional namespace for debugging |
+| `options.name` | `string` | Optional name for debugging |
+
+### Returns
+
+`Topic<T>` with:
+- `publish(data: T): void` - Send to all subscribers
+- `subscribe(handler: (data: T) => void): Subscription` - Add subscriber
+- `destroy(): void` - Remove all subscribers
+
+### Examples
+
+```tsx
+import { createTopic } from 'sigx';
+
+// Create typed topic
+const userEvents = createTopic<{
+    type: 'login' | 'logout';
+    userId: number;
+}>();
+
+// Subscribe
+const sub = userEvents.subscribe((event) => {
+    console.log(`User ${event.userId} ${event.type}`);
+});
+
+// Publish
+userEvents.publish({ type: 'login', userId: 123 });
+
+// Unsubscribe
+sub.unsubscribe();
+
+// Or destroy all
+userEvents.destroy();
+```
+
+---
+
+## toSubscriber
+
+Create a read-only subscriber from a topic.
+
+```tsx
+function toSubscriber<T>(topic: Topic<T>): {
+    subscribe: (handler: (data: T) => void) => Subscription;
+};
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `topic` | `Topic<T>` | Full topic to wrap |
+
+### Returns
+
+Object with only `subscribe` method (no `publish`).
+
+### Examples
+
+```tsx
+import { createTopic, toSubscriber } from 'sigx';
+
+// Internal: full control
+const _notifications = createTopic<{ message: string }>();
+
+// External: read-only
+export const notifications = toSubscriber(_notifications);
+
+// Can subscribe
+notifications.subscribe(({ message }) => alert(message));
+
+// Cannot publish (type error)
+notifications.publish({ message: 'Hello' }); // Error!
+```
+
+---
+
+## Topic Interface
+
+```tsx
+interface Topic<T> {
+    publish(data: T): void;
+    subscribe(handler: (data: T) => void): Subscription;
+    destroy(): void;
+}
+```
+
+---
+
+## Subscription Interface
+
+```tsx
+interface Subscription {
+    unsubscribe(): void;
+}
+```
+
+---
+
+## guid
+
+Generate a unique identifier.
+
+```tsx
+function guid(): string;
+type guid = string;
+```
+
+### Examples
+
+```tsx
+import { guid } from 'sigx';
+
+const id = guid();
+// "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+```
+
+---
+
+## valueOf
+
+Type assertion helper.
+
+```tsx
+function valueOf<T>(obj: any): T;
+```
+
+### Examples
+
+```tsx
+import { valueOf } from 'sigx';
+
+const data = valueOf<MyType>(untypedData);
+```
+
+---
+
+## Patterns
+
+### Event Bus
+
+```tsx
+import { createTopic } from 'sigx';
+
+// Centralized event bus
+export const eventBus = {
+    userLogin: createTopic<{ userId: number }>(),
+    userLogout: createTopic<void>(),
+    notification: createTopic<{ message: string; type: 'info' | 'error' }>(),
+    themeChange: createTopic<'light' | 'dark'>()
+};
+
+// Usage
+eventBus.userLogin.publish({ userId: 123 });
+eventBus.notification.subscribe(({ message }) => toast(message));
+```
+
+### Service Layer
+
+```tsx
+import { defineFactory, createTopic, InstanceLifetimes, signal } from 'sigx';
+
+const useCartService = defineFactory((ctx) => {
+    const state = signal({ items: [] as CartItem[] });
+    const cartUpdated = createTopic<{ itemCount: number }>();
+    
+    ctx.onDeactivated(() => {
+        cartUpdated.destroy();
+    });
+    
+    return {
+        get items() { return state.items; },
+        get count() { return state.items.length; },
+        
+        onUpdate: toSubscriber(cartUpdated),
+        
+        add: (item: CartItem) => {
+            state.items = [...state.items, item];
+            cartUpdated.publish({ itemCount: state.items.length });
+        },
+        
+        remove: (id: string) => {
+            state.items = state.items.filter(i => i.id !== id);
+            cartUpdated.publish({ itemCount: state.items.length });
+        },
+        
+        clear: () => {
+            state.items = [];
+            cartUpdated.publish({ itemCount: 0 });
+        }
+    };
+}, InstanceLifetimes.Singleton);
+```
+
+### Async Operations
+
+```tsx
+const useAsyncOperation = defineFactory((ctx) => {
+    const state = signal({ 
+        loading: false, 
+        error: null as Error | null,
+        data: null as any
+    });
+    
+    const execute = async <T>(operation: () => Promise<T>): Promise<T | null> => {
+        state.loading = true;
+        state.error = null;
+        
+        try {
+            const result = await operation();
+            state.data = result;
+            return result;
+        } catch (err) {
+            state.error = err instanceof Error ? err : new Error(String(err));
+            return null;
+        } finally {
+            state.loading = false;
+        }
+    };
+    
+    return {
+        get loading() { return state.loading; },
+        get error() { return state.error; },
+        get data() { return state.data; },
+        execute
+    };
+}, InstanceLifetimes.Transient);
+```

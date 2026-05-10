@@ -1,0 +1,378 @@
+---
+title: Components
+description: SignalX components API reference
+layout: docs
+category: Reference
+order: 30
+---
+
+# Components API
+
+Component creation and built-in components.
+
+## component
+
+Create a SignalX component.
+
+```tsx
+function component<TCombined, TRef, TSlots>(
+    setup: (ctx: ComponentSetupContext) => ViewFn | Promise<ViewFn>,
+    options?: ComponentOptions
+): ComponentFactory<TCombined, TRef, TSlots>;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `setup` | `(ctx) => ViewFn` | Setup function receiving context |
+| `options.name` | `string` | Component name for DevTools |
+
+### Returns
+
+`ComponentFactory` - A function usable as a JSX element.
+
+### Setup Context
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `signal` | `typeof signal` | Create reactive state |
+| `props` | `PropsAccessor<TProps>` | Reactive props |
+| `slots` | `SlotsObject<TSlots>` | Slot functions |
+| `emit` | `EmitFn<TEvents>` | Emit custom events |
+| `el` | `PlatformElement` | Root element (after mount) |
+| `parent` | `any` | Parent component |
+| `onMounted` | `(fn) => void` | Register mount callback |
+| `onUnmounted` | `(fn) => void` | Register unmount callback |
+| `onCreated` | `(fn) => void` | Register creation callback |
+| `onUpdated` | `(fn) => void` | Register update callback |
+| `expose` | `(api) => void` | Expose API to parent |
+| `update` | `() => void` | Force re-render |
+
+### Examples
+
+```tsx
+import { component, type Define } from 'sigx';
+
+type CardProps = 
+    & Define.Prop<'title', string, true>
+    & Define.Event<'close'>
+    & Define.Slot<'default'>
+    & Define.Slot<'footer'>;
+
+const Card = component<CardProps>(({ props, slots, emit }) => {
+    return () => (
+        <div class="card">
+            <header>
+                {props.title}
+                <button onClick={() => emit('close')}>×</button>
+            </header>
+            <main>{slots.default()}</main>
+            {slots.footer?.()}
+        </div>
+    );
+}, { name: 'Card' });
+
+// Usage
+<Card 
+    title="Welcome" 
+    onClose={() => setOpen(false)}
+    slots={{
+        footer: () => <button>OK</button>
+    }}
+>
+    <p>Card content</p>
+</Card>
+```
+
+---
+
+## Fragment
+
+Render children without a wrapper element.
+
+```tsx
+const Fragment: Symbol;
+```
+
+### Usage
+
+```tsx
+import { Fragment } from 'sigx';
+
+// Using Fragment component
+<Fragment>
+    <li>Item 1</li>
+    <li>Item 2</li>
+</Fragment>
+
+// Using short syntax
+<>
+    <li>Item 1</li>
+    <li>Item 2</li>
+</>
+```
+
+---
+
+## lazy
+
+Create a lazy-loaded component.
+
+```tsx
+function lazy<T extends ComponentFactory>(
+    loader: () => Promise<T | { default: T }>
+): LazyComponentFactory<T>;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `loader` | `() => Promise<Component>` | Dynamic import function |
+
+### Returns
+
+`LazyComponentFactory` with:
+- `preload(): Promise<T>` - Start loading before render
+- `isLoaded(): boolean` - Check if loaded
+
+### Examples
+
+```tsx
+import { lazy, Suspense } from 'sigx';
+
+const HeavyChart = lazy(() => import('./HeavyChart'));
+
+// Basic usage
+<Suspense fallback={<Spinner />}>
+    <HeavyChart />
+</Suspense>
+
+// Preload on hover
+<button onMouseEnter={() => HeavyChart.preload()}>
+    Show Chart
+</button>
+
+// Check load status
+if (HeavyChart.isLoaded()) {
+    console.log('Ready');
+}
+```
+
+---
+
+## Suspense
+
+Show fallback content while lazy components load.
+
+```tsx
+const Suspense: ComponentFactory<SuspenseProps>;
+```
+
+### Props
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fallback` | `JSXElement \| () => JSXElement` | Content while loading |
+
+### Examples
+
+```tsx
+import { lazy, Suspense } from 'sigx';
+
+const Dashboard = lazy(() => import('./Dashboard'));
+
+// Static fallback
+<Suspense fallback={<div>Loading...</div>}>
+    <Dashboard />
+</Suspense>
+
+// Dynamic fallback
+<Suspense fallback={() => <Spinner size={size} />}>
+    <Dashboard />
+</Suspense>
+
+// Multiple lazy components
+<Suspense fallback={<Loading />}>
+    <LazyHeader />
+    <LazyContent />
+</Suspense>
+```
+
+---
+
+## Portal
+
+Render children to a different DOM location.
+
+```tsx
+const Portal: ComponentFactory<PortalProps>;
+```
+
+### Props
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `to` | `string \| Element` | `document.body` | Target container |
+| `disabled` | `boolean` | `false` | Render in-place instead |
+
+### Examples
+
+```tsx
+import { Portal } from 'sigx';
+
+// Render to body (default)
+<Portal>
+    <div class="modal">Modal content</div>
+</Portal>
+
+// Render to specific element
+<Portal to="#modal-root">
+    <div class="modal">Modal content</div>
+</Portal>
+
+// Render to element reference
+<Portal to={containerElement}>
+    <Tooltip />
+</Portal>
+
+// Conditional portal
+<Portal disabled={inline}>
+    <Dropdown />
+</Portal>
+```
+
+---
+
+## isLazyComponent
+
+Check if a component is lazy-loaded.
+
+```tsx
+function isLazyComponent(component: any): component is LazyComponentFactory;
+```
+
+### Examples
+
+```tsx
+import { lazy, isLazyComponent } from 'sigx';
+
+const LazyComp = lazy(() => import('./Comp'));
+const RegularComp = component(() => () => <div />);
+
+isLazyComponent(LazyComp);    // true
+isLazyComponent(RegularComp); // false
+```
+
+---
+
+## getCurrentInstance
+
+Get the current component's setup context.
+
+```tsx
+function getCurrentInstance(): ComponentSetupContext | null;
+```
+
+### Returns
+
+The current component context, or `null` if not in a component.
+
+### Examples
+
+```tsx
+import { getCurrentInstance } from 'sigx';
+
+function useCustomHook() {
+    const ctx = getCurrentInstance();
+    if (!ctx) {
+        throw new Error('Must be called in component setup');
+    }
+    
+    ctx.onMounted(() => {
+        console.log('Component mounted');
+    });
+}
+```
+
+---
+
+## Helper Functions
+
+### supportsMoveBefore
+
+Check if browser supports state-preserving DOM moves.
+
+```tsx
+function supportsMoveBefore(): boolean;
+```
+
+### moveNode
+
+Move a DOM node with state preservation when available.
+
+```tsx
+function moveNode(
+    parent: Element,
+    node: Node,
+    anchor?: Node | null
+): void;
+```
+
+---
+
+## Types
+
+### ComponentFactory
+
+```tsx
+type ComponentFactory<TCombined, TRef, TSlots> = 
+    ((props: ComponentProps) => JSXElement) & {
+        __setup: SetupFn;
+        __name?: string;
+        __props: TCombined;
+        __ref: TRef;
+        __slots: TSlots;
+    };
+```
+
+### LazyComponentFactory
+
+```tsx
+type LazyComponentFactory<T> = T & {
+    preload: () => Promise<T>;
+    isLoaded: () => boolean;
+    __lazy: true;
+};
+```
+
+### SuspenseProps
+
+```tsx
+type SuspenseProps = {
+    fallback?: JSXElement | (() => JSXElement);
+};
+```
+
+### PortalProps
+
+```tsx
+type PortalProps = 
+    & Define.Prop<'to', string | Element>
+    & Define.Prop<'disabled', boolean>;
+```
+
+### ViewFn
+
+```tsx
+type ViewFn = () => JSXElement | JSXElement[] | undefined;
+```
+
+### ComponentOptions
+
+```tsx
+interface ComponentOptions {
+    name?: string;
+}
+```

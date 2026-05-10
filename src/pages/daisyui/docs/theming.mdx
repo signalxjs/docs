@@ -1,0 +1,153 @@
+---
+title: Theming
+description: Customize themes and colors with @sigx/daisyui
+layout: docs
+category: Core Concepts
+order: 30
+---
+
+# Theming
+
+SignalX DaisyUI supports DaisyUI's powerful theming system with 30+ built-in themes.
+
+## Initializing Themes
+
+Set up the theme system when your app loads:
+
+```tsx
+import { onMounted } from 'sigx';
+import { initializeTheme } from '@sigx/daisyui';
+
+onMounted(() => {
+    initializeTheme({
+        defaultTheme: 'dark',
+        storageKey: 'theme',
+    });
+});
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `defaultTheme` | `string` | `'light'` | Default theme if none is stored |
+| `storageKey` | `string` | `'theme'` | localStorage key for persistence |
+
+## Theme Toggle
+
+Add a theme toggle button:
+
+```tsx
+import { ThemeToggle } from '@sigx/daisyui';
+
+// Toggle between light and dark
+<ThemeToggle />
+
+// Custom themes
+<ThemeToggle themes={['light', 'dark', 'cupcake', 'forest']} />
+```
+
+## Programmatic Theme Switching
+
+Switch themes in code:
+
+```tsx
+import { setTheme, getTheme } from '@sigx/daisyui';
+
+// Get current theme
+const current = getTheme();
+
+// Set a specific theme
+setTheme('forest');
+```
+
+## Available Themes
+
+DaisyUI includes 30+ themes:
+
+**Light themes:**
+- `light`, `cupcake`, `bumblebee`, `emerald`, `corporate`, `retro`, `cyberpunk`, `valentine`, `garden`, `lofi`, `pastel`, `fantasy`, `wireframe`, `cmyk`, `autumn`, `acid`, `lemonade`, `winter`
+
+**Dark themes:**
+- `dark`, `synthwave`, `halloween`, `forest`, `aqua`, `luxury`, `dracula`, `night`, `coffee`, `dim`, `nord`, `sunset`
+
+## Custom Themes
+
+You can create fully custom themes using the **[Theme Generator](/daisyui/docs/theme-generator)** — an interactive tool that lets you visually configure colors, radius, effects, sizes, and border width with live preview.
+
+Define custom themes in your Tailwind config:
+
+```js
+// tailwind.config.js
+module.exports = {
+    plugins: [require('daisyui')],
+    daisyui: {
+        themes: [
+            'light',
+            'dark',
+            {
+                mytheme: {
+                    'primary': '#570df8',
+                    'secondary': '#f000b8',
+                    'accent': '#37cdbe',
+                    'neutral': '#3d4451',
+                    'base-100': '#ffffff',
+                    'info': '#3abff8',
+                    'success': '#36d399',
+                    'warning': '#fbbd23',
+                    'error': '#f87272',
+                },
+            },
+        ],
+    },
+};
+```
+
+Then use your custom theme:
+
+```tsx
+setTheme('mytheme');
+```
+
+## CSS Variables
+
+Access theme colors via CSS variables:
+
+```css
+.my-element {
+    background-color: hsl(var(--p)); /* primary */
+    color: hsl(var(--pc)); /* primary-content */
+    border-color: hsl(var(--b3)); /* base-300 */
+}
+```
+
+### Available Variables
+
+| Variable | Description |
+|----------|-------------|
+| `--p` | Primary color |
+| `--pc` | Primary content (text on primary) |
+| `--s` | Secondary color |
+| `--sc` | Secondary content |
+| `--a` | Accent color |
+| `--ac` | Accent content |
+| `--n` | Neutral color |
+| `--nc` | Neutral content |
+| `--b1` | Base 100 (background) |
+| `--b2` | Base 200 |
+| `--b3` | Base 300 |
+| `--bc` | Base content |
+
+## Responsive Theming
+
+Apply different themes based on system preference:
+
+```tsx
+import { initializeTheme } from '@sigx/daisyui';
+
+initializeTheme({
+    defaultTheme: window.matchMedia('(prefers-color-scheme: dark)').matches 
+        ? 'dark' 
+        : 'light',
+});
+```

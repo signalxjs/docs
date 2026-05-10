@@ -1,0 +1,365 @@
+---
+title: Factories
+description: Injectable factory pattern for services in SignalX
+layout: docs
+category: Advanced
+order: 20
+---
+
+# Factories
+
+SignalX provides `defineFactory()` for creating injectable services with lifecycle management. Factories are ideal for shared logic, API clients, and stateful services.
+
+## Basic Factory
+
+```tsx
+import { defineFactory, InstanceLifetimes } from 'sigx';
+
+const useLogger = defineFactory((ctx) => {
+    const logs: string[] = [];
+
+    const log = (message: string) => {
+        logs.push(`[${Date.now()}] ${message}`);
+        console.log(message);
+    };
+
+    const getLogs = () => [...logs];
+
+    ctx.onDeactivated(() => {
+        console.log('Logger deactivated');
+    });
+
+    return { log, getLogs };
+}, InstanceLifetimes.Singleton);
+
+// Usage in component
+const MyComponent = component(() => {
+    const logger = useLogger();
+    
+    logger.log('Component mounted');
+    
+    return () => <div>Check console</div>;
+});
+```
+
+## Instance Lifetimes
+
+Factories support three lifetime modes:
+
+```tsx
+import { InstanceLifetimes } from 'sigx';
+
+// New instance every time
+defineFactory(setup, InstanceLifetimes.Transient);
+
+// One instance per component tree (scoped to provider)
+defineFactory(setup, InstanceLifetimes.Scoped);
+
+// Single global instance
+defineFactory(setup, InstanceLifetimes.Singleton);
+```
+
+### Lifetime Comparison
+
+| Lifetime | Instances | Use Case |
+|----------|-----------|----------|
+| `Transient` | Many | Stateless utilities, unique per use |
+| `Scoped` | Per scope | Component-tree-local services |
+| `Singleton` | One | Global services, caches, API clients |
+
+## Factory Context
+
+The factory setup function receives a context with lifecycle hooks:
+
+```tsx
+const useService = defineFactory((ctx) => {
+    // Called when the factory instance is disposed
+    ctx.onDeactivated(() => {
+        console.log('Cleaning up...');
+    });
+
+    // Subscription helper for auto-cleanup
+    ctx.subscriptions.add(() => {
+        // This runs on deactivation
+    });
+
+    // Override default dispose behavior
+    ctx.overrideDispose((defaultDispose) => {
+        // Custom cleanup logic
+        defaultDispose();
+    });
+
+    return { /* service API */ };
+}, InstanceLifetimes.Singleton);
+```
+
+## API Client Example
+
+```tsx
+import { defineFactory, InstanceLifetimes, signal } from 'sigx';
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+const useUserApi = defineFactory((ctx) => {
+    const cache = signal(new Map<number, User>());
+    const loading = signal({ value: false });
+    
+    const fetchUser = async (id: number): Promise<User> => {
+        // Check cache first
+        const cached = cache.get(id);
+        if (cached) return cached;
+        
+        loading.value = true;
+        try {
+            const response = await fetch(`/api/users/${id}`);
+            const user = await response.json();
+            cache.set(id, user);
+            return user;
+        } finally {
+            loading.value = false;
+        }
+    };
+    
+    const invalidateCache = () => {
+        cache.$set(new Map());
+    };
+    
+    ctx.onDeactivated(() => {
+        invalidateCache();
+    });
+    
+    return {
+        fetchUser,
+        invalidateCache,
+        isLoading: () => loading.value
+    };
+}, InstanceLifetimes.Singleton);
+
+// Usage
+const UserProfile = component(({ props }) => {
+    const userApi = useUserApi();
+    const state = signal({ user: null as User | null });
+    
+    onMounted(async () => {
+        state.user = await userApi.fetchUser(props.userId);
+    });
+    
+    return () => (
+        <div>
+            {userApi.isLoading() && <Spinner />}
+            {state.user && <h1>{state.user.name}</h1>}
+        </div>
+    );
+});
+```
+
+## Factories with Parameters
+
+Factories can accept parameters for dynamic creation:
+
+```tsx
+const useRepository = defineFactory((ctx, entityName: string) => {
+    const baseUrl = `/api/${entityName}`;
+    
+    const getAll = () => fetch(baseUrl).then(r => r.json());
+    const getById = (id: number) => fetch(`${baseUrl}/${id}`).then(r => r.json());
+    const create = (data: any) => fetch(baseUrl, {
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
+    
+    return { getAll, getById, create };
+}, InstanceLifetimes.Transient);
+
+// Usage
+const usersRepo = useRepository('users');
+const postsRepo = useRepository('posts');
+```
+
+## Subscription Management
+
+Use the built-in `SubscriptionHandler` for managing subscriptions:
+
+```tsx
+const useWebSocket = defineFactory((ctx) => {
+    let ws: WebSocket | null = null;
+    
+    const connect = (url: string) => {
+        ws = new WebSocket(url);
+        
+        // Auto-cleanup on factory deactivation
+        ctx.subscriptions.add(() => {
+            ws?.close();
+        });
+    };
+    
+    const send = (data: any) => {
+        ws?.send(JSON.stringify(data));
+    };
+    
+    return { connect, send };
+}, InstanceLifetimes.Singleton);
+```
+
+## Combining with Dependency Injection
+
+Factories work with SignalX's DI system:
+
+```tsx
+import { defineFactory, defineInjectable, provide, inject, InstanceLifetimes } from 'sigx';
+
+// Define the factory
+const useAuthService = defineFactory((ctx) => {
+    const state = signal({ 
+        user: null as User | null,
+        token: null as string | null
+    });
+    
+    const login = async (email: string, password: string) => {
+        const response = await fetch('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        state.user = data.user;
+        state.token = data.token;
+    };
+    
+    const logout = () => {
+        state.user = null;
+        state.token = null;
+    };
+    
+    return {
+        get user() { return state.user; },
+        get isAuthenticated() { return !!state.token; },
+        login,
+        logout
+    };
+}, InstanceLifetimes.Singleton);
+
+// Usage in components
+const LoginForm = component(({ signal }) => {
+    const auth = useAuthService();
+    const form = signal({ email: '', password: '' });
+    
+    const handleSubmit = async () => {
+        await auth.login(form.email, form.password);
+    };
+    
+    return () => (
+        <form onSubmit={handleSubmit}>
+            <input 
+                type="email" 
+                value={form.email}
+                onInput={(e) => form.email = e.target.value}
+            />
+            <input 
+                type="password"
+                value={form.password}
+                onInput={(e) => form.password = e.target.value}
+            />
+            <button type="submit">Login</button>
+        </form>
+    );
+});
+
+const UserStatus = component(() => {
+    const auth = useAuthService();
+    
+    return () => (
+        <div>
+            {auth.isAuthenticated 
+                ? <span>Welcome, {auth.user?.name}</span>
+                : <span>Not logged in</span>
+            }
+        </div>
+    );
+});
+```
+
+## API Reference
+
+### `defineFactory(setup, lifetime, typeIdentifier?)`
+
+Create an injectable factory function.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `setup` | `(ctx: SetupFactoryContext, ...args) => T` | Factory setup function |
+| `lifetime` | `InstanceLifetimes` | Instance lifetime mode |
+| `typeIdentifier` | `string` | Optional unique identifier |
+
+**Returns:** Factory function that creates/returns the service
+
+### `SetupFactoryContext`
+
+Context passed to factory setup functions.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `onDeactivated` | `(fn: () => void) => void` | Register cleanup callback |
+| `subscriptions` | `SubscriptionHandler` | Helper for managing subscriptions |
+| `overrideDispose` | `(fn: (dispose: () => void) => void) => void` | Custom disposal logic |
+
+### `InstanceLifetimes`
+
+Enum for factory instance lifetimes.
+
+| Value | Description |
+|-------|-------------|
+| `Transient` | New instance every invocation |
+| `Scoped` | One instance per scope/provider |
+| `Singleton` | Single global instance |
+
+### `SubscriptionHandler`
+
+Helper class for managing cleanup subscriptions.
+
+```tsx
+ctx.subscriptions.add(() => cleanup());
+ctx.subscriptions.unsubscribe(); // Call all cleanup functions
+```
+
+## Best Practices
+
+1. **Use Singleton for shared state**:
+   ```tsx
+   const useStore = defineFactory(setup, InstanceLifetimes.Singleton);
+   ```
+
+2. **Clean up resources**:
+   ```tsx
+   ctx.onDeactivated(() => {
+       socket.close();
+       subscription.unsubscribe();
+   });
+   ```
+
+3. **Keep factories focused**:
+   ```tsx
+   // Good: Single responsibility
+   const useUserApi = defineFactory(/* user API only */);
+   const usePostApi = defineFactory(/* post API only */);
+   
+   // Avoid: Kitchen sink
+   const useApi = defineFactory(/* everything */);
+   ```
+
+4. **Expose reactive getters**:
+   ```tsx
+   return {
+       get user() { return state.user; },  // Reactive
+       getUser: () => state.user           // Also reactive
+   };
+   ```
+
+## Next Steps
+
+- [Messaging](/docs/advanced/messaging) - Pub/sub communication
+- [Dependency Injection](/docs/app-plugins) - DI with provide/inject
+- [Components](/docs/components) - Component patterns

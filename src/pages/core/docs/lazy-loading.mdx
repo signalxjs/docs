@@ -1,0 +1,248 @@
+---
+title: Lazy Loading & Suspense
+description: Code splitting and async component loading in SignalX
+layout: docs
+category: Built-in Components
+order: 20
+---
+
+# Lazy Loading & Suspense
+
+SignalX provides built-in support for code splitting through `lazy()` and `Suspense`. Load components on demand to reduce initial bundle size and improve performance.
+
+## Lazy Loading Components
+
+Use `lazy()` to create a component that loads on first render:
+
+```tsx
+import { lazy, Suspense } from 'sigx';
+
+// Component will be loaded when first rendered
+const HeavyChart = lazy(() => import('./components/HeavyChart'));
+
+// Usage with Suspense
+function App() {
+    return (
+        <Suspense fallback={<div>Loading chart...</div>}>
+            <HeavyChart data={chartData} />
+        </Suspense>
+    );
+}
+```
+
+The `lazy()` function accepts an import function and returns a component that:
+- Loads the component module on first render
+- Shows the `Suspense` fallback while loading
+- Renders the component once loaded
+- Caches the loaded component for subsequent renders
+
+## Suspense Boundaries
+
+`Suspense` components define loading boundaries in your component tree:
+
+```tsx
+import { lazy, Suspense, component } from 'sigx';
+
+const Dashboard = lazy(() => import('./Dashboard'));
+const Charts = lazy(() => import('./Charts'));
+const Reports = lazy(() => import('./Reports'));
+
+const App = component(() => {
+    return () => (
+        <div class="app">
+            {/* Each section can load independently */}
+            <Suspense fallback={<Skeleton type="dashboard" />}>
+                <Dashboard />
+            </Suspense>
+            
+            <div class="grid">
+                <Suspense fallback={<Skeleton type="chart" />}>
+                    <Charts />
+                </Suspense>
+                
+                <Suspense fallback={<Skeleton type="report" />}>
+                    <Reports />
+                </Suspense>
+            </div>
+        </div>
+    );
+});
+```
+
+### Fallback Options
+
+The `fallback` prop accepts either a JSX element or a function:
+
+```tsx
+// Static fallback
+<Suspense fallback={<Spinner />}>
+    <LazyComponent />
+</Suspense>
+
+// Dynamic fallback (called on each render)
+<Suspense fallback={() => <Spinner size={spinnerSize} />}>
+    <LazyComponent />
+</Suspense>
+```
+
+### Nested Suspense
+
+Multiple lazy components under the same Suspense wait together:
+
+```tsx
+<Suspense fallback={<Loading />}>
+    {/* Both components must load before content shows */}
+    <LazyHeader />
+    <LazyContent />
+</Suspense>
+```
+
+Nest Suspense boundaries for more granular loading states:
+
+```tsx
+<Suspense fallback={<AppSkeleton />}>
+    <LazyLayout>
+        <Suspense fallback={<ContentSkeleton />}>
+            <LazyContent />
+        </Suspense>
+    </LazyLayout>
+</Suspense>
+```
+
+## Preloading Components
+
+Lazy components expose a `preload()` method to start loading before render:
+
+```tsx
+const HeavyEditor = lazy(() => import('./HeavyEditor'));
+
+// Preload on hover
+<button onMouseEnter={() => HeavyEditor.preload()}>
+    Open Editor
+</button>
+
+// Or preload on route navigation
+router.beforeEach((to) => {
+    if (to.path === '/editor') {
+        HeavyEditor.preload();
+    }
+});
+```
+
+## Checking Load Status
+
+Use `isLoaded()` to check if a lazy component has finished loading:
+
+```tsx
+const LazyComponent = lazy(() => import('./Component'));
+
+// Check status
+if (LazyComponent.isLoaded()) {
+    console.log('Component is ready');
+}
+
+// Useful for conditional logic
+function showStatus() {
+    return LazyComponent.isLoaded() 
+        ? 'Ready' 
+        : 'Loading...';
+}
+```
+
+## API Reference
+
+### `lazy(loader)`
+
+Creates a lazy-loaded component wrapper.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `loader` | `() => Promise<Component>` | Function returning a dynamic import |
+
+**Returns:** `LazyComponentFactory` - Component with `preload()` and `isLoaded()` methods
+
+```tsx
+// Default export
+const Comp = lazy(() => import('./Component'));
+
+// Named export
+const Comp = lazy(() => 
+    import('./Components').then(m => m.SpecificComponent)
+);
+```
+
+### `Suspense`
+
+Component that shows fallback content while children load.
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `fallback` | `JSXElement \| () => JSXElement` | Content to show while loading |
+
+### `isLazyComponent(component)`
+
+Check if a component is a lazy-loaded component.
+
+```tsx
+import { isLazyComponent } from 'sigx';
+
+if (isLazyComponent(SomeComponent)) {
+    SomeComponent.preload();
+}
+```
+
+## Error Handling
+
+Errors during loading are thrown and can be caught with error boundaries:
+
+```tsx
+const FailingComponent = lazy(() => 
+    import('./Broken') // This import fails
+);
+
+// The error propagates up - handle with try/catch or error boundary
+<Suspense fallback={<Loading />}>
+    <FailingComponent />
+</Suspense>
+```
+
+## Best Practices
+
+1. **Route-level splitting** - Lazy load page components for the biggest impact:
+   ```tsx
+   const routes = [
+       { path: '/', component: lazy(() => import('./pages/Home')) },
+       { path: '/dashboard', component: lazy(() => import('./pages/Dashboard')) },
+   ];
+   ```
+
+2. **Preload on intent** - Start loading before the user needs it:
+   ```tsx
+   <Link 
+       href="/dashboard" 
+       onMouseEnter={() => DashboardPage.preload()}
+   >
+       Dashboard
+   </Link>
+   ```
+
+3. **Group related components** - Put related lazy components under one Suspense:
+   ```tsx
+   <Suspense fallback={<DashboardSkeleton />}>
+       <DashboardHeader />
+       <DashboardCharts />
+       <DashboardTable />
+   </Suspense>
+   ```
+
+4. **Meaningful fallbacks** - Use skeleton screens that match the content layout:
+   ```tsx
+   <Suspense fallback={<TableSkeleton rows={10} columns={5} />}>
+       <LazyDataTable />
+   </Suspense>
+   ```
+
+## Next Steps
+
+- [Portal](/docs/portal) - Render content outside the component tree
+- [Components](/docs/components) - Component patterns and best practices

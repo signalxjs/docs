@@ -1,0 +1,318 @@
+---
+title: Rating
+description: Star rating component with model binding for user ratings
+layout: docs
+category: ["Components", "Feedback"]
+order: 520
+---
+
+# Rating
+
+Rating component allows users to provide feedback using stars or other shapes. Supports sizes, half-star ratings, mask shapes, colors, and model binding.
+
+## Import
+
+```tsx
+import { Rating, Row, Col, Text, Card } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Rating, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const rating = signal({ value: 3 });
+
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Rating model={() => rating.value} />
+                <Text size="sm">Rating: {rating.value} stars</Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+All five size variants: `xs`, `sm`, `md`, `lg`, `xl`.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Rating, Text, Row, Col } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const r1 = signal({ v: 3 });
+    const r2 = signal({ v: 3 });
+    const r3 = signal({ v: 3 });
+    const r4 = signal({ v: 3 });
+    const r5 = signal({ v: 3 });
+
+    return () => (
+        <Col gap="4">
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-16">xs:</Text>
+                <Rating model={() => r1.v} size="xs" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-16">sm:</Text>
+                <Rating model={() => r2.v} size="sm" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-16">md:</Text>
+                <Rating model={() => r3.v} size="md" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-16">lg:</Text>
+                <Rating model={() => r4.v} size="lg" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-16">xl:</Text>
+                <Rating model={() => r5.v} size="xl" />
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Rating, Text, Row, Col } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const ratings = signal({
+        primary: 4,
+        secondary: 3,
+        accent: 5,
+        info: 4,
+        success: 3,
+        warning: 4,
+        error: 2
+    });
+
+    return () => (
+        <Col gap="4">
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Primary:</Text>
+                <Rating model={() => ratings.primary} color="primary" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Secondary:</Text>
+                <Rating model={() => ratings.secondary} color="secondary" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Accent:</Text>
+                <Rating model={() => ratings.accent} color="accent" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Info:</Text>
+                <Rating model={() => ratings.info} color="info" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Success:</Text>
+                <Rating model={() => ratings.success} color="success" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Warning:</Text>
+                <Rating model={() => ratings.warning} color="warning" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Error:</Text>
+                <Rating model={() => ratings.error} color="error" />
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Mask Shapes
+
+Different shapes for rating icons using the `mask` prop.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Rating, Text, Row, Col } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const ratings = signal({
+        star: 4,
+        star2: 4,
+        heart: 3,
+        circle: 5,
+        diamond: 4,
+        hexagon: 3,
+        triangle: 4
+    });
+
+    return () => (
+        <Col gap="4">
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Star:</Text>
+                <Rating model={() => ratings.star} mask="star" color="warning" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Star 2:</Text>
+                <Rating model={() => ratings.star2} mask="star-2" color="warning" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Heart:</Text>
+                <Rating model={() => ratings.heart} mask="heart" color="error" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Circle:</Text>
+                <Rating model={() => ratings.circle} mask="circle" color="primary" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Diamond:</Text>
+                <Rating model={() => ratings.diamond} mask="diamond" color="accent" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Hexagon:</Text>
+                <Rating model={() => ratings.hexagon} mask="hexagon" color="secondary" />
+            </Row>
+            <Row align="center" gap="4">
+                <Text as="span" size="sm" class="w-24">Triangle:</Text>
+                <Rating model={() => ratings.triangle} mask="triangle" color="info" />
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Half Stars
+
+Enable half-star ratings for more precise feedback using the `half` prop.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Rating, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const rating = signal({ value: 3.5 });
+
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Rating model={() => rating.value} half color="warning" size="lg" />
+                <Text size="sm">Rating: {rating.value} stars</Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Read-Only
+
+Display ratings without user interaction using the `readOnly` prop.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Rating, Col, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const r1 = signal({ v: 4 });
+    const r2 = signal({ v: 3 });
+    const r3 = signal({ v: 5 });
+
+    return () => (
+        <Col gap="4">
+            <Row align="center" gap="4">
+                <Rating model={() => r1.v} readOnly color="warning" />
+                <Text size="sm" class="opacity-70">4 stars (read-only)</Text>
+            </Row>
+            <Row align="center" gap="4">
+                <Rating model={() => r2.v} readOnly mask="heart" color="error" />
+                <Text size="sm" class="opacity-70">3 hearts (read-only)</Text>
+            </Row>
+            <Row align="center" gap="4">
+                <Rating model={() => r3.v} readOnly color="primary" />
+                <Text size="sm" class="opacity-70">5 stars (read-only)</Text>
+            </Row>
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hidden (Clearable)
+
+The component includes a hidden first radio input so the user can deselect all stars (clear the rating to 0).
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Rating, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const rating = signal({ value: 0 });
+
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Rating model={() => rating.value} color="warning" size="lg" />
+                <Text size="sm">
+                    {rating.value === 0 ? 'No rating selected (click a star, then click the same star to clear)' : `${rating.value} out of 5`}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Custom Max
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Rating, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const rating = signal({ value: 7 });
+
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Rating model={() => rating.value} max={10} color="warning" />
+                <Text size="sm">Rating: {rating.value}/10</Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => signal.property` | - | Model binding for rating value |
+| `max` | `number` | `5` | Maximum number of stars |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Size of the rating icons |
+| `mask` | `'star' \| 'star-2' \| 'heart' \| 'circle' \| 'diamond' \| 'hexagon' \| 'decagon' \| 'triangle'` | `'star-2'` | Shape of the rating icons |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Color of filled icons (defaults to orange) |
+| `half` | `boolean` | `false` | Enable half-star ratings |
+| `readOnly` | `boolean` | `false` | Disable user interaction |
+| `class` | `string` | - | Additional CSS classes |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `onChange` | `(value: number) => void` | Fired when rating changes |

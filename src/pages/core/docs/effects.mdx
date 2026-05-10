@@ -1,0 +1,171 @@
+---
+title: Effects
+description: React to changes with effects in SignalX
+layout: docs
+category: Core Concepts
+order: 20
+---
+
+# Effects
+
+Effects let you run side effects in response to signal changes. They're essential for data fetching, DOM manipulation, and synchronization.
+
+## Basic Effects
+
+```tsx
+import { signal, effect } from 'sigx';
+
+const state = signal({ count: 0 });
+
+// This runs immediately, then re-runs when count changes
+effect(() => {
+    console.log('Count is:', state.count);
+});
+
+state.count = 5;  // Logs: "Count is: 5"
+```
+
+## Effects in Components
+
+```tsx
+import { component, effect } from 'sigx';
+
+type UserProfileProps = Define.Prop<'userId', number, true>;
+
+const UserProfile = component<UserProfileProps>(({ signal, props }) => {
+    const state = signal({ user: null as any });
+    
+    // Fetch user when userId changes
+    effect(() => {
+        fetch(`/api/users/${props.userId}`)
+            .then(r => r.json())
+            .then(data => state.user = data);
+    });
+    
+    return () => (
+        <div>
+            {state.user ? (
+                <h1>{state.user.name}</h1>
+            ) : (
+                <p>Loading...</p>
+            )}
+        </div>
+    );
+});
+```
+
+## Effect Cleanup
+
+Effects return an `EffectRunner` with a `stop` method:
+
+```tsx
+const runner = effect(() => {
+    const timer = setInterval(() => {
+        console.log('Tick');
+    }, 1000);
+});
+
+// Later: stop the effect
+runner.stop();
+```
+
+## Watch API
+
+For more control over when callbacks fire, use `watch`:
+
+```tsx
+import { signal, watch } from 'sigx';
+
+const state = signal({ count: 0 });
+
+// Watch a specific value
+const stop = watch(
+    () => state.count,
+    (newValue, oldValue, onCleanup) => {
+        console.log(`Changed from ${oldValue} to ${newValue}`);
+        
+        // Optional cleanup
+        onCleanup(() => {
+            console.log('Cleaning up...');
+        });
+    },
+    { immediate: true }  // Run immediately with current value
+);
+
+// Control the watcher
+stop.pause();   // Pause watching
+stop.resume();  // Resume watching
+stop.stop();    // Stop completely
+```
+
+### Watch Options
+
+```tsx
+watch(source, callback, {
+    immediate: true,  // Run callback immediately
+    deep: true,       // Deep watch nested objects
+    once: true        // Only trigger once
+});
+```
+
+## Batching Updates
+
+Use `batch` to group multiple updates:
+
+```tsx
+import { signal, batch, effect } from 'sigx';
+
+const state = signal({ a: 1, b: 2 });
+
+effect(() => {
+    console.log('Sum:', state.a + state.b);
+});
+
+// Without batch: logs twice
+state.a = 10;  // Logs
+state.b = 20;  // Logs
+
+// With batch: logs once
+batch(() => {
+    state.a = 100;
+    state.b = 200;
+});
+// Logs once: "Sum: 300"
+```
+
+## Effect Scope
+
+Group and manage multiple effects:
+
+```tsx
+import { effectScope, effect } from 'sigx';
+
+const scope = effectScope();
+
+scope.run(() => {
+    effect(() => { /* tracked */ });
+    effect(() => { /* tracked */ });
+});
+
+// Dispose all effects at once
+scope.stop();
+```
+
+## When to Use Effects
+
+**Good use cases:**
+- Data fetching
+- DOM manipulation
+- Event listeners
+- Timers and intervals
+- Syncing with external systems
+
+**Avoid:**
+- Computing derived values (use `computed` instead)
+- Modifying other signals (can cause infinite loops)
+- Modifying signals within the same effect (can cause loops)
+
+## Next Steps
+
+- [Computed](/docs/computed) - Derive values reactively
+- [Lifecycle](/docs/lifecycle) - Component mount/unmount hooks

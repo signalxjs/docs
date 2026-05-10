@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or discussion about SignalX
+    url: https://github.com/signalxjs/core/discussions
+    about: For open-ended questions about the framework. (Docs site bugs should use the templates above.)
+  - name: Bug in the framework itself
+    url: https://github.com/signalxjs/core/issues
+    about: Report bugs in `sigx`, `@sigx/runtime-*`, etc. in the core repo.

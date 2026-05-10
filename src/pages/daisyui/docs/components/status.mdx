@@ -1,0 +1,175 @@
+---
+title: Status
+description: A small indicator to visually show the current status of an element
+layout: docs
+category: ["Components", "Feedback"]
+order: 445
+---
+
+# Status
+
+A small icon to visually show the current status of an element, like online, offline, error, etc.
+
+## Import
+
+```tsx
+import { Status, Row, Col, Text, Avatar, Badge } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Status } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Status />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Status, Row, Text, Col } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Col align="center">
+                <Status size="xs" color="neutral" />
+                <Text size="xs">xs</Text>
+            </Col>
+            <Col align="center">
+                <Status size="sm" color="neutral" />
+                <Text size="xs">sm</Text>
+            </Col>
+            <Col align="center">
+                <Status size="md" color="neutral" />
+                <Text size="xs">md</Text>
+            </Col>
+            <Col align="center">
+                <Status size="lg" color="neutral" />
+                <Text size="xs">lg</Text>
+            </Col>
+            <Col align="center">
+                <Status size="xl" color="neutral" />
+                <Text size="xs">xl</Text>
+            </Col>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Status, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Status color="primary" />
+            <Status color="secondary" />
+            <Status color="accent" />
+            <Status color="neutral" />
+            <Status color="info" />
+            <Status color="success" />
+            <Status color="warning" />
+            <Status color="error" />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Ping Animation
+
+Use the `animate-ping` Tailwind utility class to create a ping/pulse effect for active or alert states.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Status, Row, Flex } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="8" align="center">
+            <Flex class="inline-grid *:[grid-area:1/1]">
+                <Status color="error" class="animate-ping" />
+                <Status color="error" />
+            </Flex>
+            <Flex class="inline-grid *:[grid-area:1/1]">
+                <Status color="success" class="animate-ping" />
+                <Status color="success" />
+            </Flex>
+            <Flex class="inline-grid *:[grid-area:1/1]">
+                <Status color="warning" class="animate-ping" />
+                <Status color="warning" />
+            </Flex>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Bounce Animation
+
+Use the `animate-bounce` Tailwind utility class for a notification-style effect.
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Status, Row } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Status color="info" class="animate-bounce" />
+            <Status color="success" class="animate-bounce" />
+            <Status color="error" class="animate-bounce" />
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Status with Avatar
+
+```tsx preview code live
+import { component, render } from 'sigx';
+import { Status, Avatar, Flex } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Row gap="4" align="center">
+            <Flex class="relative">
+                <Avatar size="sm" shape="circle" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <Status color="success" size="sm" class="absolute bottom-0 right-0" />
+            </Flex>
+            <Flex class="relative">
+                <Avatar size="sm" shape="circle" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <Status color="error" size="sm" class="absolute bottom-0 right-0" />
+            </Flex>
+        </Row>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `undefined` | Color variant |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `undefined` | Size of the status indicator |
+| `class` | `string` | `undefined` | Additional CSS classes |

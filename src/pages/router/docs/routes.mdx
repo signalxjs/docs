@@ -1,0 +1,120 @@
+---
+title: Defining Routes
+description: Learn how to define routes in @sigx/router
+layout: docs
+category: Core Concepts
+order: 20
+---
+
+# Defining Routes
+
+Routes are defined as an array of route configuration objects when creating the router.
+
+## Basic Route Configuration
+
+Each route requires a `path` and `component`:
+
+```tsx
+import { createRouter } from '@sigx/router';
+
+const router = createRouter({
+    routes: [
+        { path: '/', component: Home },
+        { path: '/about', component: About },
+        { path: '/contact', component: Contact },
+    ],
+});
+```
+
+## Dynamic Parameters
+
+Use `:param` syntax for dynamic segments:
+
+```tsx
+const router = createRouter({
+    routes: [
+        { path: '/users/:id', component: UserProfile },
+        { path: '/posts/:category/:slug', component: BlogPost },
+    ],
+});
+```
+
+Access parameters in your component:
+
+```tsx
+import { component } from 'sigx';
+import { useRoute } from '@sigx/router';
+
+const UserProfile = component(() => {
+    const route = useRoute();
+    
+    return () => (
+        <div>
+            <h1>User ID: {route.params.id}</h1>
+        </div>
+    );
+});
+```
+
+## Nested Routes
+
+Define child routes with the `children` property:
+
+```tsx
+const router = createRouter({
+    routes: [
+        {
+            path: '/admin',
+            component: AdminLayout,
+            children: [
+                { path: '', component: AdminDashboard }, // /admin
+                { path: 'users', component: AdminUsers }, // /admin/users
+                { path: 'settings', component: AdminSettings }, // /admin/settings
+            ],
+        },
+    ],
+});
+```
+
+Use nested `RouterView` in the parent layout:
+
+```tsx
+const AdminLayout = component(() => {
+    return () => (
+        <div class="admin-layout">
+            <AdminSidebar />
+            <main>
+                <RouterView /> {/* Renders child routes */}
+            </main>
+        </div>
+    );
+});
+```
+
+## Lazy Loading
+
+Lazy load routes for better performance:
+
+```tsx
+const router = createRouter({
+    routes: [
+        { 
+            path: '/dashboard', 
+            component: () => import('./pages/Dashboard'),
+        },
+    ],
+});
+```
+
+## Catch-All Routes
+
+Use `*` for catch-all/404 routes:
+
+```tsx
+const router = createRouter({
+    routes: [
+        { path: '/', component: Home },
+        { path: '*', component: NotFound }, // Matches everything else
+    ],
+});
+```

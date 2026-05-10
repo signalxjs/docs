@@ -1,0 +1,188 @@
+---
+title: Navigation
+description: Learn how to navigate programmatically with @sigx/router
+layout: docs
+category: Core Concepts
+order: 30
+---
+
+# Navigation
+
+SignalX Router provides multiple ways to navigate between routes.
+
+## RouterLink Component
+
+The declarative way to navigate:
+
+```tsx
+import { RouterLink } from '@sigx/router';
+
+// Basic link
+<RouterLink to="/about">About</RouterLink>
+
+// With query parameters
+<RouterLink to="/search?q=hello">Search</RouterLink>
+
+// With route object
+<RouterLink to={{ path: '/users', query: { page: '1' } }}>
+    Users
+</RouterLink>
+```
+
+### Active State
+
+RouterLink automatically applies classes when the route is active:
+
+```tsx
+<RouterLink 
+    to="/about"
+    class="nav-link"
+    activeClass="nav-link-active"
+    exactActiveClass="nav-link-exact"
+>
+    About
+</RouterLink>
+```
+
+## Programmatic Navigation
+
+Use `useRouter` for programmatic navigation:
+
+```tsx
+import { component } from 'sigx';
+import { useRouter } from '@sigx/router';
+
+const LoginForm = component(() => {
+    const router = useRouter();
+    
+    const handleLogin = async () => {
+        await performLogin();
+        router.push('/dashboard');
+    };
+    
+    return () => (
+        <button onClick={handleLogin}>Login</button>
+    );
+});
+```
+
+### Navigation Methods
+
+```tsx
+const router = useRouter();
+
+// Navigate to a path
+router.push('/users');
+
+// Navigate with params
+router.push('/users/123');
+
+// Navigate with query
+router.push({ path: '/search', query: { q: 'hello' } });
+
+// Replace current entry (no history)
+router.replace('/login');
+
+// Go back
+router.back();
+
+// Go forward
+router.forward();
+
+// Go to specific history entry
+router.go(-2);
+```
+
+## Accessing Route Information
+
+Use `useRoute` to access current route information:
+
+```tsx
+import { component } from 'sigx';
+import { useRoute } from '@sigx/router';
+
+const UserProfile = component(() => {
+    const route = useRoute();
+    
+    return () => (
+        <div>
+            <p>Path: {route.path}</p>
+            <p>User ID: {route.params.id}</p>
+            <p>Query: {JSON.stringify(route.query)}</p>
+        </div>
+    );
+});
+```
+
+Route properties are reactive - they update automatically when navigation occurs.
+
+## Scroll Restoration
+
+By default, the router does not manage scroll behavior. To enable scroll restoration — scroll-to-top on push, scroll-restore on back/forward, and hash-to-element scrolling — provide a `scrollBehavior` callback in router options:
+
+```tsx
+import { createRouter, createWebHistory } from '@sigx/router';
+
+const router = createRouter({
+    history: createWebHistory(),
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+        // Back/forward navigation — restore previous scroll position
+        if (savedPosition) return savedPosition;
+        // Hash navigation — scroll to the target element
+        if (to.hash) return { el: to.hash };
+        // New navigation — scroll to top
+        return { top: 0 };
+    },
+});
+```
+
+The `savedPosition` parameter is `{ left, top }` when navigating with the browser back/forward buttons, and `null` for push/replace navigations. The router automatically saves and restores scroll positions across the history stack.
+
+### Smooth Scrolling
+
+Pass `behavior: 'smooth'` in the returned position:
+
+```tsx
+scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return { ...savedPosition, behavior: 'smooth' };
+    return { top: 0, behavior: 'smooth' };
+}
+```
+
+### Scroll to Element with Offset
+
+When scrolling to a hash target, you can add a `top` offset — useful with fixed headers:
+
+```tsx
+scrollBehavior(to) {
+    if (to.hash) {
+        return { el: to.hash, top: -80 };
+    }
+    return { top: 0 };
+}
+```
+
+### Async Scrolling
+
+Return a `Promise` to delay scrolling — for example, to wait for lazy-loaded content to render:
+
+```tsx
+scrollBehavior(to) {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve({ top: 0 }), 300);
+    });
+}
+```
+
+### Skipping Scroll
+
+Return `false` to prevent any scrolling for a specific navigation:
+
+```tsx
+scrollBehavior(to, from) {
+    // Don't scroll when only the query changes
+    if (to.path === from?.path) return false;
+    return { top: 0 };
+}
+```

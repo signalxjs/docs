@@ -1,0 +1,122 @@
+---
+title: Getting Started
+description: Get started with @sigx/daisyui - beautiful UI components for SignalX
+layout: docs
+category: Getting Started
+order: 10
+---
+
+import { PrereqCallout } from '@/components/PrereqCallout';
+
+# Getting Started with DaisyUI
+
+<PrereqCallout items={[
+    { name: 'SignalX Core basics', path: '/core/docs/getting-started' },
+    { name: 'Components', path: '/core/docs/components' },
+]} />
+
+SignalX DaisyUI provides pre-built, accessible UI components powered by DaisyUI and Tailwind CSS.
+
+## Installation
+
+```bash
+pnpm add @sigx/daisyui
+```
+
+Make sure you also have Tailwind CSS and DaisyUI configured in your project.
+
+## Setup
+
+### 1. Configure Tailwind
+
+Add DaisyUI to your Tailwind config:
+
+```js
+// tailwind.config.js
+module.exports = {
+    content: ['./src/**/*.{tsx,ts,jsx,js}'],
+    plugins: [require('daisyui')],
+    daisyui: {
+        themes: ['light', 'dark', 'cupcake', 'forest'],
+    },
+};
+```
+
+### 2. Initialize Theme
+
+Initialize the theme system in your app:
+
+```tsx
+import { component, onMounted } from 'sigx';
+import { initializeTheme } from '@sigx/daisyui';
+
+const App = component(() => {
+    onMounted(() => {
+        initializeTheme({ defaultTheme: 'dark' });
+    });
+    
+    return () => <div>...</div>;
+});
+```
+
+## Using Components
+
+Import and use components directly:
+
+```tsx live preview
+import { component, signal, render } from 'sigx';
+import { Button, Modal, ModalHeader, ModalBody, Card, CardTitle } from '@sigx/daisyui';
+
+const MyComponent = component(() => {
+    const showModal = signal(false);
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <CardTitle>Welcome!</CardTitle>
+                <p>This is a beautiful card component.</p>
+                <Card.Actions>
+                    <Button 
+                        variant="primary"
+                        onClick={() => showModal.value = true}
+                    >
+                        Open Modal
+                    </Button>
+                </Card.Actions>
+            </Card.Body>
+            
+            <Modal 
+                open={showModal.value}
+                onClose={() => showModal.value = false}
+            >
+                <ModalHeader onClose={() => showModal.value = false}>Hello!</ModalHeader>
+                <ModalBody>
+                    Modal content goes here.
+                </ModalBody>
+            </Modal>
+        </Card>
+    );
+});
+
+render(<MyComponent />, "#sandbox");
+```
+
+## Theme Toggle
+
+Add a theme toggle to your app:
+
+```tsx
+import { ThemeToggle } from '@sigx/daisyui';
+
+// Simple toggle between light and dark
+<ThemeToggle />
+
+// Or with custom themes
+<ThemeToggle themes={['light', 'dark', 'cupcake']} />
+```
+
+## Next Steps
+
+- [Components](/daisyui/docs/components) - Browse all available components
+- [Theming](/daisyui/docs/theming) - Customize themes and colors
+- [API Reference](/daisyui/api) - Complete API documentation

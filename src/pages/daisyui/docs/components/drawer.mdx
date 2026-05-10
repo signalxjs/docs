@@ -1,0 +1,277 @@
+---
+title: Drawer
+description: Side panel component for navigation and mobile menus
+layout: docs
+category: ["Components", "Layout"]
+order: 600
+---
+
+# Drawer
+
+Slide-out side panel for navigation, filters, and mobile menus with model binding support.
+
+## Import
+
+```tsx
+import { Drawer, Text } from '@sigx/daisyui';
+```
+
+## Basic Drawer
+
+Use `model` for two-way binding to control drawer visibility. The Drawer component should wrap your main content:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Drawer, Button, Card, Col, Menu, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const drawer = signal({ open: false });
+    
+    return () => (
+        <Card class="relative h-56 overflow-hidden">
+            <Drawer 
+                model={() => drawer.open}
+                slots={{
+                    side: () => (
+                        <Menu class="p-4 w-60 md:w-80 min-h-full bg-base-200">
+                            <Menu.Item value="item-1">
+                                <Text as="span" onClick={() => drawer.open = false}>Sidebar Item 1</Text>
+                            </Menu.Item>
+                            <Menu.Item value="item-2">
+                                <Text as="span" onClick={() => drawer.open = false}>Sidebar Item 2</Text>
+                            </Menu.Item>
+                        </Menu>
+                    )
+                }}
+            >
+                <Col align="center" justify="center" class="h-full bg-base-100">
+                    <Button onClick={() => drawer.open = true}>
+                        Open Drawer
+                    </Button>
+                </Col>
+            </Drawer>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Drawer Positions
+
+### Right Side Drawer
+
+Use `side="right"` (adds `drawer-end` class) to open the drawer from the right:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Drawer, Button, Card, Col, Menu, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const drawer = signal({ open: false });
+    
+    return () => (
+        <Card class="relative h-56 overflow-hidden">
+            <Drawer 
+                model={() => drawer.open} 
+                side="right"
+                slots={{
+                    side: () => (
+                        <Menu class="p-4 w-60 md:w-80 min-h-full bg-base-200">
+                            <Menu.Item value="item-1">
+                                <Text as="span" onClick={() => drawer.open = false}>Sidebar Item 1</Text>
+                            </Menu.Item>
+                            <Menu.Item value="item-2">
+                                <Text as="span" onClick={() => drawer.open = false}>Sidebar Item 2</Text>
+                            </Menu.Item>
+                        </Menu>
+                    )
+                }}
+            >
+                <Col align="center" justify="center" class="h-full bg-base-100">
+                    <Button onClick={() => drawer.open = true}>
+                        Open Right Drawer
+                    </Button>
+                </Col>
+            </Drawer>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Navbar with Drawer
+
+A common pattern with navbar and drawer for mobile navigation:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Drawer, Button, Card, Navbar, Col, Row, Menu, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const drawer = signal({ open: false });
+    
+    return () => (
+        <Card class="relative h-56 overflow-hidden">
+            <Drawer 
+                model={() => drawer.open}
+                slots={{
+                    side: () => (
+                        <Menu class="p-4 w-60 md:w-80 min-h-full bg-base-200">
+                            <Menu.Item value="item-1">
+                                <Text as="span" onClick={() => drawer.open = false}>Sidebar Item 1</Text>
+                            </Menu.Item>
+                            <Menu.Item value="item-2">
+                                <Text as="span" onClick={() => drawer.open = false}>Sidebar Item 2</Text>
+                            </Menu.Item>
+                        </Menu>
+                    )
+                }}
+            >
+                <Col class="drawer-content">
+                    <Navbar class="w-full bg-base-300">
+                        <Button variant="ghost" shape="square" onClick={() => drawer.open = true}>
+                            <Text as="span" size="xl">☰</Text>
+                        </Button>
+                        <Text as="span" weight="semibold">Navbar Title</Text>
+                        <Menu horizontal class="hidden lg:flex">
+                            <Menu.Item value="nav-1"><Text as="span">Navbar Item 1</Text></Menu.Item>
+                            <Menu.Item value="nav-2"><Text as="span">Navbar Item 2</Text></Menu.Item>
+                        </Menu>
+                    </Navbar>
+                    <Row justify="center" align="center" class="grow">Content</Row>
+                </Col>
+            </Drawer>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Responsive Drawer
+
+Drawer that's always visible on large screens using `responsive` prop (adds `lg:drawer-open` class):
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Drawer, Button, Card, Col, Menu, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const drawer = signal({ open: false });
+    
+    return () => (
+        <Card class="relative h-56 overflow-hidden">
+            <Drawer 
+                model={() => drawer.open} 
+                responsive
+                slots={{
+                    side: () => (
+                        <Menu class="p-4 w-60 md:w-80 min-h-full bg-base-200">
+                            <Menu.Item value="item-1"><Text as="span">Sidebar Item 1</Text></Menu.Item>
+                            <Menu.Item value="item-2"><Text as="span">Sidebar Item 2</Text></Menu.Item>
+                        </Menu>
+                    )
+                }}
+            >
+                <Col align="center" justify="center" class="h-full bg-base-100">
+                    <Button class="lg:hidden" onClick={() => drawer.open = true}>
+                        Open Drawer
+                    </Button>
+                    <Text class="hidden lg:block">Sidebar is always visible on large screens</Text>
+                </Col>
+            </Drawer>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Filter Drawer
+
+A right-side filter panel commonly used in e-commerce:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Drawer, Button, Card, Col, FormField, Heading, Range, Select, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const drawer = signal({ open: false, category: '', price: 50 });
+    
+    return () => (
+        <Card class="relative h-64 overflow-hidden">
+            <Drawer 
+                model={() => drawer.open} 
+                side="right"
+                slots={{
+                    side: () => (
+                        <Col gap="4" class="p-4 w-60 md:w-80 min-h-full bg-base-200">
+                            <Heading level={2} size="xl">Filters</Heading>
+                            <FormField label="Category">
+                                <Select
+                                    model={() => drawer.category}
+                                    variant="bordered"
+                                    options={[
+                                        { value: 'all', label: 'All' },
+                                        { value: 'electronics', label: 'Electronics' },
+                                        { value: 'clothing', label: 'Clothing' },
+                                    ]}
+                                />
+                            </FormField>
+                            <FormField label="Price Range">
+                                <Range model={() => drawer.price} />
+                            </FormField>
+                            <Button 
+                                variant="primary" 
+                                class="w-full"
+                                onClick={() => drawer.open = false}
+                            >
+                                Apply Filters
+                            </Button>
+                        </Col>
+                    )
+                }}
+            >
+                <Col align="center" justify="center" class="h-full bg-base-100">
+                    <Text as="p">Product listing content</Text>
+                    <Button variant="primary" onClick={() => drawer.open = true}>
+                        Open Filters
+                    </Button>
+                </Col>
+            </Drawer>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => boolean` | - | Two-way binding for open state |
+| `side` | `'left' \| 'right'` | `'left'` | Which side the drawer opens from |
+| `responsive` | `boolean` | `false` | Always visible on large screens (`lg:drawer-open`) |
+| `class` | `string` | - | Additional CSS classes |
+
+## Slots
+
+| Slot | Description |
+|------|-------------|
+| `default` | Main content area (goes in `drawer-content`) |
+| `side` | Drawer sidebar content (goes in `drawer-side`) |
+
+## DaisyUI Classes Reference
+
+| Class | Description |
+|-------|-------------|
+| `drawer` | The wrapper for sidebar and content |
+| `drawer-toggle` | Hidden checkbox that controls the state |
+| `drawer-content` | Content part |
+| `drawer-side` | Sidebar part |
+| `drawer-overlay` | Label that covers the page when open |
+| `drawer-end` | Opens drawer from the right side |
+| `drawer-open` | Forces the drawer to be open |

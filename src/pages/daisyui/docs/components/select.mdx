@@ -1,0 +1,256 @@
+---
+title: Select
+description: Dropdown select component for choosing from a list of options
+layout: docs
+category: ["Components", "Data Input"]
+order: 515
+---
+
+# Select
+
+Select component for dropdown selection with model binding support.
+
+## Import
+
+```tsx
+import { Select, Col } from '@sigx/daisyui';
+```
+
+## Basic Usage
+
+Use `model` for two-way binding:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Select, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ country: '' });
+    
+    const countries = [
+        { value: 'us', label: 'United States' },
+        { value: 'uk', label: 'United Kingdom' },
+        { value: 'ca', label: 'Canada' },
+        { value: 'au', label: 'Australia' },
+        { value: 'de', label: 'Germany' }
+    ];
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Select 
+                    model={() => form.country}
+                    options={countries}
+                    placeholder="Select a country"
+                    variant="bordered"
+                />
+                
+                <Text size="sm" class="opacity-70">
+                    Selected: {form.country || '(none)'}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Sizes
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Select, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    const options = [
+        { value: 'a', label: 'Option A' },
+        { value: 'b', label: 'Option B' },
+        { value: 'c', label: 'Option C' }
+    ];
+    
+    return () => (
+        <Col gap="4">
+            <Select size="xs" options={options} placeholder="Extra small" variant="bordered" />
+            <Select size="sm" options={options} placeholder="Small" variant="bordered" />
+            <Select size="md" options={options} placeholder="Medium (default)" variant="bordered" />
+            <Select size="lg" options={options} placeholder="Large" variant="bordered" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Colors
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Select, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    const options = [
+        { value: 'a', label: 'Option A' },
+        { value: 'b', label: 'Option B' }
+    ];
+    
+    return () => (
+        <Col gap="4">
+            <Select color="primary" options={options} placeholder="Primary" variant="bordered" />
+            <Select color="secondary" options={options} placeholder="Secondary" variant="bordered" />
+            <Select color="accent" options={options} placeholder="Accent" variant="bordered" />
+            <Select color="info" options={options} placeholder="Info" variant="bordered" />
+            <Select color="success" options={options} placeholder="Success" variant="bordered" />
+            <Select color="warning" options={options} placeholder="Warning" variant="bordered" />
+            <Select color="error" options={options} placeholder="Error" variant="bordered" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Variants
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Select, Col } from '@sigx/daisyui';
+const Demo = component(() => {
+    const options = [
+        { value: 'a', label: 'Option A' },
+        { value: 'b', label: 'Option B' }
+    ];
+    
+    return () => (
+        <Col gap="4">
+            <Select options={options} placeholder="Default (no variant)" />
+            <Select options={options} placeholder="Bordered" variant="bordered" />
+            <Select options={options} placeholder="Ghost" variant="ghost" />
+        </Col>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With Disabled Options
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Select, Card, Text } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ plan: '' });
+    
+    const plans = [
+        { value: 'free', label: 'Free Plan' },
+        { value: 'pro', label: 'Pro Plan' },
+        { value: 'enterprise', label: 'Enterprise (Coming Soon)', disabled: true }
+    ];
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <Select 
+                    model={() => form.plan}
+                    options={plans}
+                    placeholder="Select a plan"
+                    variant="bordered"
+                />
+                
+                <Text size="sm" class="opacity-70">
+                    Selected: {form.plan || '(none)'}
+                </Text>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## With FormField
+
+Wrap with `FormField` for labels and validation:
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Select, FormField, Card } from '@sigx/daisyui';
+
+const Demo = component(({ signal }) => {
+    const form = signal({ category: '' });
+    const hasError = () => !form.category;
+    
+    const categories = [
+        { value: 'tech', label: 'Technology' },
+        { value: 'design', label: 'Design' },
+        { value: 'business', label: 'Business' },
+        { value: 'other', label: 'Other' }
+    ];
+    
+    return () => (
+        <Card>
+            <Card.Body class="space-y-4">
+                <FormField 
+                    label="Category" 
+                    required 
+                    error={hasError() ? 'Please select a category' : ''}
+                >
+                    <Select 
+                        model={() => form.category}
+                        options={categories}
+                        placeholder="Choose a category"
+                        color={hasError() ? 'error' : undefined}
+                        variant="bordered"
+                    />
+                </FormField>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Disabled State
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Select } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const options = [
+        { value: 'a', label: 'Option A' },
+        { value: 'b', label: 'Option B' }
+    ];
+    
+    return () => (
+        <Select 
+            options={options} 
+            placeholder="Disabled select" 
+            variant="bordered"
+            disabled 
+        />
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `model` | `() => signal.property` | - | Model binding for two-way sync |
+| `name` | `string` | - | Select name for form submission |
+| `options` | `Array<{ value, label, disabled? }>` | - | Select options |
+| `placeholder` | `string` | - | Placeholder text (shown as disabled first option) |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Select size |
+| `variant` | `'bordered' \| 'ghost'` | - | Visual variant |
+| `color` | `'primary' \| 'secondary' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | - | Border color |
+| `disabled` | `boolean` | `false` | Disable the select |
+| `class` | `string` | - | Additional CSS classes |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `onChange` | `(value: string) => void` | Fired when selection changes |

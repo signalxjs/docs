@@ -1,0 +1,595 @@
+---
+title: API Reference
+description: API reference for @sigx/router
+layout: docs
+category: API Reference
+order: 100
+---
+
+# Router API Reference
+
+Complete API reference for `@sigx/router`.
+
+---
+
+## Router Creation
+
+### createRouter
+
+Creates a new router instance.
+
+```tsx
+import { createRouter, createWebHistory } from '@sigx/router';
+
+const router = createRouter({
+    routes: [
+        { path: '/', component: Home },
+        { path: '/about', component: About },
+    ],
+    history: createWebHistory(),
+    base: '/',
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) return savedPosition;
+        if (to.hash) return { el: to.hash };
+        return { top: 0 };
+    },
+});
+```
+
+#### RouterOptions
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `routes` | `RouteRecordRaw[]` | Required | Array of route definitions |
+| `history` | `RouterHistory` | Required | History implementation (`createWebHistory`, `createHashHistory`, or `createMemoryHistory`) |
+| `base` | `string` | `undefined` | Base URL for the application |
+| `scrollBehavior` | `ScrollBehaviorHandler` | `undefined` | Callback to control scroll position after each navigation |
+
+---
+
+## History
+
+### createWebHistory
+
+Creates a history implementation using the HTML5 History API. Suitable for browser environments.
+
+```tsx
+import { createWebHistory } from '@sigx/router';
+
+const history = createWebHistory();
+const history = createWebHistory({ base: '/app' });
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `base` | `string` | `undefined` | Base path prepended to all URLs |
+
+### createMemoryHistory
+
+Creates an in-memory history implementation. Suitable for SSR or testing.
+
+```tsx
+import { createMemoryHistory } from '@sigx/router';
+
+const history = createMemoryHistory();
+const history = createMemoryHistory({ base: '/app', initialLocation: '/home' });
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `base` | `string` | `undefined` | Base path prepended to all URLs |
+| `initialLocation` | `string` | `undefined` | Initial URL location |
+
+### createHashHistory
+
+Creates a hash-based history implementation. Uses `/#/path` URLs so the server never sees the route path — ideal for static hosting (GitHub Pages, S3), Electron, and environments without SPA server-side fallback.
+
+```tsx
+import { createHashHistory } from '@sigx/router';
+
+const history = createHashHistory();
+const history = createHashHistory({ base: '/app' });
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `base` | `string` | `undefined` | Base path within the hash (e.g. `/#/app/about`) |
+
+---
+
+## Router Instance
+
+The object returned by `createRouter`. Access it via `useRouter()` inside components.
+
+### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `currentRoute` | `RouteLocation` | Reactive current route location |
+
+### Navigation Methods
+
+#### router.push
+
+Navigate to a new location, adding an entry to the history stack.
+
+```tsx
+router.push('/about');
+router.push({ name: 'user', params: { id: '1' } });
+```
+
+**Signature:** `push(to: RouteLocationRaw): Promise<RouteLocation | void>`
+
+#### router.replace
+
+Navigate to a new location, replacing the current history entry.
+
+```tsx
+router.replace('/login');
+```
+
+**Signature:** `replace(to: RouteLocationRaw): Promise<RouteLocation | void>`
+
+#### router.back
+
+Go back one step in the history stack.
+
+**Signature:** `back(): void`
+
+#### router.forward
+
+Go forward one step in the history stack.
+
+**Signature:** `forward(): void`
+
+#### router.go
+
+Move forward or backward by a given number of entries in the history stack.
+
+```tsx
+router.go(-2); // Go back two entries
+```
+
+**Signature:** `go(delta: number): void`
+
+### Guard Methods
+
+#### router.beforeEach
+
+Register a global navigation guard that runs before every navigation. Returns a function to remove the guard.
+
+```tsx
+const removeGuard = router.beforeEach((to, from, next) => {
+    if (!isAuthenticated && to.path !== '/login') {
+        next('/login');
+    } else {
+        next();
+    }
+});
+```
+
+**Signature:** `beforeEach(guard: NavigationGuard): () => void`
+
+#### router.beforeResolve
+
+Register a global guard that runs after per-route guards but before navigation is confirmed. Returns a function to remove the guard.
+
+**Signature:** `beforeResolve(guard: NavigationGuard): () => void`
+
+#### router.afterEach
+
+Register a global hook that runs after every navigation. Returns a function to remove the hook.
+
+```tsx
+const removeHook = router.afterEach((to, from) => {
+    trackPageView(to.path);
+});
+```
+
+**Signature:** `afterEach(hook: NavigationHookAfter): () => void`
+
+### Route Management Methods
+
+#### router.addRoute
+
+Dynamically add a route. Optionally nest it under a parent by name. Returns a function to remove the added route.
+
+```tsx
+const removeRoute = router.addRoute({ path: '/new', component: NewPage });
+router.addRoute({ path: 'profile', component: Profile }, 'user');
+```
+
+**Signature:** `addRoute(route: RouteRecordRaw, parentName?: string): () => void`
+
+#### router.removeRoute
+
+Remove a route by name.
+
+**Signature:** `removeRoute(name: string): void`
+
+#### router.hasRoute
+
+Check if a route with the given name exists.
+
+**Signature:** `hasRoute(name: string): boolean`
+
+#### router.getRoutes
+
+Return the full list of registered route records.
+
+**Signature:** `getRoutes(): RouteRecordRaw[]`
+
+### Other Methods
+
+#### router.resolve
+
+Resolve a route location to a normalized `RouteLocation` object without navigating.
+
+```tsx
+const resolved = router.resolve({ name: 'user', params: { id: '1' } });
+```
+
+**Signature:** `resolve(to: RouteLocationRaw): RouteLocation`
+
+#### router.match
+
+Match the current route against a set of patterns and return the corresponding value.
+
+```tsx
+const result = router.match({
+    '/': () => 'home',
+    '/about': () => 'about',
+});
+```
+
+**Signature:** `match<T>(patterns: RouteMatchPatterns<T>): T | undefined`
+
+#### router.install
+
+Install the router into an application instance. Called automatically when passed to the app.
+
+**Signature:** `install(app: App): void`
+
+#### router.isReady
+
+Returns a promise that resolves when the router has completed the initial navigation.
+
+```tsx
+await router.isReady();
+```
+
+**Signature:** `isReady(): Promise<void>`
+
+---
+
+## Components
+
+### RouterView
+
+Renders the component matched by the current route.
+
+```tsx
+import { RouterView } from '@sigx/router';
+
+<RouterView />
+<RouterView name="sidebar" />
+<RouterView pageProps={{ theme: 'dark' }} />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | `undefined` | Named view to render |
+| `pageProps` | `Record<string, unknown>` | `undefined` | Additional props passed to the rendered component |
+
+### Link / RouterLink
+
+Navigation link component. Available as both `Link` and `RouterLink`.
+
+```tsx
+import { Link, RouterLink } from '@sigx/router';
+
+<Link to="/about">About</Link>
+<RouterLink to={{ name: 'user', params: { id: '1' } }} activeClass="active">
+    User
+</RouterLink>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `to` | `RouteLocationRaw` | Required | Target location |
+| `replace` | `boolean` | `false` | Use `router.replace` instead of `router.push` |
+| `activeClass` | `string` | `undefined` | Class applied when the link is active |
+| `exactActiveClass` | `string` | `undefined` | Class applied when the link is an exact active match |
+| `ariaCurrentValue` | `string` | `undefined` | Value for the `aria-current` attribute when the link is active |
+
+---
+
+## Hooks
+
+### useRouter
+
+Returns the router instance for programmatic navigation.
+
+```tsx
+import { useRouter } from '@sigx/router';
+
+const router = useRouter();
+router.push('/about');
+```
+
+**Signature:** `useRouter(): Router`
+
+### useRoute
+
+Returns reactive route information for the current location.
+
+```tsx
+import { useRoute } from '@sigx/router';
+
+const route = useRoute();
+
+route.path;      // Current path
+route.params;    // Route parameters
+route.query;     // Query parameters
+route.hash;      // URL hash
+route.meta;      // Route metadata
+route.name;      // Route name
+```
+
+**Signature:** `useRoute(): RouteLocation`
+
+### useParams
+
+Returns reactive route parameters.
+
+```tsx
+import { useParams } from '@sigx/router';
+
+const params = useParams();
+// params.id, params.slug, etc.
+```
+
+**Signature:** `useParams(): RouteParams`
+
+### useQuery
+
+Returns reactive query parameters.
+
+```tsx
+import { useQuery } from '@sigx/router';
+
+const query = useQuery();
+// query.search, query.page, etc.
+```
+
+**Signature:** `useQuery(): RouteQuery`
+
+### useNavigate
+
+Returns a navigation function.
+
+```tsx
+import { useNavigate } from '@sigx/router';
+
+const navigate = useNavigate();
+navigate('/about');
+navigate({ name: 'user', params: { id: '1' } });
+```
+
+**Signature:** `useNavigate(): (to: RouteLocationRaw) => Promise<RouteLocation | void>`
+
+### onBeforeRouteLeave
+
+Register a guard that runs when the component's route is about to be navigated away from. Can only be used inside a component rendered by `RouterView`.
+
+```tsx
+import { onBeforeRouteLeave } from '@sigx/router';
+
+onBeforeRouteLeave((to, from, next) => {
+    if (hasUnsavedChanges) {
+        next(false);
+    } else {
+        next();
+    }
+});
+```
+
+**Signature:** `onBeforeRouteLeave(guard: NavigationGuard): void`
+
+### onBeforeRouteUpdate
+
+Register a guard that runs when the component's route params or query change but the component is reused. Can only be used inside a component rendered by `RouterView`.
+
+```tsx
+import { onBeforeRouteUpdate } from '@sigx/router';
+
+onBeforeRouteUpdate((to, from, next) => {
+    fetchData(to.params.id);
+    next();
+});
+```
+
+**Signature:** `onBeforeRouteUpdate(guard: NavigationGuard): void`
+
+---
+
+## Utility Functions
+
+### parseQuery
+
+Parse a query string into a `RouteQuery` object.
+
+```tsx
+import { parseQuery } from '@sigx/router';
+
+parseQuery('?page=1&sort=name');
+// { page: '1', sort: 'name' }
+```
+
+**Signature:** `parseQuery(queryString: string): RouteQuery`
+
+### stringifyQuery
+
+Serialize a `RouteQuery` object into a query string.
+
+```tsx
+import { stringifyQuery } from '@sigx/router';
+
+stringifyQuery({ page: '1', sort: 'name' });
+// 'page=1&sort=name'
+```
+
+**Signature:** `stringifyQuery(query: RouteQuery): string`
+
+### parseURL
+
+Parse a URL string into its constituent parts.
+
+```tsx
+import { parseURL } from '@sigx/router';
+
+parseURL('/about?page=1#section');
+// { path: '/about', query: { page: '1' }, hash: '#section' }
+```
+
+**Signature:** `parseURL(url: string): { path: string; query: RouteQuery; hash: string }`
+
+### buildPath
+
+Build a full URL path from parts.
+
+```tsx
+import { buildPath } from '@sigx/router';
+
+buildPath('/about', { page: '1' }, '#section');
+// '/about?page=1#section'
+```
+
+**Signature:** `buildPath(path: string, query?: RouteQuery, hash?: string): string`
+
+---
+
+## Types
+
+### RouteRecordRaw
+
+Route definition used when configuring the router.
+
+```tsx
+interface RouteRecordRaw {
+    path: string;
+    name?: string;
+    component?: ComponentFactory | (() => Promise<{ default: ComponentFactory }>);
+    children?: RouteRecordRaw[];
+    redirect?: RouteLocationRaw | ((to: RouteLocation) => RouteLocationRaw);
+    meta?: RouteMeta;
+    beforeEnter?: NavigationGuard | NavigationGuard[];
+    props?: boolean | Record<string, any> | ((route: RouteLocation) => Record<string, any>);
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `path` | `string` | URL path pattern (e.g. `'/users/:id'`) |
+| `name` | `string` | Optional unique name for the route |
+| `component` | `ComponentFactory \| () => Promise<{ default: ComponentFactory }>` | Component to render, supports lazy loading |
+| `children` | `RouteRecordRaw[]` | Nested child routes |
+| `redirect` | `RouteLocationRaw \| ((to: RouteLocation) => RouteLocationRaw)` | Redirect target or function |
+| `meta` | `RouteMeta` | Arbitrary metadata attached to the route |
+| `beforeEnter` | `NavigationGuard \| NavigationGuard[]` | Per-route navigation guard(s) |
+| `props` | `boolean \| Record<string, any> \| ((route: RouteLocation) => Record<string, any>)` | Pass route params as component props |
+
+### RouteLocationRaw
+
+A route location that can be passed to `router.push`, `router.replace`, or the `Link` `to` prop.
+
+```tsx
+type RouteLocationRaw = string | {
+    name?: string;
+    path?: string;
+    params?: Record<string, string>;
+    query?: Record<string, string>;
+    hash?: string;
+};
+```
+
+### RouteLocation
+
+A normalized, resolved route location.
+
+```tsx
+interface RouteLocation {
+    path: string;
+    name?: string;
+    params: Record<string, string>;
+    query: Record<string, string>;
+    hash: string;
+    meta: RouteMeta;
+    matched: RouteRecordRaw[];
+}
+```
+
+### NavigationGuard
+
+```tsx
+type NavigationGuard = (
+    to: RouteLocation,
+    from: RouteLocation,
+    next: (to?: RouteLocationRaw | false) => void
+) => void | Promise<void>;
+```
+
+### NavigationHookAfter
+
+```tsx
+type NavigationHookAfter = (
+    to: RouteLocation,
+    from: RouteLocation
+) => void;
+```
+
+### ScrollPosition
+
+Returned by the `scrollBehavior` callback to control where the page scrolls after navigation.
+
+```tsx
+interface ScrollPosition {
+    left?: number;
+    top?: number;
+    el?: string | Element;
+    behavior?: 'auto' | 'smooth';
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `left` | `number` | Pixels from the left edge |
+| `top` | `number` | Pixels from the top edge |
+| `el` | `string \| Element` | CSS selector or DOM element to scroll into view |
+| `behavior` | `'auto' \| 'smooth'` | Scroll behavior (defaults to `'auto'`) |
+
+When `el` is provided, the element is scrolled into view first; `top` and `left` are then applied as additional offsets (useful for fixed headers).
+
+### ScrollBehaviorHandler
+
+The function signature for the `scrollBehavior` option in `RouterOptions`.
+
+```tsx
+type ScrollBehaviorHandler = (
+    to: RouteLocation,
+    from: RouteLocation | null,
+    savedPosition: { left: number; top: number } | null
+) => ScrollPosition | false | void | Promise<ScrollPosition | false | void>;
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `to` | `RouteLocation` | Target route |
+| `from` | `RouteLocation \| null` | Previous route (`null` on initial navigation) |
+| `savedPosition` | `{ left: number; top: number } \| null` | Saved viewport position for back/forward, `null` for push/replace |
+
+**Return values:**
+- `ScrollPosition` — scroll to the given position
+- `false` — skip scrolling entirely
+- `void` / `undefined` — do nothing
+- `Promise<...>` — async scrolling (e.g., wait for content to load)

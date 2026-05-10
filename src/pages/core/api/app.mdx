@@ -1,0 +1,294 @@
+---
+title: App
+description: SignalX application and plugin API reference
+layout: docs
+category: Reference
+order: 60
+---
+
+# App API
+
+Application creation and plugin system.
+
+## defineApp
+
+Create a SignalX application.
+
+```tsx
+function defineApp(options?: AppOptions): App;
+```
+
+### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options.plugins` | `Plugin[]` | Plugins to install |
+| `options.provide` | `Record<any, any>` | App-level provides |
+
+### Returns
+
+`App` - Application instance.
+
+### App Methods
+
+| Method | Type | Description |
+|--------|------|-------------|
+| `use(plugin)` | `(plugin: Plugin) => App` | Install a plugin |
+| `mount(component, container)` | `(comp, el) => void` | Mount root component |
+| `unmount()` | `() => void` | Unmount the application |
+| `provide(token, value)` | `(token, value) => App` | Provide app-level value |
+
+### Examples
+
+```tsx
+import { defineApp, component } from 'sigx';
+
+const App = component(() => {
+    return () => <div>Hello, SignalX!</div>;
+});
+
+const app = defineApp();
+
+// Install plugins
+app.use(routerPlugin);
+app.use(storePlugin);
+
+// Provide app-level values
+app.provide('config', { apiUrl: '/api' });
+
+// Mount
+app.mount(App, document.getElementById('app'));
+
+// Later: unmount
+app.unmount();
+```
+
+---
+
+## Plugin
+
+Interface for SignalX plugins.
+
+```tsx
+interface Plugin {
+    name: string;
+    install(app: App, options?: any): void;
+}
+```
+
+### Creating Plugins
+
+```tsx
+import type { Plugin } from 'sigx';
+
+const myPlugin: Plugin = {
+    name: 'my-plugin',
+    install(app, options = {}) {
+        // Add app-level functionality
+        app.provide('myFeature', createFeature(options));
+        
+        // Access app context
+        console.log('Plugin installed');
+    }
+};
+
+// Usage
+const app = defineApp();
+app.use(myPlugin);
+```
+
+### Plugin with Options
+
+```tsx
+interface LoggerOptions {
+    level: 'debug' | 'info' | 'warn' | 'error';
+    prefix: string;
+}
+
+function createLoggerPlugin(options: LoggerOptions): Plugin {
+    return {
+        name: 'logger',
+        install(app) {
+            const logger = {
+                log: (msg: string) => {
+                    if (shouldLog(options.level)) {
+                        console.log(`${options.prefix} ${msg}`);
+                    }
+                }
+            };
+            app.provide('logger', logger);
+        }
+    };
+}
+
+// Usage
+app.use(createLoggerPlugin({ level: 'info', prefix: '[App]' }));
+```
+
+---
+
+## App Context
+
+The app context is available throughout the component tree.
+
+```tsx
+import { component, injectApp } from 'sigx';
+
+const MyComponent = component(() => {
+    const app = injectApp();
+    
+    // Access app-level provides
+    const config = app?.provides.get('config');
+    
+    return () => <div>API: {config?.apiUrl}</div>;
+});
+```
+
+---
+
+## Lifecycle Hooks
+
+Apps support lifecycle hooks:
+
+```tsx
+const app = defineApp({
+    onMount: () => console.log('App mounted'),
+    onUnmount: () => console.log('App unmounted'),
+    onError: (err) => console.error('App error:', err)
+});
+```
+
+---
+
+## Multiple Apps
+
+You can create multiple independent apps:
+
+```tsx
+const mainApp = defineApp();
+mainApp.mount(MainApp, document.getElementById('main'));
+
+const widgetApp = defineApp();
+widgetApp.mount(Widget, document.getElementById('widget'));
+
+// Each app has its own:
+// - Component tree
+// - Provides
+// - Plugins
+```
+
+---
+
+## Common Patterns
+
+### Router Plugin
+
+```tsx
+import { createRouter } from '@sigx/router';
+
+const routerPlugin: Plugin = {
+    name: 'router',
+    install(app, { routes }) {
+        const router = createRouter({ routes });
+        app.provide('router', router);
+        app.router = router;
+    }
+};
+
+const app = defineApp();
+app.use(routerPlugin, { 
+    routes: [
+        { path: '/', component: Home },
+        { path: '/about', component: About }
+    ]
+});
+```
+
+### Store Plugin
+
+```tsx
+import { createStore } from '@sigx/store';
+
+const storePlugin: Plugin = {
+    name: 'store',
+    install(app, storeOptions) {
+        const store = createStore(storeOptions);
+        app.provide('store', store);
+        app.store = store;
+    }
+};
+```
+
+### Error Handling Plugin
+
+```tsx
+const errorHandlerPlugin: Plugin = {
+    name: 'error-handler',
+    install(app) {
+        const errorState = signal({ 
+            hasError: false, 
+            error: null as Error | null 
+        });
+        
+        app.provide('errorBoundary', {
+            state: errorState,
+            handleError: (err: Error) => {
+                errorState.hasError = true;
+                errorState.error = err;
+                console.error('App error:', err);
+            },
+            reset: () => {
+                errorState.hasError = false;
+                errorState.error = null;
+            }
+        });
+    }
+};
+```
+
+---
+
+## Types
+
+### App
+
+```tsx
+interface App {
+    use(plugin: Plugin, options?: any): App;
+    mount(component: ComponentFactory, container: Element): void;
+    unmount(): void;
+    provide<T>(token: any, value: T): App;
+    provides: Map<any, any>;
+}
+```
+
+### Plugin
+
+```tsx
+interface Plugin {
+    name: string;
+    install(app: App, options?: any): void;
+}
+```
+
+### AppOptions
+
+```tsx
+interface AppOptions {
+    plugins?: Plugin[];
+    provide?: Record<any, any>;
+    onMount?: () => void;
+    onUnmount?: () => void;
+    onError?: (error: Error) => void;
+}
+```
+
+### AppContext
+
+```tsx
+interface AppContext {
+    provides: Map<any, any>;
+    plugins: Plugin[];
+    root: ComponentFactory | null;
+}
+```

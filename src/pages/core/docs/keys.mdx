@@ -1,0 +1,251 @@
+---
+title: Keys
+description: Learn how to use keys for efficient list rendering and component identity
+layout: docs
+category: Core Concepts
+order: 60
+---
+
+# Keys
+
+Keys help SignalX identify which items in a list have changed, been added, or removed. They are essential for efficient updates and preserving component state during re-renders.
+
+## Why Keys Matter
+
+When rendering lists, SignalX needs to understand which elements correspond between renders. Without keys, SignalX uses element position and type to match elements, which can lead to:
+
+- **Incorrect state preservation** - Component state may be applied to the wrong element
+- **Unnecessary DOM operations** - Elements may be destroyed and recreated instead of reused
+- **Animation issues** - Transitions may not work correctly when items move
+
+## Using Keys
+
+Add the `key` prop to elements in a list:
+
+```tsx live
+import { component } from 'sigx';
+
+const TodoList = component(({ signal }) => {
+    const todos = signal([
+        { id: 1, text: 'Learn SignalX' },
+        { id: 2, text: 'Build an app' },
+        { id: 3, text: 'Deploy to production' }
+    ]);
+
+    return () => (
+        <ul>
+            {todos.map(todo => (
+                <li key={todo.id}>{todo.text}</li>
+            ))}
+        </ul>
+    );
+});
+```
+
+## Key Requirements
+
+### Keys Must Be Unique Among Siblings
+
+Keys only need to be unique within the same parent, not globally:
+
+```tsx live
+// ✅ Good - keys unique within each list
+<ul>
+    {categories.map(category => (
+        <li key={category.id}>
+            <h3>{category.name}</h3>
+            <ul>
+                {category.items.map(item => (
+                    <li key={item.id}>{item.name}</li>
+                ))}
+            </ul>
+        </li>
+    ))}
+</ul>
+```
+
+### Keys Should Be Stable
+
+Use IDs from your data, not array indices:
+
+```tsx live
+// ❌ Bad - using index as key
+{todos.map((todo, index) => (
+    <TodoItem key={index} todo={todo} />
+))}
+
+// ✅ Good - using stable ID
+{todos.map(todo => (
+    <TodoItem key={todo.id} todo={todo} />
+))}
+```
+
+Using indices as keys causes issues when items are reordered, added, or removed because the key no longer corresponds to the same data.
+
+### Keys Should Be Consistent
+
+The same item should always have the same key:
+
+```tsx live
+// ❌ Bad - random keys change on every render
+{todos.map(todo => (
+    <TodoItem key={Math.random()} todo={todo} />
+))}
+
+// ✅ Good - stable, predictable keys
+{todos.map(todo => (
+    <TodoItem key={todo.id} todo={todo} />
+))}
+```
+
+## Key Types
+
+Keys can be strings or numbers:
+
+```tsx live
+// String key
+<li key="header">Header</li>
+
+// Number key
+<li key={1}>First</li>
+
+// ID from data
+<li key={item.id}>{item.name}</li>
+```
+
+> **Note:** Keys are converted to strings internally, so `key={1}` and `key="1"` are treated as the same key.
+
+## Forcing Component Remount
+
+Changing a component's key forces it to unmount and remount with fresh state:
+
+```tsx live
+import { component } from 'sigx';
+
+const FormWizard = component(({ signal }) => {
+    const step = signal(1);
+    
+    return () => (
+        <div>
+            {/* Changing key resets the form state */}
+            <StepForm key={step()} step={step()} />
+            
+            <button onClick={() => step.v++}>Next Step</button>
+        </div>
+    );
+});
+
+const StepForm = component(({ props, signal }) => {
+    // This state resets when the key changes
+    const formData = signal({});
+    
+    return () => (
+        <form>
+            {/* Form fields for step {props.step} */}
+        </form>
+    );
+});
+```
+
+This pattern is useful for:
+- Resetting form state when switching between items
+- Forcing animations to restart
+- Clearing component caches
+
+## Development Warnings
+
+SignalX provides helpful warnings in development mode for actual bugs:
+
+### Duplicate Key Warning
+
+```tsx live
+// ⚠️ Warning: Duplicate key "1" detected
+<ul>
+    <li key="1">First</li>
+    <li key="1">Also First?</li>  {/* Duplicate! */}
+</ul>
+```
+
+> **Note:** SignalX does not warn about missing keys. Our double-ended diffing algorithm efficiently handles lists without keys by matching on type and position. Keys are still recommended for optimal performance and correct state preservation in dynamic lists, but you won't be nagged about them.
+
+## Best Practices
+
+### 1. Always Key Dynamic Lists
+
+Any list that can change (items added, removed, or reordered) should use keys:
+
+```tsx live
+// Dynamic list - needs keys
+{users.map(user => <UserCard key={user.id} user={user} />)}
+
+// Static list - keys are optional but still recommended
+{['Home', 'About', 'Contact'].map(page => (
+    <NavLink key={page} to={`/${page.toLowerCase()}`}>{page}</NavLink>
+))}
+```
+
+### 2. Use Meaningful IDs
+
+If your data doesn't have IDs, generate them when the data is created, not during rendering:
+
+```tsx live
+// ✅ Good - generate IDs when creating data
+function addTodo(text) {
+    todos.push({
+        id: crypto.randomUUID(),  // or use a counter
+        text
+    });
+}
+```
+
+### 3. Composite Keys
+
+For items that don't have a single unique ID, combine multiple fields:
+
+```tsx live
+{events.map(event => (
+    <EventCard 
+        key={`${event.date}-${event.venue}-${event.time}`} 
+        event={event} 
+    />
+))}
+```
+
+### 4. Keys on Components
+
+Keys work the same way on custom components:
+
+```tsx live
+{products.map(product => (
+    <ProductCard 
+        key={product.sku}
+        product={product}
+        onAddToCart={() => addToCart(product)}
+    />
+))}
+```
+
+## How Keys Work Internally
+
+SignalX uses a double-ended diffing algorithm that:
+
+1. Compares elements from the start of both old and new lists
+2. Compares elements from the end of both lists
+3. Detects moves (old start → new end, old end → new start)
+4. Uses a key-to-index map for O(1) lookup of remaining items
+5. Mounts new items and unmounts removed items
+
+This algorithm is O(n) and efficiently handles common list operations like:
+- Appending items
+- Prepending items
+- Removing items
+- Reordering items
+- Complete list replacement
+
+## Summary
+
+- **Use keys** for all dynamic lists to help SignalX track element identity
+- **Keys must be unique** among siblings
+- **Keys should be stable** - use data IDs, not array indices
+- **Changing a key** forces remount with fresh state
+- **Development warnings** help catch common mistakes

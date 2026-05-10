@@ -1,0 +1,318 @@
+---
+title: Dropdown
+description: Dropdown component for action menus and context menus
+layout: docs
+category: ["Components", "Actions"]
+order: 110
+---
+
+# Dropdown
+
+Dropdown component for creating action menus, context menus, and select-like interfaces.
+
+## Import
+
+```tsx
+import { Dropdown } from '@sigx/daisyui';
+```
+
+## Basic Dropdown
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Dropdown, Button, Menu, Card, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body class="py-12">
+                <Row justify="center">
+                    <Dropdown
+                        slots={{
+                            trigger: () => <Button>Click me</Button>
+                        }}
+                    >
+                        <Menu.Item><Text as="span">Item 1</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 2</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 3</Text></Menu.Item>
+                    </Dropdown>
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Dropdown Positions
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Dropdown, Button, Menu, Card, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const positions = ['bottom', 'top', 'left', 'right'] as const;
+    
+    return () => (
+        <Card>
+            <Card.Body class="py-12">
+                <Row wrap justify="center" gap="4">
+                    {positions.map(pos => (
+                        <Dropdown 
+                            position={pos}
+                            menuClass="w-40"
+                            slots={{
+                                trigger: () => <Button>{pos}</Button>
+                            }}
+                        >
+                            <Menu.Item><Text as="span">Option 1</Text></Menu.Item>
+                            <Menu.Item><Text as="span">Option 2</Text></Menu.Item>
+                        </Dropdown>
+                    ))}
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Dropdown End Alignment
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Dropdown, Button, Menu, Card, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body class="py-12">
+                <Row justify="center" gap="4">
+                    <Dropdown
+                        menuClass="w-40"
+                        slots={{
+                            trigger: () => <Button>Start (default)</Button>
+                        }}
+                    >
+                        <Menu.Item><Text as="span">Option 1</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Option 2</Text></Menu.Item>
+                    </Dropdown>
+                    
+                    <Dropdown 
+                        position="end"
+                        menuClass="w-40"
+                        slots={{
+                            trigger: () => <Button>End aligned</Button>
+                        }}
+                    >
+                        <Menu.Item><Text as="span">Option 1</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Option 2</Text></Menu.Item>
+                    </Dropdown>
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Hover Dropdown
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Dropdown, Button, Menu, Card, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body class="py-12">
+                <Row justify="center">
+                    <Dropdown 
+                        hover
+                        menuClass="w-52"
+                        slots={{
+                            trigger: () => <Button>Hover me</Button>
+                        }}
+                    >
+                        <Menu.Item><Text as="span">Item 1</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 2</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Item 3</Text></Menu.Item>
+                    </Dropdown>
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## User Menu Example
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Dropdown, Button, Menu, Card, Badge, Col, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Card.Body class="py-12">
+                <Row justify="center">
+                    <Dropdown 
+                        position="end"
+                        menuClass="w-56"
+                        slots={{
+                            trigger: () => (
+                                <Button variant="ghost" shape="circle">
+                                    <Text as="span" weight="bold" class="w-10 h-10 rounded-full bg-primary text-primary-content inline-flex items-center justify-center">
+                                        JD
+                                    </Text>
+                                </Button>
+                            )
+                        }}
+                    >
+                        <Col gap="1" class="px-4 py-3 border-b border-base-300">
+                            <Text weight="bold">John Doe</Text>
+                            <Text size="sm" color="muted">john@example.com</Text>
+                        </Col>
+                        <Menu.Item>
+                            <Row justify="between" align="center" class="w-full">
+                                <Text as="span">Profile</Text>
+                                <Badge variant="primary" size="sm">New</Badge>
+                            </Row>
+                        </Menu.Item>
+                        <Menu.Item><Text as="span">Settings</Text></Menu.Item>
+                        <Menu.Item><Text as="span">Billing</Text></Menu.Item>
+                        <Col class="border-t border-base-300 mt-2 pt-2">
+                            <Menu.Item><Text as="span" color="error">Logout</Text></Menu.Item>
+                        </Col>
+                    </Dropdown>
+                </Row>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Navbar Dropdown
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Dropdown, Button, Menu, Card, Navbar, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    return () => (
+        <Card>
+            <Navbar
+                class="bg-base-200 rounded-box"
+                slots={{
+                    start: () => <Text as="span" size="xl" weight="bold">App</Text>,
+                    end: () => (
+                        <Row gap="2">
+                            <Dropdown 
+                                position="end"
+                                menuClass="w-48 mt-2"
+                                slots={{
+                                    trigger: () => <Button variant="ghost">Products</Button>
+                                }}
+                            >
+                                <Menu.Item><Text as="span">Electronics</Text></Menu.Item>
+                                <Menu.Item><Text as="span">Clothing</Text></Menu.Item>
+                                <Menu.Item><Text as="span">Home & Garden</Text></Menu.Item>
+                            </Dropdown>
+                            
+                            <Dropdown 
+                                position="end"
+                                menuClass="w-48 mt-2"
+                                slots={{
+                                    trigger: () => <Button variant="ghost">About</Button>
+                                }}
+                            >
+                                <Menu.Item><Text as="span">Company</Text></Menu.Item>
+                                <Menu.Item><Text as="span">Team</Text></Menu.Item>
+                                <Menu.Item><Text as="span">Contact</Text></Menu.Item>
+                            </Dropdown>
+                        </Row>
+                    ),
+                }}
+            />
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Context Menu Example
+
+```tsx live preview
+import { component, render } from 'sigx';
+import { Dropdown, Menu, Card, Badge, Col, Row, Text } from '@sigx/daisyui';
+
+const Demo = component(() => {
+    const items = [
+        { id: 1, name: 'Document 1.pdf', type: 'PDF' },
+        { id: 2, name: 'Image.png', type: 'Image' },
+        { id: 3, name: 'Report.xlsx', type: 'Excel' }
+    ];
+    
+    return () => (
+        <Card>
+            <Card.Body>
+                <Col gap="2">
+                    <Text size="sm" color="muted" margin={{ bottom: "4" }}>Hover on items to see menu:</Text>
+                    
+                    {items.map(item => (
+                        <Dropdown 
+                            hover
+                            menuClass="w-48"
+                            slots={{
+                                trigger: () => (
+                                    <Row align="center" gap="3" class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 w-full">
+                                        <Text as="span" size="2xl">📄</Text>
+                                        <Col gap="1" class="flex-1">
+                                            <Text as="span" weight="medium">{item.name}</Text>
+                                            <Badge variant="ghost" size="sm">{item.type}</Badge>
+                                        </Col>
+                                    </Row>
+                                )
+                            }}
+                        >
+                            <Menu.Item><Text as="span">Open</Text></Menu.Item>
+                            <Menu.Item><Text as="span">Download</Text></Menu.Item>
+                            <Menu.Item><Text as="span">Rename</Text></Menu.Item>
+                            <Menu.Item><Text as="span">Share</Text></Menu.Item>
+                            <Col class="border-t border-base-300 mt-1 pt-1">
+                                <Menu.Item><Text as="span" color="error">Delete</Text></Menu.Item>
+                            </Col>
+                        </Dropdown>
+                    ))}
+                </Col>
+            </Card.Body>
+        </Card>
+    );
+});
+
+render(<Demo />, "#sandbox");
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `position` | `'end' \| 'top' \| 'bottom' \| 'left' \| 'right'` | - | Dropdown position |
+| `hover` | `boolean` | `false` | Open on hover instead of click |
+| `menuClass` | `string` | - | Additional CSS classes for the dropdown menu |
+| `class` | `string` | - | Additional CSS classes for the container |
+
+## Slots
+
+| Slot | Description |
+|------|-------------|
+| `trigger` | The element that opens the dropdown (can be any component) |
+| `default` | Dropdown menu content (typically Menu.Item components) |

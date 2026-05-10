@@ -1,0 +1,89 @@
+---
+title: Installation
+description: How to install SignalX in your project
+layout: docs
+category: Getting Started
+order: 20
+---
+
+# Installation
+
+SignalX can be installed in several ways depending on your project setup.
+
+## Create a New Project
+
+The fastest way to get started is with our CLI:
+
+```bash
+npm create sigx@latest my-app
+```
+
+This will scaffold a new project with:
+- Vite for development and building
+- TypeScript configuration
+- SignalX and the Vite plugin pre-configured
+
+## Add to Existing Project
+
+### Using npm
+
+```bash
+npm install sigx @sigx/vite
+```
+
+### Using pnpm
+
+```bash
+pnpm add sigx @sigx/vite
+```
+
+### Using yarn
+
+```bash
+yarn add sigx @sigx/vite
+```
+
+## Configure Vite
+
+Add the SignalX plugin to your Vite configuration:
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { sigxPlugin } from '@sigx/vite';
+
+export default defineConfig({
+    plugins: [sigxPlugin()],
+});
+```
+
+## TypeScript Configuration
+
+For the best TypeScript experience, update your `tsconfig.json`:
+
+```json
+{
+    "compilerOptions": {
+        "jsx": "preserve",
+        "jsxImportSource": "sigx",
+        "moduleResolution": "bundler"
+    }
+}
+```
+
+## Package Versions
+
+SignalX follows semantic versioning. Current packages:
+
+| Package | Version | Description |
+|---------|---------|-------------|
+| `sigx` | 0.1.5 | Core runtime |
+| `@sigx/vite` | 0.1.5 | Vite plugin |
+| `@sigx/router` | 0.1.5 | Client-side router |
+| `@sigx/store` | 0.1.5 | State management |
+| `@sigx/daisyui` | 0.1.5 | UI components |
+
+## Next Steps
+
+- [Quick Start](/docs/quick-start) - Build your first component
+- [Signals](/docs/signals) - Learn about reactive state
