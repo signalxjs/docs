@@ -16,34 +16,19 @@ type ScrollRevealProps =
     & Define.Slot<'default'>;
 
 export const ScrollReveal = component<ScrollRevealProps>(({ props, slots, signal }) => {
-    // Start visible so SSR-rendered content is shown immediately. We only
-    // hide-and-animate elements that are still below the fold when the
-    // browser first sees them; above-the-fold content stays visible (no
-    // FOUC, no dependence on the IntersectionObserver firing on time).
-    const state = signal({ isVisible: true });
+    const state = signal({ isVisible: false });
     let containerRef: HTMLElement | null = null;
     let observer: IntersectionObserver | null = null;
-
+    
     const animation = props.animation ?? 'fade-up';
     const delay = props.delay ?? 0;
     const duration = props.duration ?? 600;
     const threshold = props.threshold ?? 0.1;
     const once = props.once ?? true;
-
+    
     onMounted(() => {
         if (!containerRef) return;
-
-        // Above-the-fold? Skip the observer — the content is already
-        // visible from the SSR render and we don't want to flash it out.
-        const rect = containerRef.getBoundingClientRect();
-        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-        if (rect.top < viewportHeight) {
-            return;
-        }
-
-        // Below the fold — hide now, then fade in when scrolled into view.
-        state.isVisible = false;
-
+        
         observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -59,7 +44,7 @@ export const ScrollReveal = component<ScrollRevealProps>(({ props, slots, signal
             },
             { threshold }
         );
-
+        
         observer.observe(containerRef);
     });
     
