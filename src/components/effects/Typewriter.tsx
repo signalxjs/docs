@@ -13,45 +13,42 @@ type TypewriterProps =
     & Define.Prop<'pauseDuration', number, false>
     & Define.Prop<'class', string, false>;
 
-export const Typewriter = component<TypewriterProps>(({ props, signal }) => {
-    const state = signal({
-        displayText: '',
-        wordIndex: 0,
-        isDeleting: false
-    });
-    
+export const Typewriter = component<TypewriterProps>(({ props }) => {
     const typingSpeed = props.typingSpeed ?? 100;
     const deletingSpeed = props.deletingSpeed ?? 50;
     const pauseDuration = props.pauseDuration ?? 2000;
-    
+
+    let textEl: HTMLElement | null = null;
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    
+    let wordIndex = 0;
+    let displayText = '';
+    let isDeleting = false;
+
     const tick = () => {
+        if (!textEl) return;
         const words = props.words ?? [];
         if (words.length === 0) return;
-        
-        const currentWord = words[state.wordIndex];
-        const currentText = state.displayText;
-        
-        if (state.isDeleting) {
-            // Deleting
-            state.displayText = currentWord.substring(0, currentText.length - 1);
-            
-            if (state.displayText === '') {
-                state.isDeleting = false;
-                state.wordIndex = (state.wordIndex + 1) % words.length;
+
+        const currentWord = words[wordIndex];
+
+        if (isDeleting) {
+            displayText = currentWord.substring(0, displayText.length - 1);
+            textEl.textContent = displayText;
+
+            if (displayText === '') {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
                 timeoutId = setTimeout(tick, typingSpeed);
             } else {
                 timeoutId = setTimeout(tick, deletingSpeed);
             }
         } else {
-            // Typing
-            state.displayText = currentWord.substring(0, currentText.length + 1);
-            
-            if (state.displayText === currentWord) {
-                // Finished typing, pause then delete
+            displayText = currentWord.substring(0, displayText.length + 1);
+            textEl.textContent = displayText;
+
+            if (displayText === currentWord) {
                 timeoutId = setTimeout(() => {
-                    state.isDeleting = true;
+                    isDeleting = true;
                     tick();
                 }, pauseDuration);
             } else {
@@ -59,20 +56,20 @@ export const Typewriter = component<TypewriterProps>(({ props, signal }) => {
             }
         }
     };
-    
+
     onMounted(() => {
         tick();
     });
-    
+
     onUnmounted(() => {
         if (timeoutId) {
             clearTimeout(timeoutId);
         }
     });
-    
+
     return () => (
         <span class={`typewriter ${props.class ?? ''}`}>
-            <span class="typewriter-text">{state.displayText}</span>
+            <span class="typewriter-text" ref={(el: HTMLElement) => { textEl = el; }} />
             <span class="typewriter-cursor">|</span>
         </span>
     );
