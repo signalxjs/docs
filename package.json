@@ -47,7 +47,7 @@
         "type": "git",
         "url": "git+https://github.com/signalxjs/docs.git"
     },
-    "homepage": "https://signalx.dev",
+    "homepage": "https://signalxjs.github.io/docs/",
     "bugs": {
         "url": "https://github.com/signalxjs/docs/issues"
     },

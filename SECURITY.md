@@ -1,6 +1,6 @@
 # Security Policy
 
-This repo holds the source for the SignalX documentation site at <https://signalx.dev>. It is not a published npm package.
+This repo holds the source for the SignalX documentation site at <https://signalxjs.github.io/docs/>. It is not a published npm package.
 
 ## Reporting a vulnerability in the published framework
 
