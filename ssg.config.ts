@@ -22,7 +22,9 @@ export default defineSSGConfig({
     site: {
         title: 'SignalX',
         description: 'A lightweight reactive component framework',
-        url: 'https://signalx.dev',
+        // origin only — page paths already include the `/docs/` base path
+        // configured in vite.config.ts, so site.url must NOT repeat it.
+        url: 'https://signalxjs.github.io',
         favicon: '/sigx.png',
         themeColor: '#000000',
         fonts: [
@@ -30,7 +32,7 @@ export default defineSSGConfig({
             'JetBrains+Mono:wght@400;500',
         ],
         // OG/Twitter support
-        ogImage: 'https://signalx.dev/og-image.png',
+        ogImage: 'https://signalxjs.github.io/docs/og-image.png',
         twitter: 'signalxjs',
     },
     
