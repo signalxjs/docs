@@ -28,8 +28,8 @@ importers:
         specifier: ^0.4.5
         version: 0.4.5(sigx@0.4.3)
       '@sigx/ssg':
-        specifier: ^0.4.5
-        version: 0.4.5(@sigx/cli@0.1.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
+        specifier: ^0.4.6
+        version: 0.4.6(@sigx/cli@0.1.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
       '@sigx/store':
         specifier: ^0.4.4
         version: 0.4.4
@@ -646,8 +646,8 @@ packages:
   '@sigx/server-renderer@0.4.3':
     resolution: {integrity: sha512-DtR+PBX185SlJaH8FhLGBaWqs3d2+haAgZf5+CmbzD3A7EshQ+mt+aa3yccxjifcZuMO7v+atgjMo1GuVr0+Uw==}
 
-  '@sigx/ssg@0.4.5':
-    resolution: {integrity: sha512-ezTYpLfo624U+/Oo9O5/eXV6se2KM9cXMuf8a39ddGaxKft6e5/CYcUom/RPM3F0wZYjljAHAkF7WQAygFInlA==}
+  '@sigx/ssg@0.4.6':
+    resolution: {integrity: sha512-7t+GXlkqcRO1ZT+iZc3kdmU4Mijv7BKnmH1oqSLfYTxMXOz2p7rgu6G2EOzqiKnV0Rz7/TC2Op0ACeHHKwNkhQ==}
     peerDependencies:
       '@sigx/cli': '*'
       sigx: ^0.4.3
@@ -2145,7 +2145,7 @@ snapshots:
     dependencies:
       sigx: 0.4.3
 
-  '@sigx/ssg@0.4.5(@sigx/cli@0.1.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
+  '@sigx/ssg@0.4.6(@sigx/cli@0.1.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
     dependencies:
       '@sigx/router': 0.4.5(sigx@0.4.3)
       '@sigx/server-renderer': 0.4.3
