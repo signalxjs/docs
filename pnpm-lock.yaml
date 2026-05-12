@@ -19,11 +19,11 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0)
       '@sigx/live-code':
-        specifier: ^0.1.2
-        version: 0.1.2(@shikijs/langs@4.0.2)(@shikijs/monaco@3.23.0)(@shikijs/themes@4.0.2)(@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.1(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.5(sigx@0.4.3))(@sigx/store@0.4.4)(shiki@4.0.2)(sigx@0.4.3)
+        specifier: ^0.1.3
+        version: 0.1.3(@shikijs/langs@4.0.2)(@shikijs/monaco@3.23.0)(@shikijs/themes@4.0.2)(@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.5(sigx@0.4.3))(@sigx/store@0.4.4)(shiki@4.0.2)(sigx@0.4.3)
       '@sigx/monaco-editor':
-        specifier: ^0.1.1
-        version: 0.1.1(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
+        specifier: ^0.1.2
+        version: 0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
       '@sigx/router':
         specifier: ^0.4.5
         version: 0.4.5(sigx@0.4.3)
@@ -591,8 +591,8 @@ packages:
       sigx: ^0.4.3
       tailwindcss: '>=4.0.0'
 
-  '@sigx/live-code@0.1.2':
-    resolution: {integrity: sha512-zk4BMi05sdT9Sric3NJHxh8QGNm4cTqflHt4irbOwYA/juGA1kkT/u/4YNwoB9FWYmnqfDHkJXDKxBoNs32hCw==}
+  '@sigx/live-code@0.1.3':
+    resolution: {integrity: sha512-viifxI8Tg+knSFe9ajelM+ql2bJl3fQFZPfof4bVKnJ7QMO69181Q8GJ3+rojp1/qVTE8f4+MDXZ2GZsabnC0Q==}
     peerDependencies:
       '@shikijs/langs': '>=3.7.0'
       '@shikijs/monaco': '>=3.7.0'
@@ -611,8 +611,8 @@ packages:
       '@sigx/store':
         optional: true
 
-  '@sigx/monaco-editor@0.1.1':
-    resolution: {integrity: sha512-ZMaJDsD6JNZXik1CSg6tZW8BXV6MX6OQFP3AmoYvlM7KFeIy1pOj2AZXzxPShjLlVUF3oE0aliHXMYqqNKGbkQ==}
+  '@sigx/monaco-editor@0.1.2':
+    resolution: {integrity: sha512-i8MsV67m8fRbKLQOAt1wdBMzwAu0L2XKuxfvf0xpCTwkN+YbdZbNM60Z4ow4zAxQwKjd/cZ5fiKOTO15y9ztbw==}
     peerDependencies:
       monaco-editor: '>=0.50.0'
       sigx: ^0.4.3
@@ -2095,12 +2095,12 @@ snapshots:
       sigx: 0.4.3
       tailwindcss: 4.3.0
 
-  '@sigx/live-code@0.1.2(@shikijs/langs@4.0.2)(@shikijs/monaco@3.23.0)(@shikijs/themes@4.0.2)(@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.1(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.5(sigx@0.4.3))(@sigx/store@0.4.4)(shiki@4.0.2)(sigx@0.4.3)':
+  '@sigx/live-code@0.1.3(@shikijs/langs@4.0.2)(@shikijs/monaco@3.23.0)(@shikijs/themes@4.0.2)(@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.5(sigx@0.4.3))(@sigx/store@0.4.4)(shiki@4.0.2)(sigx@0.4.3)':
     dependencies:
       '@shikijs/langs': 4.0.2
       '@shikijs/monaco': 3.23.0
       '@shikijs/themes': 4.0.2
-      '@sigx/monaco-editor': 0.1.1(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
+      '@sigx/monaco-editor': 0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
       shiki: 4.0.2
       sigx: 0.4.3
       sucrase: 3.35.1
@@ -2109,7 +2109,7 @@ snapshots:
       '@sigx/router': 0.4.5(sigx@0.4.3)
       '@sigx/store': 0.4.4
 
-  '@sigx/monaco-editor@0.1.1(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
+  '@sigx/monaco-editor@0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
     dependencies:
       sigx: 0.4.3
     optionalDependencies:
