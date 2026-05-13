@@ -5,11 +5,11 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@sigx/reactivity': ^0.4.3
-  '@sigx/runtime-core': ^0.4.3
-  '@sigx/runtime-dom': ^0.4.3
-  '@sigx/server-renderer': ^0.4.3
-  sigx: ^0.4.3
+  '@sigx/reactivity': ^0.4.5
+  '@sigx/runtime-core': ^0.4.5
+  '@sigx/runtime-dom': ^0.4.5
+  '@sigx/server-renderer': ^0.4.5
+  sigx: ^0.4.5
 
 importers:
 
@@ -17,31 +17,31 @@ importers:
     dependencies:
       '@sigx/daisyui':
         specifier: ^0.4.2
-        version: 0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0)
+        version: 0.4.2(daisyui@5.5.19)(sigx@0.4.5)(tailwindcss@4.3.0)
       '@sigx/live-code':
         specifier: ^0.1.3
-        version: 0.1.3(@shikijs/langs@4.0.2)(@shikijs/monaco@3.23.0)(@shikijs/themes@4.0.2)(@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.5(sigx@0.4.3))(@sigx/store@0.4.4)(shiki@4.0.2)(sigx@0.4.3)
+        version: 0.1.3(@shikijs/langs@4.0.2)(@shikijs/monaco@3.23.0)(@shikijs/themes@4.0.2)(@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.5)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.2(monaco-editor@0.55.1)(sigx@0.4.5)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.5(sigx@0.4.5))(@sigx/store@0.4.4)(shiki@4.0.2)(sigx@0.4.5)
       '@sigx/monaco-editor':
         specifier: ^0.1.2
-        version: 0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
+        version: 0.1.2(monaco-editor@0.55.1)(sigx@0.4.5)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
       '@sigx/router':
         specifier: ^0.4.5
-        version: 0.4.5(sigx@0.4.3)
+        version: 0.4.5(sigx@0.4.5)
       '@sigx/ssg':
         specifier: ^0.4.6
-        version: 0.4.6(@sigx/cli@0.1.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
+        version: 0.4.6(@sigx/cli@0.1.1)(sigx@0.4.5)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
       '@sigx/store':
         specifier: ^0.4.4
         version: 0.4.4
       '@sigx/vite':
         specifier: ^0.4.3
-        version: 0.4.3(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
+        version: 0.4.3(sigx@0.4.5)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
       monaco-editor:
         specifier: ^0.55.1
         version: 0.55.1
       sigx:
-        specifier: ^0.4.3
-        version: 0.4.3
+        specifier: ^0.4.5
+        version: 0.4.5
     devDependencies:
       '@mdx-js/rollup':
         specifier: ^3.1.0
@@ -588,7 +588,7 @@ packages:
     resolution: {integrity: sha512-q6Yy7R3alhgUmJM2mSc29fq5GW/uJAjgg7CnwzU4PM8IF4HWoILmLPvifIIx9POhs1pnBNyYgAurdKSGetqYoA==}
     peerDependencies:
       daisyui: '>=5.0.0'
-      sigx: ^0.4.3
+      sigx: ^0.4.5
       tailwindcss: '>=4.0.0'
 
   '@sigx/live-code@0.1.3':
@@ -602,7 +602,7 @@ packages:
       '@sigx/router': '>=0.3.0'
       '@sigx/store': '>=0.3.0'
       shiki: '>=3.7.0'
-      sigx: ^0.4.3
+      sigx: ^0.4.5
     peerDependenciesMeta:
       '@sigx/daisyui':
         optional: true
@@ -615,7 +615,7 @@ packages:
     resolution: {integrity: sha512-i8MsV67m8fRbKLQOAt1wdBMzwAu0L2XKuxfvf0xpCTwkN+YbdZbNM60Z4ow4zAxQwKjd/cZ5fiKOTO15y9ztbw==}
     peerDependencies:
       monaco-editor: '>=0.50.0'
-      sigx: ^0.4.3
+      sigx: ^0.4.5
       vite: '>=5.0.0'
     peerDependenciesMeta:
       monaco-editor:
@@ -623,34 +623,34 @@ packages:
       vite:
         optional: true
 
-  '@sigx/reactivity@0.4.3':
-    resolution: {integrity: sha512-S6nCZuwRGsPSvGrLXLxRSJzVFIPdWAIbSu4gKAglNxuq5V3A2aH9SdHE/wSqz0lTzA4qrIRR2wSbi3bnOMjKOg==}
+  '@sigx/reactivity@0.4.5':
+    resolution: {integrity: sha512-r/IVjuFRxyFhxAjApcoVjkBf6vW/VftzVDtQqsqgDt0dlg1BEUZpyzy9Aoi18z0SdpjJjlXhnU7kq01fZ/w8dQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
   '@sigx/router@0.4.5':
     resolution: {integrity: sha512-RcyA+YPHf47TGBmGnKvq/x9GW2Yx1+gO37U6o3m8/BOuxP6fATnUVAn6fU5+SKjLvz9jxkHinNbv9OP/0Qd1Iw==}
     peerDependencies:
-      sigx: ^0.4.3
+      sigx: ^0.4.5
 
-  '@sigx/runtime-core@0.4.3':
-    resolution: {integrity: sha512-KVvlFFMzhl0xFhE4p1Liy0R2LPebDS3ckWk8I6kplbw/t6kb4Jsr0k19Hy7IoWhfZ84yD1EhvAHDyXvIU1wmOQ==}
+  '@sigx/runtime-core@0.4.5':
+    resolution: {integrity: sha512-wTcRZRsQ7mLRKxjtiuq7hyctr7Zuhirgs6XlqerX1/DhWzAEARbD5Rs/s6ZjgCRmfDEDj4FEhryv1BN0x2KJZw==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
-  '@sigx/runtime-dom@0.4.3':
-    resolution: {integrity: sha512-1G5PC5xSdNgdiUjNKnm1mIg6+QYmt1S9nQIkR2ON0vz+rsvAGeysTEwM3PCUe98HHBpqrkIk/9iqH2VRUd5BCA==}
+  '@sigx/runtime-dom@0.4.5':
+    resolution: {integrity: sha512-tzEffpxpppRD7OTWETx/BcDbtsTgJdp50UA3+6RKYYesPuF0sf1IlLDPrTHGzUYDRQrt/esuD0TBa6QflFY1Vw==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
   '@sigx/runtime-terminal@0.3.2':
     resolution: {integrity: sha512-eABP66c/yKvM1ZEhhy52L1Jvn7mX0kVpyB+hYkftxXq/i6gDWH/p99dmqN2zQSxwT04R502ujlvvAPKyJRihqg==}
 
-  '@sigx/server-renderer@0.4.3':
-    resolution: {integrity: sha512-DtR+PBX185SlJaH8FhLGBaWqs3d2+haAgZf5+CmbzD3A7EshQ+mt+aa3yccxjifcZuMO7v+atgjMo1GuVr0+Uw==}
+  '@sigx/server-renderer@0.4.5':
+    resolution: {integrity: sha512-BREjGqN3RbxpJgo2JWw3onrWR+TqvI+PlkCEjDC/3IpCziaDi4Qas9nUpAwYklFrXuvmCQve9F3sKBtAXs9EvQ==}
 
   '@sigx/ssg@0.4.6':
     resolution: {integrity: sha512-7t+GXlkqcRO1ZT+iZc3kdmU4Mijv7BKnmH1oqSLfYTxMXOz2p7rgu6G2EOzqiKnV0Rz7/TC2Op0ACeHHKwNkhQ==}
     peerDependencies:
       '@sigx/cli': '*'
-      sigx: ^0.4.3
+      sigx: ^0.4.5
       vite: '>=8.0.0'
     peerDependenciesMeta:
       '@sigx/cli':
@@ -666,7 +666,7 @@ packages:
     resolution: {integrity: sha512-rce7KVn9PQCdfBm0zC4zMvwPdGfjWN5J7Y5ZGA3/72iD2i63cFYIAmm5i808vLKsNFTC9T9SLDOYTT/8lnESQQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
-      sigx: ^0.4.3
+      sigx: ^0.4.5
       vite: '>=8.0.0'
 
   '@tailwindcss/node@4.3.0':
@@ -1525,8 +1525,8 @@ packages:
     resolution: {integrity: sha512-eAVKTMedR5ckPo4xne/PjYQYrU3qx78gtJZ+sHlXEg5IHhhoQhMfZVzetTYuaJS0L2Ef3AcCRzCHV8T0WI6nIQ==}
     engines: {node: '>=20'}
 
-  sigx@0.4.3:
-    resolution: {integrity: sha512-FCi5UlyRvi+fnOrYPou8yiBpvvobSSNF/aHvwBEsxBlC6OGrhrvp4z8+F8TazoUEbW0TtCby9ntwaDxJCezM7g==}
+  sigx@0.4.5:
+    resolution: {integrity: sha512-HXxlGibU/BOmOg2sT/xxYFJPacp+4ROMqwWvAgEpS43E2eNvej2MP+dN6YWrSD3SMumgNwiA7w2zZqrIu17NOg==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
   source-map-js@1.2.1:
@@ -2086,69 +2086,69 @@ snapshots:
       '@sigx/terminal': 0.3.2
       citty: 0.2.2
 
-  '@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0)':
+  '@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.5)(tailwindcss@4.3.0)':
     dependencies:
-      '@sigx/reactivity': 0.4.3
-      '@sigx/runtime-core': 0.4.3
-      '@sigx/runtime-dom': 0.4.3
+      '@sigx/reactivity': 0.4.5
+      '@sigx/runtime-core': 0.4.5
+      '@sigx/runtime-dom': 0.4.5
       daisyui: 5.5.19
-      sigx: 0.4.3
+      sigx: 0.4.5
       tailwindcss: 4.3.0
 
-  '@sigx/live-code@0.1.3(@shikijs/langs@4.0.2)(@shikijs/monaco@3.23.0)(@shikijs/themes@4.0.2)(@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.5(sigx@0.4.3))(@sigx/store@0.4.4)(shiki@4.0.2)(sigx@0.4.3)':
+  '@sigx/live-code@0.1.3(@shikijs/langs@4.0.2)(@shikijs/monaco@3.23.0)(@shikijs/themes@4.0.2)(@sigx/daisyui@0.4.2(daisyui@5.5.19)(sigx@0.4.5)(tailwindcss@4.3.0))(@sigx/monaco-editor@0.1.2(monaco-editor@0.55.1)(sigx@0.4.5)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)))(@sigx/router@0.4.5(sigx@0.4.5))(@sigx/store@0.4.4)(shiki@4.0.2)(sigx@0.4.5)':
     dependencies:
       '@shikijs/langs': 4.0.2
       '@shikijs/monaco': 3.23.0
       '@shikijs/themes': 4.0.2
-      '@sigx/monaco-editor': 0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
+      '@sigx/monaco-editor': 0.1.2(monaco-editor@0.55.1)(sigx@0.4.5)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))
       shiki: 4.0.2
-      sigx: 0.4.3
+      sigx: 0.4.5
       sucrase: 3.35.1
     optionalDependencies:
-      '@sigx/daisyui': 0.4.2(daisyui@5.5.19)(sigx@0.4.3)(tailwindcss@4.3.0)
-      '@sigx/router': 0.4.5(sigx@0.4.3)
+      '@sigx/daisyui': 0.4.2(daisyui@5.5.19)(sigx@0.4.5)(tailwindcss@4.3.0)
+      '@sigx/router': 0.4.5(sigx@0.4.5)
       '@sigx/store': 0.4.4
 
-  '@sigx/monaco-editor@0.1.2(monaco-editor@0.55.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
+  '@sigx/monaco-editor@0.1.2(monaco-editor@0.55.1)(sigx@0.4.5)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
     dependencies:
-      sigx: 0.4.3
+      sigx: 0.4.5
     optionalDependencies:
       '@shikijs/monaco': 3.23.0
       monaco-editor: 0.55.1
       shiki: 3.23.0
       vite: 8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)
 
-  '@sigx/reactivity@0.4.3': {}
+  '@sigx/reactivity@0.4.5': {}
 
-  '@sigx/router@0.4.5(sigx@0.4.3)':
+  '@sigx/router@0.4.5(sigx@0.4.5)':
     dependencies:
-      '@sigx/reactivity': 0.4.3
-      '@sigx/runtime-core': 0.4.3
-      '@sigx/runtime-dom': 0.4.3
-      sigx: 0.4.3
+      '@sigx/reactivity': 0.4.5
+      '@sigx/runtime-core': 0.4.5
+      '@sigx/runtime-dom': 0.4.5
+      sigx: 0.4.5
 
-  '@sigx/runtime-core@0.4.3':
+  '@sigx/runtime-core@0.4.5':
     dependencies:
-      '@sigx/reactivity': 0.4.3
+      '@sigx/reactivity': 0.4.5
 
-  '@sigx/runtime-dom@0.4.3':
+  '@sigx/runtime-dom@0.4.5':
     dependencies:
-      '@sigx/reactivity': 0.4.3
-      '@sigx/runtime-core': 0.4.3
+      '@sigx/reactivity': 0.4.5
+      '@sigx/runtime-core': 0.4.5
 
   '@sigx/runtime-terminal@0.3.2':
     dependencies:
-      '@sigx/reactivity': 0.4.3
-      '@sigx/runtime-core': 0.4.3
+      '@sigx/reactivity': 0.4.5
+      '@sigx/runtime-core': 0.4.5
 
-  '@sigx/server-renderer@0.4.3':
+  '@sigx/server-renderer@0.4.5':
     dependencies:
-      sigx: 0.4.3
+      sigx: 0.4.5
 
-  '@sigx/ssg@0.4.6(@sigx/cli@0.1.1)(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
+  '@sigx/ssg@0.4.6(@sigx/cli@0.1.1)(sigx@0.4.5)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
     dependencies:
-      '@sigx/router': 0.4.5(sigx@0.4.3)
-      '@sigx/server-renderer': 0.4.3
+      '@sigx/router': 0.4.5(sigx@0.4.5)
+      '@sigx/server-renderer': 0.4.5
       esbuild: 0.28.0
       fast-glob: 3.3.3
       gray-matter: 4.0.3
@@ -2163,7 +2163,7 @@ snapshots:
       remark-parse: 11.0.0
       remark-rehype: 11.1.2
       shiki: 4.0.2
-      sigx: 0.4.3
+      sigx: 0.4.5
       unified: 11.0.5
       unist-util-visit: 5.1.0
       vite: 8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)
@@ -2174,18 +2174,18 @@ snapshots:
 
   '@sigx/store@0.4.4':
     dependencies:
-      '@sigx/reactivity': 0.4.3
-      '@sigx/runtime-core': 0.4.3
+      '@sigx/reactivity': 0.4.5
+      '@sigx/runtime-core': 0.4.5
 
   '@sigx/terminal@0.3.2':
     dependencies:
-      '@sigx/reactivity': 0.4.3
-      '@sigx/runtime-core': 0.4.3
+      '@sigx/reactivity': 0.4.5
+      '@sigx/runtime-core': 0.4.5
       '@sigx/runtime-terminal': 0.3.2
 
-  '@sigx/vite@0.4.3(sigx@0.4.3)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
+  '@sigx/vite@0.4.3(sigx@0.4.5)(vite@8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4))':
     dependencies:
-      sigx: 0.4.3
+      sigx: 0.4.5
       vite: 8.0.11(esbuild@0.28.0)(jiti@2.7.0)(yaml@2.8.4)
 
   '@tailwindcss/node@4.3.0':
@@ -3454,11 +3454,11 @@ snapshots:
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
 
-  sigx@0.4.3:
+  sigx@0.4.5:
     dependencies:
-      '@sigx/reactivity': 0.4.3
-      '@sigx/runtime-core': 0.4.3
-      '@sigx/runtime-dom': 0.4.3
+      '@sigx/reactivity': 0.4.5
+      '@sigx/runtime-core': 0.4.5
+      '@sigx/runtime-dom': 0.4.5
 
   source-map-js@1.2.1: {}
 

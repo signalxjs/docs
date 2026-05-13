@@ -23,7 +23,7 @@
         "@sigx/store": "^0.4.4",
         "@sigx/vite": "^0.4.3",
         "monaco-editor": "^0.55.1",
-        "sigx": "^0.4.3"
+        "sigx": "^0.4.5"
     },
     "devDependencies": {
         "@mdx-js/rollup": "^3.1.0",
@@ -53,11 +53,11 @@
     },
     "pnpm": {
         "overrides": {
-            "@sigx/reactivity": "^0.4.3",
-            "@sigx/runtime-core": "^0.4.3",
-            "@sigx/runtime-dom": "^0.4.3",
-            "@sigx/server-renderer": "^0.4.3",
-            "sigx": "^0.4.3"
+            "@sigx/reactivity": "^0.4.5",
+            "@sigx/runtime-core": "^0.4.5",
+            "@sigx/runtime-dom": "^0.4.5",
+            "@sigx/server-renderer": "^0.4.5",
+            "sigx": "^0.4.5"
         },
         "peerDependencyRules": {
             "allowedVersions": {
