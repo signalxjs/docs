@@ -9,10 +9,10 @@ import { resolve } from 'path';
 // 'cdn' loads Monaco from unpkg.
 const MONACO_STRATEGY = (process.env.MONACO_STRATEGY as 'prebundled' | 'cdn') || 'prebundled';
 
-// Asset path prefix. Defaults to `/docs/` for the GitHub Pages deployment
-// (signalxjs.github.io/docs/); set BASE_PATH=/ when serving from a custom
-// domain root.
-const BASE_PATH = process.env.BASE_PATH ?? '/docs/';
+// Asset path prefix. Defaults to `/` for the GitHub Pages deployment at
+// the org root (https://signalxjs.github.io/); override with BASE_PATH if
+// serving from a subpath.
+const BASE_PATH = process.env.BASE_PATH ?? '/';
 
 export default defineConfig({
     base: BASE_PATH,
