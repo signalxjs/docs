@@ -124,7 +124,7 @@ export const EcosystemSection = component(() => {
                             Get started with the full stack in seconds
                         </p>
                         <code class="inline-block gradient-border glass-effect px-6 py-3 rounded-lg font-mono text-lg hover:scale-105 transition-transform cursor-pointer">
-                            <span class="text-accent">npm</span> create sigx@latest my-app
+                            <span class="text-accent">npm</span> create @sigx@latest my-app
                         </code>
                     </div>
                 </ScrollReveal>
