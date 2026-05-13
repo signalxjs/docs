@@ -13,7 +13,7 @@ export const HeroSection = component(({ signal }) => {
     const state = signal({ copied: false });
     
     const copyInstallCommand = async () => {
-        await navigator.clipboard.writeText('npm create sigx@latest');
+        await navigator.clipboard.writeText('npm create @sigx@latest');
         state.copied = true;
         setTimeout(() => state.copied = false, 2000);
     };
@@ -114,7 +114,7 @@ export const HeroSection = component(({ signal }) => {
                             onClick={copyInstallCommand}
                         >
                             <code class="text-lg font-mono text-base-content">
-                                <span class="text-accent">npm</span> create sigx@latest
+                                <span class="text-accent">npm</span> create @sigx@latest
                             </code>
                             <button class="text-base-content/50 hover:text-base-content transition-colors">
                                 {state.copied ? (
