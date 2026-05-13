@@ -4,14 +4,14 @@ import { component, computed } from 'sigx';
 const PriceCalculator = component(({ signal }) => {
     const state = signal({ price: 100, quantity: 2 });
     
-    // Computed returns a function - call it to get value
-    const total = computed(() => 
+    // Computed is a signal - access via .value
+    const total = computed(() =>
         state.price * state.quantity
     );
     
     return () => (
         <div>
-            <p>Total: ${total()}</p>
+            <p>Total: ${total.value}</p>
         </div>
     );
 });
